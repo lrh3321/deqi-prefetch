@@ -1,0 +1,81 @@
+[data-comment='normal'] span.token.comment {
+	font-style: normal;
+}
+
+img[alt],
+.menu,
+.header p,
+h2 a,
+div.footer,
+div.container > ul.list {
+	display: none;
+}
+
+h2.op a {
+	display: block;
+}
+
+body > div.container,
+body > div.header {
+	width: var(--container-width, '1200px');
+}
+
+body {
+	backdrop-filter: contrast(110%);
+}
+
+fieldset {
+	display: block;
+	min-inline-size: min-content;
+	margin-inline: 2px;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border-width: 2px;
+	border-style: groove;
+	border-color: gray;
+	border-image: initial;
+	padding-block: 0.35em 0.625em;
+	padding-inline: 0.75em;
+}
+
+input[type='number'] {
+	padding-left: 0.5rem;
+}
+
+editable-list li {
+	width: fit-content;
+	height: fit-content;
+	display: flex;
+	align-items: baseline;
+
+	--list-display: none;
+}
+
+editable-list li:hover {
+	--list-display: block;
+}
+
+editable-list li:hover .icon {
+	top: 0rem;
+	right: 3rem;
+}
+
+editable-list .icon {
+	border: none;
+	cursor: pointer;
+	position: relative;
+	font-size: 1.8rem;
+	display: var(--list-display);
+}
+
+editable-list textarea {
+	padding: 0.5rem;
+	width: 95%;
+}
+
+editable-list ul {
+	display: flex;
+	max-width: 80svw;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
