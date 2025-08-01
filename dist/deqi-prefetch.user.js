@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-07-31
+// @version      2025-08-02
 // @author       LRH3321
 // @description  得奇小说网，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -196,6 +196,7 @@ ${blockCommentEnd}`);
       if (snippet) {
         this.counter++;
         const idx = this.counter.toString();
+        this.codeSnippetsStore.set(idx, snippet);
         snippet = this.trimSnippet(snippet);
         this.addCodeSnippet(idx, snippet);
         textInput.value = "";

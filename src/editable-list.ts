@@ -43,6 +43,7 @@ export class EditableList extends HTMLElement {
 		if (snippet) {
 			this.counter++;
 			const idx = this.counter.toString();
+			this.codeSnippetsStore.set(idx, snippet);
 			snippet = this.trimSnippet(snippet);
 			this.addCodeSnippet(idx, snippet);
 			textInput!!.value = '';

@@ -12,7 +12,7 @@ export default defineConfig({
 				homepageURL: 'https://greasyfork.org/zh-CN/scripts/537588-deqi-prefech',
 				updateURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
-				version: '2025-07-31',
+				version: '2025-08-02',
 				description: '得奇小说网，看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
 				license: 'MIT',
