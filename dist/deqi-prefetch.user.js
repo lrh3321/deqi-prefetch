@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-02
+// @version      2025-08-04
 // @author       LRH3321
 // @description  得奇小说网，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -13,6 +13,7 @@
 // @match        https://www.deqixs.com/xiaoshuo/*/*.html
 // @match        https://www.deqixs.com/xiaoshuo/*/
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js
+// @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js
 // @tag          novels
 // @grant        GM_addElement
 // @grant        GM_addStyle
@@ -24,7 +25,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}input[type=number]{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:space-around} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:space-around} ');
 
 (function () {
   'use strict';
@@ -37,7 +38,6 @@
   let extendLanguageElement = null;
   function setupExtendLanguageSupport() {
     if (!coreLanguages.has(codeLang)) {
-      _unsafeWindow.Prism = _unsafeWindow.Prism || window.Prism;
       console.log("loading language", codeLang);
       const src = `https://dev.prismjs.com/components/prism-${codeLang}.js`;
       if (extendLanguageElement?.src == src) {
@@ -85,7 +85,7 @@
           lines.push(...getRandomCode().split(/[\r]?\n/));
         }
         line = lines.shift();
-        if (line.trim() == "}") {
+        if (line.trim().length === 1) {
           codeSegments.push(line);
           line = "";
         }
@@ -123,7 +123,7 @@ ${blockCommentEnd}`);
   }
   function createPreformattedCode(snippet) {
     const code = document.createElement("code");
-    code.className = `language-${codeLang}`;
+    code.className = `language-${codeLang} match-braces rainbow-braces`;
     code.style.whiteSpace = "pre-wrap";
     code.style.textWrap = "pretty";
     code.style.overflowX = "auto";
@@ -132,7 +132,7 @@ ${blockCommentEnd}`);
     pre.style.whiteSpace = "pre-wrap";
     pre.style.textWrap = "pretty";
     pre.style.overflowX = "auto";
-    pre.className = `language-${codeLang}`;
+    pre.className = `language-${codeLang} match-braces rainbow-braces`;
     if (pre.firstChild) {
       pre.replaceChild(code, pre.firstChild);
     } else {
@@ -141,14 +141,21 @@ ${blockCommentEnd}`);
     return pre;
   }
   function highlightElement(el, async, callback) {
+    console.log(Prism.hooks.all["complete"]);
+    const codes = Array.from(el.querySelectorAll("code"));
+    const highlightAll = () => {
+      codes.forEach((code) => {
+        Prism.highlightElement(code, async, callback);
+      });
+    };
     if (coreLanguages.has(codeLang)) {
-      Prism.highlightElement(el, async, callback);
+      highlightAll();
     } else {
       let count = 0;
       const lazyHighlightElement = () => {
         count++;
         if (codeLang in Prism.languages) {
-          Prism.highlightElement(el, async, callback);
+          highlightAll();
           return;
         }
         if (count > 10) {
@@ -414,6 +421,11 @@ switch (x) {
     if (!codeParagraphItalic) {
       document.body.dataset.comment = "normal";
     }
+    _GM_addElement(document.head, "link", {
+      href: "https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.css",
+      rel: "stylesheet",
+      type: "text/css"
+    });
   }
   let bookPageAccessKey = _GM_getValue("bookPageAccessKey", "h");
   let previousChapterAccessKey = _GM_getValue("previousChapterAccessKey", "b");
@@ -423,7 +435,7 @@ switch (x) {
     accessKeysFieldset.innerHTML = `<legend>快捷键设置
 	<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Reference/Global_attributes/accesskey#%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8B" target="_blank" style="margin-left: 5rem;">快捷键使用帮助</a>
 </legend>
-<div style="display: flex;gap: 1rem;">
+<div style="display: flex;gap: 0.5rem;flex-wrap:wrap;">
     <label>上一章:
         <select id="previousChapterAccessKey"></select>
     </label>
@@ -481,6 +493,11 @@ switch (x) {
   function createDisguiseCodeFieldset() {
     setupExtendLanguageSupport();
     const disguiseFieldset = document.createElement("fieldset");
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.flexWrap = "wrap";
+    div.style.gap = "0.5rem";
+    disguiseFieldset.appendChild(div);
     const codeThemeInput = document.createElement("select");
     codeThemeInput.name = "theme";
     avalibleCodeThemes.forEach((theme) => {
@@ -502,7 +519,7 @@ switch (x) {
     const codeThemeLabel = document.createElement("label");
     codeThemeLabel.innerText = "代码主题：";
     codeThemeLabel.appendChild(codeThemeInput);
-    disguiseFieldset.appendChild(codeThemeLabel);
+    div.appendChild(codeThemeLabel);
     const codeLangInput = document.createElement("select");
     codeLangInput.name = "lang";
     avalibleCodeLanguages.forEach((theme) => {
@@ -522,9 +539,8 @@ switch (x) {
     };
     const codeLangLabel = document.createElement("label");
     codeLangLabel.innerText = "代码语言：";
-    codeLangLabel.style.marginLeft = "0.5rem";
     codeLangLabel.appendChild(codeLangInput);
-    disguiseFieldset.appendChild(codeLangLabel);
+    div.appendChild(codeLangLabel);
     const codeItalicInput = document.createElement("input");
     codeItalicInput.type = "checkbox";
     codeItalicInput.name = "font-italic";
@@ -550,26 +566,25 @@ switch (x) {
     const codeInlineLengthLabel = document.createElement("label");
     codeInlineLengthLabel.innerText = "单行注释长度限制：";
     codeInlineLengthLabel.appendChild(codeInlineLengthInput);
-    disguiseFieldset.appendChild(codeInlineLengthLabel);
+    div.appendChild(codeInlineLengthLabel);
     const codeItalicLabel = document.createElement("label");
-    codeItalicLabel.style.marginLeft = "0.5rem";
     codeItalicLabel.appendChild(codeItalicInput);
     codeItalicLabel.append(" 小说斜体");
-    disguiseFieldset.appendChild(codeItalicLabel);
+    div.appendChild(codeItalicLabel);
     const demoCodeTitle = document.createElement("h3");
     demoCodeTitle.innerText = "主题效果：";
     disguiseFieldset.appendChild(demoCodeTitle);
     const preDemo = document.createElement("pre");
-    preDemo.innerHTML = `<code class="language-javascript"><span class="token comment">/*
+    preDemo.innerHTML = `<code class="language-javascript match-braces rainbow-braces"><span class="token comment">/*
 	让我们说中文
  */</span>
-<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token parameter">bar</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation brace-round brace-open brace-level-1" id="pair-21-close">(</span><span class="token parameter">bar</span><span class="token punctuation brace-round brace-close brace-level-1" id="pair-21-open">)</span> <span class="token punctuation brace-curly brace-open brace-level-1" id="pair-23-close">{</span>
 	<span class="token comment">// 短的注释</span>
 	<span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">42</span><span class="token punctuation">,</span>
 		b <span class="token operator">=</span> <span class="token string">'Prism'</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> a <span class="token operator">+</span> <span class="token function">bar</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code>`;
-    preDemo.className = "language-javascript";
+	<span class="token keyword">return</span> a <span class="token operator">+</span> <span class="token function">bar</span><span class="token punctuation brace-round brace-open brace-level-2" id="pair-22-close">(</span>b<span class="token punctuation brace-round brace-close brace-level-2" id="pair-22-open">)</span><span class="token punctuation">;</span>
+<span class="token punctuation brace-curly brace-close brace-level-1" id="pair-23-open">}</span></code>`;
+    preDemo.className = "language-javascript match-braces";
     disguiseFieldset.appendChild(preDemo);
     setupEditableList();
     setTimeout(() => {
@@ -592,7 +607,7 @@ switch (x) {
     containerStyleFieldset.appendChild(legend);
     const widthInput = document.createElement("input");
     widthInput.value = containerWidth;
-    widthInput.style.width = "4rem";
+    widthInput.size = 10;
     widthInput.onchange = () => {
       containerWidth = widthInput.value;
       document.body.style.setProperty("--container-width", containerWidth);
@@ -681,6 +696,7 @@ switch (x) {
   _GM_registerMenuCommand("脚本设置", function() {
     open("/pifu/");
   });
+  window.Prism = _unsafeWindow.Prism = _unsafeWindow.Prism || window.Prism;
   function handleBookPage() {
     let finished = false;
     const itemtxt = document.querySelector(".itemtxt");
@@ -831,9 +847,10 @@ switch (x) {
       setupExtendLanguageSupport();
       handleSettingPage();
       setTimeout(() => {
-        document.body.style.backgroundColor = getComputedStyle(
-          document.querySelector("pre")
-        ).backgroundColor;
+        const pre = document.querySelector("pre");
+        if (pre) {
+          document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
+        }
       }, 1e3);
     } else if (location.pathname.endsWith(".html")) {
       if (!isInIframe) {

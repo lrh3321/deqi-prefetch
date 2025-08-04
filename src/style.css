@@ -24,7 +24,7 @@ body {
 	backdrop-filter: contrast(110%);
 }
 
-fieldset {
+form fieldset {
 	display: block;
 	min-inline-size: min-content;
 	margin-inline: 2px;
@@ -38,7 +38,14 @@ fieldset {
 	padding-inline: 0.75em;
 }
 
-input[type='number'] {
+fieldset label {
+	display: flex;
+	width: fit-content;
+	gap: 0.4rem;
+	white-space: nowrap;
+}
+
+label input {
 	padding-left: 0.5rem;
 }
 

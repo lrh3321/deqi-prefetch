@@ -1,10 +1,9 @@
-import { GM_addElement, unsafeWindow } from '$';
+import { GM_addElement } from '$';
 import { codeLang, coreLanguages, fakeCodeSnippet, inlineLengthMax } from './config';
 
 let extendLanguageElement: HTMLScriptElement | null = null;
 export function setupExtendLanguageSupport() {
 	if (!coreLanguages.has(codeLang)) {
-		(unsafeWindow as any).Prism = (unsafeWindow as any).Prism || (window as any).Prism;
 		console.log('loading language', codeLang);
 		const src = `https://dev.prismjs.com/components/prism-${codeLang}.js`;
 		if (extendLanguageElement?.src == src) {
@@ -65,7 +64,7 @@ export function disguiseToCode(container: Element) {
 				lines.push(...getRandomCode().split(/[\r]?\n/));
 			}
 			line = lines.shift()!!;
-			if (line.trim() == '}') {
+			if (line.trim().length === 1) {
 				codeSegments.push(line);
 				line = '';
 			}
@@ -114,7 +113,7 @@ export function disguiseToCode(container: Element) {
  */
 export function createPreformattedCode(snippet: string): HTMLPreElement {
 	const code = document.createElement('code');
-	code.className = `language-${codeLang}`;
+	code.className = `language-${codeLang} match-braces rainbow-braces`;
 	code.style.whiteSpace = 'pre-wrap';
 	code.style.textWrap = 'pretty';
 	code.style.overflowX = 'auto';
@@ -123,7 +122,7 @@ export function createPreformattedCode(snippet: string): HTMLPreElement {
 	pre.style.whiteSpace = 'pre-wrap';
 	pre.style.textWrap = 'pretty';
 	pre.style.overflowX = 'auto';
-	pre.className = `language-${codeLang}`;
+	pre.className = `language-${codeLang} match-braces rainbow-braces`;
 	if (pre.firstChild) {
 		pre.replaceChild(code, pre.firstChild);
 	} else {
@@ -143,15 +142,22 @@ export function highlightElement(
 	async?: boolean,
 	callback?: (element: Element) => void
 ) {
+	console.log(Prism.hooks.all['complete']);
+	const codes = Array.from(el.querySelectorAll('code'));
+	const highlightAll = () => {
+		codes.forEach((code) => {
+			Prism.highlightElement(code, async, callback);
+		});
+	};
 	if (coreLanguages.has(codeLang)) {
-		Prism.highlightElement(el, async, callback);
+		highlightAll();
 	} else {
 		let count = 0;
 		const lazyHighlightElement = () => {
 			count++;
 			// 检查语言包是否已加载，如果已加载则执行高亮
 			if (codeLang in Prism.languages) {
-				Prism.highlightElement(el, async, callback);
+				highlightAll();
 				return;
 			}
 			// 限制重试次数，避免无限循环

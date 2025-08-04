@@ -1,6 +1,7 @@
 import { GM_addElement, GM_getValue, GM_setValue } from '$';
 import { setupExtendLanguageSupport } from './code';
 import { EditableList, setupEditableList } from './editable-list';
+// import { enableMatchBraces } from './prism-match-braces';
 import { getCodeThemeURL } from './utils';
 
 // 是否伪装成代码
@@ -145,6 +146,12 @@ export function setupCodeTheme() {
 	if (!codeParagraphItalic) {
 		document.body.dataset.comment = 'normal';
 	}
+
+	GM_addElement(document.head, 'link', {
+		href: 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.css',
+		rel: 'stylesheet',
+		type: 'text/css'
+	});
 }
 
 export let bookPageAccessKey = GM_getValue('bookPageAccessKey', 'h');
@@ -156,7 +163,7 @@ function createAccessKeysFieldset(): HTMLFieldSetElement {
 	accessKeysFieldset.innerHTML = `<legend>快捷键设置
 	<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Reference/Global_attributes/accesskey#%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8B" target="_blank" style="margin-left: 5rem;">快捷键使用帮助</a>
 </legend>
-<div style="display: flex;gap: 1rem;">
+<div style="display: flex;gap: 0.5rem;flex-wrap:wrap;">
     <label>上一章:
         <select id="previousChapterAccessKey"></select>
     </label>
@@ -225,6 +232,13 @@ export let inlineLengthMax = GM_getValue('inlineLengthMax', 40);
 function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	setupExtendLanguageSupport();
 	const disguiseFieldset = document.createElement('fieldset');
+
+	const div = document.createElement('div');
+	div.style.display = 'flex';
+	div.style.flexWrap = 'wrap';
+	div.style.gap = '0.5rem';
+	disguiseFieldset.appendChild(div);
+
 	const codeThemeInput = document.createElement('select');
 	codeThemeInput.name = 'theme';
 	avalibleCodeThemes.forEach((theme) => {
@@ -248,7 +262,7 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	const codeThemeLabel = document.createElement('label');
 	codeThemeLabel.innerText = '代码主题：';
 	codeThemeLabel.appendChild(codeThemeInput);
-	disguiseFieldset.appendChild(codeThemeLabel);
+	div.appendChild(codeThemeLabel);
 
 	const codeLangInput = document.createElement('select');
 	codeLangInput.name = 'lang';
@@ -270,9 +284,8 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 
 	const codeLangLabel = document.createElement('label');
 	codeLangLabel.innerText = '代码语言：';
-	codeLangLabel.style.marginLeft = '0.5rem';
 	codeLangLabel.appendChild(codeLangInput);
-	disguiseFieldset.appendChild(codeLangLabel);
+	div.appendChild(codeLangLabel);
 
 	const codeItalicInput = document.createElement('input');
 	codeItalicInput.type = 'checkbox';
@@ -301,28 +314,27 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	const codeInlineLengthLabel = document.createElement('label');
 	codeInlineLengthLabel.innerText = '单行注释长度限制：';
 	codeInlineLengthLabel.appendChild(codeInlineLengthInput);
-	disguiseFieldset.appendChild(codeInlineLengthLabel);
+	div.appendChild(codeInlineLengthLabel);
 
 	const codeItalicLabel = document.createElement('label');
-	codeItalicLabel.style.marginLeft = '0.5rem';
 	codeItalicLabel.appendChild(codeItalicInput);
 	codeItalicLabel.append(' 小说斜体');
-	disguiseFieldset.appendChild(codeItalicLabel);
+	div.appendChild(codeItalicLabel);
 
 	const demoCodeTitle = document.createElement('h3');
 	demoCodeTitle.innerText = '主题效果：';
 	disguiseFieldset.appendChild(demoCodeTitle);
 	const preDemo = document.createElement('pre');
-	preDemo.innerHTML = `<code class="language-javascript"><span class="token comment">/*
+	preDemo.innerHTML = `<code class="language-javascript match-braces rainbow-braces"><span class="token comment">/*
 	让我们说中文
  */</span>
-<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token parameter">bar</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation brace-round brace-open brace-level-1" id="pair-21-close">(</span><span class="token parameter">bar</span><span class="token punctuation brace-round brace-close brace-level-1" id="pair-21-open">)</span> <span class="token punctuation brace-curly brace-open brace-level-1" id="pair-23-close">{</span>
 	<span class="token comment">// 短的注释</span>
 	<span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">42</span><span class="token punctuation">,</span>
 		b <span class="token operator">=</span> <span class="token string">'Prism'</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> a <span class="token operator">+</span> <span class="token function">bar</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code>`;
-	preDemo.className = 'language-javascript';
+	<span class="token keyword">return</span> a <span class="token operator">+</span> <span class="token function">bar</span><span class="token punctuation brace-round brace-open brace-level-2" id="pair-22-close">(</span>b<span class="token punctuation brace-round brace-close brace-level-2" id="pair-22-open">)</span><span class="token punctuation">;</span>
+<span class="token punctuation brace-curly brace-close brace-level-1" id="pair-23-open">}</span></code>`;
+	preDemo.className = 'language-javascript match-braces';
 	disguiseFieldset.appendChild(preDemo);
 
 	setupEditableList();
@@ -353,7 +365,7 @@ function createContainerStyleFieldset(): HTMLFieldSetElement {
 
 	const widthInput = document.createElement('input');
 	widthInput.value = containerWidth;
-	widthInput.style.width = '4rem';
+	widthInput.size = 10;
 	widthInput.onchange = () => {
 		containerWidth = widthInput.value;
 		document.body.style.setProperty('--container-width', containerWidth);

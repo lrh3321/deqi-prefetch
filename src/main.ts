@@ -1,5 +1,5 @@
 import './style.css';
-import { GM_getValue, GM_registerMenuCommand } from '$';
+import { GM_getValue, GM_registerMenuCommand, unsafeWindow } from '$';
 import {
 	bookPageAccessKey,
 	containerWidth,
@@ -18,6 +18,9 @@ const isInIframe = window.self !== window.top;
 GM_registerMenuCommand('脚本设置', function () {
 	open('/pifu/');
 });
+
+(window as any).Prism = (unsafeWindow as any).Prism =
+	(unsafeWindow as any).Prism || (window as any).Prism;
 
 function handleBookPage() {
 	let finished = false;
@@ -200,9 +203,10 @@ function handleRoute() {
 
 		// 延迟设置背景色，确保pre元素已经渲染完成
 		setTimeout(() => {
-			document.body.style.backgroundColor = getComputedStyle(
-				document.querySelector('pre')!!
-			).backgroundColor;
+			const pre = document.querySelector('pre');
+			if (pre) {
+				document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
+			}
 		}, 1000);
 	}
 	// 章节页面处理逻辑

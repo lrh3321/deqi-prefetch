@@ -371,10 +371,10 @@ typescript@^5.9.2:
   resolved "https://registry.npmmirror.com/typescript/-/typescript-5.9.2.tgz"
   integrity sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==
 
-vite-plugin-monkey@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.npmmirror.com/vite-plugin-monkey/-/vite-plugin-monkey-6.0.0.tgz"
-  integrity sha512-Bf6jo3nYzP4y8VtiPFUq7RcQAl2bbiP7zSruofxxlLwv7b8VqxN08qlWbxvmo+FQinXAfSAupaQnEYSGAMg2vg==
+vite-plugin-monkey@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.npmmirror.com/vite-plugin-monkey/-/vite-plugin-monkey-6.0.1.tgz"
+  integrity sha512-sk2pMKyaMKiJmyIV26EAkg9OKqVI563HQC46UVY7Cm2w2W8sanIrwSAKUaIXXXXxcY+RXCBZvYb7z33cKY+lMg==
   dependencies:
     acorn-walk "^8.3.4"
     cross-spawn "^7.0.6"
