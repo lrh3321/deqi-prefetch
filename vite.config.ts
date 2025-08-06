@@ -12,7 +12,7 @@ export default defineConfig({
 				homepageURL: 'https://greasyfork.org/zh-CN/scripts/537588-deqi-prefech',
 				updateURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
-				version: '2025-08-04',
+				version: '2025-08-06',
 				description: '得奇小说网，看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
 				license: 'MIT',
@@ -20,7 +20,8 @@ export default defineConfig({
 				icon: 'https://www.google.com/s2/favicons?sz=64&domain=deqixs.com',
 				require: [
 					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js',
-					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js'
+					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js',
+					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js'
 				],
 				match: [
 					'https://www.deqixs.com/pifu/',

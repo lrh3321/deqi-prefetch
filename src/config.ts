@@ -1,7 +1,6 @@
 import { GM_addElement, GM_getValue, GM_setValue } from '$';
-import { setupExtendLanguageSupport } from './code';
+import { highlightElement, setupExtendLanguageSupport } from './code';
 import { EditableList, setupEditableList } from './editable-list';
-// import { enableMatchBraces } from './prism-match-braces';
 import { getCodeThemeURL } from './utils';
 
 // 是否伪装成代码
@@ -52,6 +51,7 @@ if (fakeCodeSnippet.trim() == '') {
 
 export let codeTheme = GM_getValue('code-theme', 'prism');
 export let codeParagraphItalic = GM_getValue('code-italic', true);
+export let codeShowLineNumbers = GM_getValue('line-numbers', false);
 
 export let refreshInterval = GM_getValue('refreshInterval', 15 * 60000);
 
@@ -147,10 +147,12 @@ export function setupCodeTheme() {
 		document.body.dataset.comment = 'normal';
 	}
 
-	GM_addElement(document.head, 'link', {
-		href: 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.css',
-		rel: 'stylesheet',
-		type: 'text/css'
+	['match-braces', 'line-numbers'].forEach((pluginName) => {
+		GM_addElement(document.head, 'link', {
+			href: `https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/${pluginName}/prism-${pluginName}.min.css`,
+			rel: 'stylesheet',
+			type: 'text/css'
+		});
 	});
 }
 
@@ -264,6 +266,30 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	codeThemeLabel.appendChild(codeThemeInput);
 	div.appendChild(codeThemeLabel);
 
+	const codeDemo = `<code class="language-javascript match-braces rainbow-braces">/*
+	让我们说中文
+ */
+function foo(bar) {
+	// 短的注释
+	var a = 42,
+		b = 'Prism';
+	return a + bar(b);
+}</code>`;
+	let preDemo = document.createElement('pre');
+	const renderDemo = () => {
+		let newPre = document.createElement('pre');
+		newPre.innerHTML = codeDemo;
+		newPre.className = `language-javascript match-braces ${codeShowLineNumbers ? 'line-numbers' : ''}`;
+		if (codeShowLineNumbers) {
+			const codeDemo = newPre.querySelector('code')!;
+			codeDemo.classList.add('line-numbers');
+		}
+		highlightElement(newPre);
+		disguiseFieldset.replaceChild(newPre, preDemo);
+		preDemo = newPre;
+		console.log('update demo');
+	};
+
 	const codeLangInput = document.createElement('select');
 	codeLangInput.name = 'lang';
 	avalibleCodeLanguages.forEach((theme) => {
@@ -279,6 +305,7 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 			GM_setValue('code-lang', codeLang);
 			setupExtendLanguageSupport();
 			editableList?.render();
+			renderDemo();
 		}
 	};
 
@@ -286,6 +313,23 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	codeLangLabel.innerText = '代码语言：';
 	codeLangLabel.appendChild(codeLangInput);
 	div.appendChild(codeLangLabel);
+
+	const codeShowLineNumbersInput = document.createElement('input');
+	codeShowLineNumbersInput.type = 'checkbox';
+	codeShowLineNumbersInput.name = 'line-numbers';
+	codeShowLineNumbersInput.checked = codeShowLineNumbers;
+	codeShowLineNumbersInput.onchange = () => {
+		codeShowLineNumbers = codeShowLineNumbersInput.checked;
+		GM_setValue('line-numbers', codeShowLineNumbers);
+		console.log(`Change code show line numbers to ${codeShowLineNumbers}`, editableList);
+		editableList?.render();
+		renderDemo();
+	};
+
+	const codeShowLineNumbersLabel = document.createElement('label');
+	codeShowLineNumbersLabel.appendChild(codeShowLineNumbersInput);
+	codeShowLineNumbersLabel.append(' 显示行号');
+	div.appendChild(codeShowLineNumbersLabel);
 
 	const codeItalicInput = document.createElement('input');
 	codeItalicInput.type = 'checkbox';
@@ -300,6 +344,11 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 			document.body.dataset.comment = 'normal';
 		}
 	};
+
+	const codeItalicLabel = document.createElement('label');
+	codeItalicLabel.appendChild(codeItalicInput);
+	codeItalicLabel.append(' 小说斜体');
+	div.appendChild(codeItalicLabel);
 
 	const codeInlineLengthInput = document.createElement('input');
 	codeInlineLengthInput.name = 'comment-lenth-limit';
@@ -316,25 +365,9 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	codeInlineLengthLabel.appendChild(codeInlineLengthInput);
 	div.appendChild(codeInlineLengthLabel);
 
-	const codeItalicLabel = document.createElement('label');
-	codeItalicLabel.appendChild(codeItalicInput);
-	codeItalicLabel.append(' 小说斜体');
-	div.appendChild(codeItalicLabel);
-
 	const demoCodeTitle = document.createElement('h3');
 	demoCodeTitle.innerText = '主题效果：';
 	disguiseFieldset.appendChild(demoCodeTitle);
-	const preDemo = document.createElement('pre');
-	preDemo.innerHTML = `<code class="language-javascript match-braces rainbow-braces"><span class="token comment">/*
-	让我们说中文
- */</span>
-<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation brace-round brace-open brace-level-1" id="pair-21-close">(</span><span class="token parameter">bar</span><span class="token punctuation brace-round brace-close brace-level-1" id="pair-21-open">)</span> <span class="token punctuation brace-curly brace-open brace-level-1" id="pair-23-close">{</span>
-	<span class="token comment">// 短的注释</span>
-	<span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">42</span><span class="token punctuation">,</span>
-		b <span class="token operator">=</span> <span class="token string">'Prism'</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> a <span class="token operator">+</span> <span class="token function">bar</span><span class="token punctuation brace-round brace-open brace-level-2" id="pair-22-close">(</span>b<span class="token punctuation brace-round brace-close brace-level-2" id="pair-22-open">)</span><span class="token punctuation">;</span>
-<span class="token punctuation brace-curly brace-close brace-level-1" id="pair-23-open">}</span></code>`;
-	preDemo.className = 'language-javascript match-braces';
 	disguiseFieldset.appendChild(preDemo);
 
 	setupEditableList();
@@ -343,6 +376,7 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 		editableList = document.createElement('editable-list') as EditableList;
 		disguiseFieldset.appendChild(editableList);
 		editableList.updateCodeSnippets(fakeCodeSnippet.split('====\n'));
+		renderDemo();
 
 		const onItemChange = () => {
 			GM_setValue('fake-codes', editableList?.codeSnippets.join('====\n'));

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-04
+// @version      2025-08-06
 // @author       LRH3321
 // @description  得奇小说网，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -14,6 +14,7 @@
 // @match        https://www.deqixs.com/xiaoshuo/*/
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js
+// @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js
 // @tag          novels
 // @grant        GM_addElement
 // @grant        GM_addStyle
@@ -25,7 +26,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:space-around} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem} ');
 
 (function () {
   'use strict';
@@ -124,15 +125,12 @@ ${blockCommentEnd}`);
   function createPreformattedCode(snippet) {
     const code = document.createElement("code");
     code.className = `language-${codeLang} match-braces rainbow-braces`;
-    code.style.whiteSpace = "pre-wrap";
-    code.style.textWrap = "pretty";
-    code.style.overflowX = "auto";
     code.innerHTML = snippet;
     const pre = document.createElement("pre");
     pre.style.whiteSpace = "pre-wrap";
     pre.style.textWrap = "pretty";
     pre.style.overflowX = "auto";
-    pre.className = `language-${codeLang} match-braces rainbow-braces`;
+    pre.className = `language-${codeLang} match-braces rainbow-braces ${codeShowLineNumbers ? "line-numbers" : ""}`;
     if (pre.firstChild) {
       pre.replaceChild(code, pre.firstChild);
     } else {
@@ -141,7 +139,6 @@ ${blockCommentEnd}`);
     return pre;
   }
   function highlightElement(el, async, callback) {
-    console.log(Prism.hooks.all["complete"]);
     const codes = Array.from(el.querySelectorAll("code"));
     const highlightAll = () => {
       codes.forEach((code) => {
@@ -336,6 +333,7 @@ switch (x) {
   }
   let codeTheme = _GM_getValue("code-theme", "prism");
   let codeParagraphItalic = _GM_getValue("code-italic", true);
+  let codeShowLineNumbers = _GM_getValue("line-numbers", false);
   let refreshInterval = _GM_getValue("refreshInterval", 15 * 6e4);
   const avalibleCodeThemes = [
     { Name: "Default", code: "prism" },
@@ -421,10 +419,12 @@ switch (x) {
     if (!codeParagraphItalic) {
       document.body.dataset.comment = "normal";
     }
-    _GM_addElement(document.head, "link", {
-      href: "https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.css",
-      rel: "stylesheet",
-      type: "text/css"
+    ["match-braces", "line-numbers"].forEach((pluginName) => {
+      _GM_addElement(document.head, "link", {
+        href: `https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/${pluginName}/prism-${pluginName}.min.css`,
+        rel: "stylesheet",
+        type: "text/css"
+      });
     });
   }
   let bookPageAccessKey = _GM_getValue("bookPageAccessKey", "h");
@@ -520,6 +520,29 @@ switch (x) {
     codeThemeLabel.innerText = "代码主题：";
     codeThemeLabel.appendChild(codeThemeInput);
     div.appendChild(codeThemeLabel);
+    const codeDemo = `<code class="language-javascript match-braces rainbow-braces">/*
+	让我们说中文
+ */
+function foo(bar) {
+	// 短的注释
+	var a = 42,
+		b = 'Prism';
+	return a + bar(b);
+}</code>`;
+    let preDemo = document.createElement("pre");
+    const renderDemo = () => {
+      let newPre = document.createElement("pre");
+      newPre.innerHTML = codeDemo;
+      newPre.className = `language-javascript match-braces ${codeShowLineNumbers ? "line-numbers" : ""}`;
+      if (codeShowLineNumbers) {
+        const codeDemo2 = newPre.querySelector("code");
+        codeDemo2.classList.add("line-numbers");
+      }
+      highlightElement(newPre);
+      disguiseFieldset.replaceChild(newPre, preDemo);
+      preDemo = newPre;
+      console.log("update demo");
+    };
     const codeLangInput = document.createElement("select");
     codeLangInput.name = "lang";
     avalibleCodeLanguages.forEach((theme) => {
@@ -535,12 +558,28 @@ switch (x) {
         _GM_setValue("code-lang", codeLang);
         setupExtendLanguageSupport();
         editableList?.render();
+        renderDemo();
       }
     };
     const codeLangLabel = document.createElement("label");
     codeLangLabel.innerText = "代码语言：";
     codeLangLabel.appendChild(codeLangInput);
     div.appendChild(codeLangLabel);
+    const codeShowLineNumbersInput = document.createElement("input");
+    codeShowLineNumbersInput.type = "checkbox";
+    codeShowLineNumbersInput.name = "line-numbers";
+    codeShowLineNumbersInput.checked = codeShowLineNumbers;
+    codeShowLineNumbersInput.onchange = () => {
+      codeShowLineNumbers = codeShowLineNumbersInput.checked;
+      _GM_setValue("line-numbers", codeShowLineNumbers);
+      console.log(`Change code show line numbers to ${codeShowLineNumbers}`, editableList);
+      editableList?.render();
+      renderDemo();
+    };
+    const codeShowLineNumbersLabel = document.createElement("label");
+    codeShowLineNumbersLabel.appendChild(codeShowLineNumbersInput);
+    codeShowLineNumbersLabel.append(" 显示行号");
+    div.appendChild(codeShowLineNumbersLabel);
     const codeItalicInput = document.createElement("input");
     codeItalicInput.type = "checkbox";
     codeItalicInput.name = "font-italic";
@@ -554,6 +593,10 @@ switch (x) {
         document.body.dataset.comment = "normal";
       }
     };
+    const codeItalicLabel = document.createElement("label");
+    codeItalicLabel.appendChild(codeItalicInput);
+    codeItalicLabel.append(" 小说斜体");
+    div.appendChild(codeItalicLabel);
     const codeInlineLengthInput = document.createElement("input");
     codeInlineLengthInput.name = "comment-lenth-limit";
     codeInlineLengthInput.type = "number";
@@ -567,30 +610,16 @@ switch (x) {
     codeInlineLengthLabel.innerText = "单行注释长度限制：";
     codeInlineLengthLabel.appendChild(codeInlineLengthInput);
     div.appendChild(codeInlineLengthLabel);
-    const codeItalicLabel = document.createElement("label");
-    codeItalicLabel.appendChild(codeItalicInput);
-    codeItalicLabel.append(" 小说斜体");
-    div.appendChild(codeItalicLabel);
     const demoCodeTitle = document.createElement("h3");
     demoCodeTitle.innerText = "主题效果：";
     disguiseFieldset.appendChild(demoCodeTitle);
-    const preDemo = document.createElement("pre");
-    preDemo.innerHTML = `<code class="language-javascript match-braces rainbow-braces"><span class="token comment">/*
-	让我们说中文
- */</span>
-<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation brace-round brace-open brace-level-1" id="pair-21-close">(</span><span class="token parameter">bar</span><span class="token punctuation brace-round brace-close brace-level-1" id="pair-21-open">)</span> <span class="token punctuation brace-curly brace-open brace-level-1" id="pair-23-close">{</span>
-	<span class="token comment">// 短的注释</span>
-	<span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">42</span><span class="token punctuation">,</span>
-		b <span class="token operator">=</span> <span class="token string">'Prism'</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> a <span class="token operator">+</span> <span class="token function">bar</span><span class="token punctuation brace-round brace-open brace-level-2" id="pair-22-close">(</span>b<span class="token punctuation brace-round brace-close brace-level-2" id="pair-22-open">)</span><span class="token punctuation">;</span>
-<span class="token punctuation brace-curly brace-close brace-level-1" id="pair-23-open">}</span></code>`;
-    preDemo.className = "language-javascript match-braces";
     disguiseFieldset.appendChild(preDemo);
     setupEditableList();
     setTimeout(() => {
       editableList = document.createElement("editable-list");
       disguiseFieldset.appendChild(editableList);
       editableList.updateCodeSnippets(fakeCodeSnippet.split("====\n"));
+      renderDemo();
       const onItemChange = () => {
         _GM_setValue("fake-codes", editableList?.codeSnippets.join("====\n"));
       };

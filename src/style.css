@@ -84,5 +84,6 @@ editable-list ul {
 	display: flex;
 	max-width: 80svw;
 	flex-wrap: wrap;
-	justify-content: space-around;
+	justify-content: flex-start;
+	column-gap: 1rem;
 }

@@ -1,5 +1,11 @@
 import { GM_addElement } from '$';
-import { codeLang, coreLanguages, fakeCodeSnippet, inlineLengthMax } from './config';
+import {
+	codeLang,
+	codeShowLineNumbers,
+	coreLanguages,
+	fakeCodeSnippet,
+	inlineLengthMax
+} from './config';
 
 let extendLanguageElement: HTMLScriptElement | null = null;
 export function setupExtendLanguageSupport() {
@@ -114,15 +120,16 @@ export function disguiseToCode(container: Element) {
 export function createPreformattedCode(snippet: string): HTMLPreElement {
 	const code = document.createElement('code');
 	code.className = `language-${codeLang} match-braces rainbow-braces`;
-	code.style.whiteSpace = 'pre-wrap';
-	code.style.textWrap = 'pretty';
-	code.style.overflowX = 'auto';
+	// code.style.whiteSpace = 'pre-wrap';
+	// code.style.textWrap = 'pretty';
+	// code.style.overflowX = 'auto';
 	code.innerHTML = snippet;
 	const pre = document.createElement('pre');
 	pre.style.whiteSpace = 'pre-wrap';
 	pre.style.textWrap = 'pretty';
 	pre.style.overflowX = 'auto';
-	pre.className = `language-${codeLang} match-braces rainbow-braces`;
+	pre.className = `language-${codeLang} match-braces rainbow-braces ${codeShowLineNumbers ? 'line-numbers' : ''}`;
+	// console.log(pre.className, codeShowLineNumbers);
 	if (pre.firstChild) {
 		pre.replaceChild(code, pre.firstChild);
 	} else {
@@ -142,7 +149,7 @@ export function highlightElement(
 	async?: boolean,
 	callback?: (element: Element) => void
 ) {
-	console.log(Prism.hooks.all['complete']);
+	// console.log(Prism.hooks.all['complete']);
 	const codes = Array.from(el.querySelectorAll('code'));
 	const highlightAll = () => {
 		codes.forEach((code) => {
