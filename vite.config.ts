@@ -12,8 +12,10 @@ export default defineConfig({
 				homepageURL: 'https://greasyfork.org/zh-CN/scripts/537588-deqi-prefech',
 				updateURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
-				version: '2025-08-06',
-				description: '得奇小说网，看单个章节免翻页，把小说伪装成代码',
+				source: 'https://github.com/lrh3321/deqi-prefetch',
+				supportURL: 'https://github.com/lrh3321/deqi-prefetch/issues',
+				version: '2025-08-067',
+				description: '得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
 				license: 'MIT',
 				tag: ['novels'],
@@ -24,10 +26,12 @@ export default defineConfig({
 					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js'
 				],
 				match: [
-					'https://www.deqixs.com/pifu/',
-					'https://www.deqixs.com/xiaoshuo/*/*.html',
-					'https://www.deqixs.com/xiaoshuo/*/'
+					'*://www.deqixs.com/pifu/',
+					'*://www.deqixs.com/xiaoshuo/*/*.html',
+					'*://www.deqixs.com/xiaoshuo/*/',
+					'*://www.biqu33.cc/*'
 				],
+				connect: ['self'],
 				grant: [
 					'GM_addElement',
 					'GM_addStyle',
@@ -35,6 +39,7 @@ export default defineConfig({
 					'GM_getValue',
 					'GM_registerMenuCommand',
 					'GM_setValue',
+					'GM_xmlhttpRequest',
 					'unsafeWindow'
 				],
 				'run-at': 'document-end'

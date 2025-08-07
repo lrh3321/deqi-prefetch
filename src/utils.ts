@@ -44,4 +44,11 @@ export function releaseCopy() {
 		doc.off('copy');
 		doc.off('cut');
 	}
+
+	document.onclick = null;
+	document.oncontextmenu = null;
+	document.oncopy = null;
+	document.oncut = null;
 }
+
+export const isInIframe = window.self !== window.top;

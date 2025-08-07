@@ -1,32 +1,37 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-06
+// @version      2025-08-067
 // @author       LRH3321
-// @description  得奇小说网，看单个章节免翻页，把小说伪装成代码
+// @description  得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=deqixs.com
 // @homepageURL  https://greasyfork.org/zh-CN/scripts/537588-deqi-prefech
+// @source       https://github.com/lrh3321/deqi-prefetch
+// @supportURL   https://github.com/lrh3321/deqi-prefetch/issues
 // @downloadURL  https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
 // @updateURL    https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
-// @match        https://www.deqixs.com/pifu/
-// @match        https://www.deqixs.com/xiaoshuo/*/*.html
-// @match        https://www.deqixs.com/xiaoshuo/*/
+// @match        *://www.deqixs.com/pifu/
+// @match        *://www.deqixs.com/xiaoshuo/*/*.html
+// @match        *://www.deqixs.com/xiaoshuo/*/
+// @match        *://www.biqu33.cc/*
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js
 // @tag          novels
+// @connect      self
 // @grant        GM_addElement
 // @grant        GM_addStyle
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
+// @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const i=document.createElement("style");i.textContent=e,document.head.append(i)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent} ');
 
 (function () {
   'use strict';
@@ -35,6 +40,7 @@
   var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
   var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
   var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var _unsafeWindow = /* @__PURE__ */ (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   let extendLanguageElement = null;
   function setupExtendLanguageSupport() {
@@ -121,6 +127,14 @@ ${blockCommentEnd}`);
     highlightElement(pre, false, (_) => {
       document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
     });
+  }
+  function disguiseParagraphs(container) {
+    switch (disguiseMode) {
+      case "code":
+      default:
+        disguiseToCode(container);
+        break;
+    }
   }
   function createPreformattedCode(snippet) {
     const code = document.createElement("code");
@@ -286,7 +300,13 @@ ${blockCommentEnd}`);
       doc.off("copy");
       doc.off("cut");
     }
+    document.onclick = null;
+    document.oncontextmenu = null;
+    document.oncopy = null;
+    document.oncut = null;
   }
+  const isInIframe = window.self !== window.top;
+  let disguiseDebug = _GM_getValue("disguiseDebug", false);
   let disguiseMode = _GM_getValue("disguise-mode", "none");
   let codeLang = _GM_getValue("code-lang", "javascript");
   const defaultCodeSnippet = `var x = 1;
@@ -719,13 +739,16 @@ function foo(bar) {
         refreshInterval = interval;
       }
     };
+    setTimeout(() => {
+      const pre = document.querySelector("pre");
+      if (pre) {
+        const computedStyle = getComputedStyle(pre);
+        document.body.style.backgroundColor = computedStyle.backgroundColor;
+        form.style.color = computedStyle.color;
+      }
+    }, 1e3);
     return form;
   }
-  const isInIframe = window.self !== window.top;
-  _GM_registerMenuCommand("脚本设置", function() {
-    open("/pifu/");
-  });
-  window.Prism = _unsafeWindow.Prism = _unsafeWindow.Prism || window.Prism;
   function handleBookPage() {
     let finished = false;
     const itemtxt = document.querySelector(".itemtxt");
@@ -758,18 +781,10 @@ function foo(bar) {
       }
     }
   }
-  function handleSettingPage() {
+  function handleSettingPage$1() {
     const settingForm = createSettingForm();
     const container = document.querySelector("div.container");
     container.appendChild(settingForm);
-  }
-  function disguiseParagraphs(container) {
-    switch (disguiseMode) {
-      case "code":
-      default:
-        disguiseToCode(container);
-        break;
-    }
   }
   function handleChaperPage() {
     const container = document.querySelector("div.container");
@@ -870,17 +885,11 @@ function foo(bar) {
       }
     }
   }
-  function handleRoute() {
+  function handleDeqiRoute() {
     if (location.pathname === "/pifu/") {
       setupCodeTheme();
       setupExtendLanguageSupport();
-      handleSettingPage();
-      setTimeout(() => {
-        const pre = document.querySelector("pre");
-        if (pre) {
-          document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
-        }
-      }, 1e3);
+      handleSettingPage$1();
     } else if (location.pathname.endsWith(".html")) {
       if (!isInIframe) {
         switch (disguiseMode) {
@@ -891,8 +900,118 @@ function foo(bar) {
         }
       }
       handleChaperPage();
-    } else {
+    } else if (location.pathname.startsWith("/xiaoshuo/")) {
       handleBookPage();
+    }
+  }
+  function handleSettingPage() {
+    const settingForm = createSettingForm();
+    const articleMain = document.createElement("div");
+    articleMain.id = "article_main";
+    articleMain.classList = "container";
+    const container = document.getElementById("main");
+    articleMain.appendChild(settingForm);
+    container.appendChild(articleMain);
+  }
+  function handleChapterPage() {
+    if (isInIframe) {
+      const mainboxs = document.getElementById("mainboxs");
+      window.parent.postMessage({
+        mainboxs: mainboxs?.innerHTML,
+        href: location.href
+      });
+      return;
+    }
+    if (disguiseDebug) {
+      disguiseParagraphs(document.getElementById("mainboxs"));
+      return;
+    }
+    const nextLinks = Array.from(
+      document.querySelectorAll("#page-links a.post-page-numbers")
+    );
+    const netxDivs = new Array(nextLinks.length);
+    let remainLinks = nextLinks.length;
+    for (let index = 0; index < nextLinks.length; index++) {
+      const element = nextLinks[index];
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: element.href,
+        responseType: "document",
+        onload: (response) => {
+          const div = response.response.getElementById("mainboxs");
+          netxDivs[index] = div.innerHTML;
+          console.log(div, netxDivs);
+          element.remove();
+          remainLinks--;
+          if (remainLinks == 0) {
+            const mainboxs = document.getElementById("mainboxs");
+            netxDivs.forEach((div2) => {
+              const next = document.createElement("div");
+              next.innerHTML = div2;
+              mainboxs.appendChild(next);
+            });
+            const main = document.getElementById("article_main");
+            if (main) {
+              main.appendChild(document.querySelector("div.page-links"));
+              main.appendChild(mainboxs);
+              main.appendChild(document.querySelector("div.prenext"));
+              main.appendChild(document.querySelector("div.post-content"));
+              main.querySelectorAll(".page-links, .post-content");
+            }
+            disguiseParagraphs(mainboxs);
+          }
+        }
+      });
+    }
+    const prenexts = document.querySelectorAll("div.prenext a");
+    for (const element of prenexts) {
+      if (element instanceof HTMLAnchorElement) {
+        if (element.textContent == "上一章") {
+          element.accessKey = previousChapterAccessKey;
+          element.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
+        } else if (element.textContent == "章节目录") {
+          element.accessKey = bookPageAccessKey;
+          element.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
+        } else if (element.textContent == "下一章") {
+          element.accessKey = nextChapterAccessKey;
+          element.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+        }
+      }
+    }
+  }
+  function handleBiqu33Route() {
+    switch (location.pathname.split("/").length) {
+      case 2:
+      case 4:
+        setupCodeTheme();
+        setupExtendLanguageSupport();
+        handleSettingPage();
+        break;
+      case 5:
+        if (!isInIframe) {
+          switch (disguiseMode) {
+            case "code":
+              setupCodeTheme();
+              setupExtendLanguageSupport();
+              break;
+          }
+        }
+        handleChapterPage();
+        break;
+    }
+  }
+  window.Prism = _unsafeWindow.Prism = _unsafeWindow.Prism || window.Prism;
+  function handleRoute() {
+    if (location.host.endsWith("deqixs.com")) {
+      handleDeqiRoute();
+      _GM_registerMenuCommand("脚本设置", function() {
+        open("/pifu/");
+      });
+    } else if (location.hostname == "www.biqu33.cc" || location.pathname.startsWith("/book/")) {
+      handleBiqu33Route();
+      _GM_registerMenuCommand("脚本设置", function() {
+        open("/");
+      });
     }
   }
   document.body.style.setProperty("--container-width", containerWidth);

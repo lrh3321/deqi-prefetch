@@ -3,6 +3,7 @@ import {
 	codeLang,
 	codeShowLineNumbers,
 	coreLanguages,
+	disguiseMode,
 	fakeCodeSnippet,
 	inlineLengthMax
 } from './config';
@@ -110,6 +111,16 @@ export function disguiseToCode(container: Element) {
 	highlightElement(pre, false, (_) => {
 		document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
 	});
+}
+
+export function disguiseParagraphs(container: Element) {
+	switch (disguiseMode) {
+		case 'code':
+		default:
+			// 伪装成代码
+			disguiseToCode(container);
+			break;
+	}
 }
 
 /**

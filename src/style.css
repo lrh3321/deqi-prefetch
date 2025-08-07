@@ -16,7 +16,8 @@ h2.op a {
 }
 
 body > div.container,
-body > div.header {
+body > div.header,
+#article_main {
 	width: var(--container-width, '1200px');
 }
 
@@ -86,4 +87,14 @@ editable-list ul {
 	flex-wrap: wrap;
 	justify-content: flex-start;
 	column-gap: 1rem;
+}
+
+/* biqu33 */
+#header,
+#main .container-fluid,
+#article_main .row {
+	display: none;
+}
+#article_main {
+	background: transparent;
 }

@@ -3,6 +3,8 @@ import { highlightElement, setupExtendLanguageSupport } from './code';
 import { EditableList, setupEditableList } from './editable-list';
 import { getCodeThemeURL } from './utils';
 
+export let disguiseDebug = GM_getValue('disguiseDebug', false);
+
 // 是否伪装成代码
 export let disguiseMode = GM_getValue<DisguiseMode>('disguise-mode', 'none');
 export let codeLang = GM_getValue<string>('code-lang', 'javascript');
@@ -497,5 +499,14 @@ export function createSettingForm(): HTMLFormElement {
 		}
 	};
 
+	// 延迟设置背景色，确保pre元素已经渲染完成
+	setTimeout(() => {
+		const pre = document.querySelector('pre');
+		if (pre) {
+			const computedStyle = getComputedStyle(pre);
+			document.body.style.backgroundColor = computedStyle.backgroundColor;
+			form.style.color = computedStyle.color;
+		}
+	}, 1000);
 	return form;
 }
