@@ -9,7 +9,6 @@ import {
 	previousChapterAccessKey,
 	setupCodeTheme
 } from './config';
-import { isInIframe } from './utils';
 
 function handleSettingPage() {
 	const settingForm = createSettingForm();
@@ -21,15 +20,6 @@ function handleSettingPage() {
 	container.appendChild(articleMain);
 }
 function handleChapterPage() {
-	if (isInIframe) {
-		const mainboxs = document.getElementById('mainboxs');
-		window.parent.postMessage({
-			mainboxs: mainboxs?.innerHTML,
-			href: location.href
-		});
-		return;
-	}
-
 	if (disguiseDebug) {
 		disguiseParagraphs(document.getElementById('mainboxs')!!);
 		return;
@@ -40,6 +30,7 @@ function handleChapterPage() {
 	) as HTMLAnchorElement[];
 	const netxDivs = new Array<string | undefined>(nextLinks.length);
 	let remainLinks = nextLinks.length;
+	let hasCanvas = false;
 	for (let index = 0; index < nextLinks.length; index++) {
 		const element = nextLinks[index];
 		GM_xmlhttpRequest({
@@ -47,9 +38,13 @@ function handleChapterPage() {
 			url: element.href,
 			responseType: 'document',
 			onload: (response) => {
-				const div = response.response.getElementById('mainboxs')!!;
+				const doc = response.response;
+				const div = doc.getElementById('mainboxs')!!;
+				if (div.getElementsByTagName('p').length == 0) {
+					hasCanvas = true;
+				}
 				netxDivs[index] = div.innerHTML;
-				console.log(div, netxDivs);
+				// console.log(div, netxDivs);
 				element.remove();
 				remainLinks--;
 				if (remainLinks == 0) {
@@ -67,6 +62,9 @@ function handleChapterPage() {
 						main.appendChild(document.querySelector('div.prenext')!!);
 						main.appendChild(document.querySelector('div.post-content')!!);
 						main.querySelectorAll('.page-links, .post-content');
+					}
+					if (hasCanvas) {
+						document.body.append('章节不完整');
 					}
 					disguiseParagraphs(mainboxs);
 				}
@@ -92,24 +90,28 @@ function handleChapterPage() {
 }
 
 export function handleBiqu33Route() {
-	switch (location.pathname.split('/').length) {
+	const segments = location.pathname.split('/').filter(Boolean);
+	const lastSegment = segments[segments.length - 1];
+	switch (segments.length) {
+		case 0:
+		case 1:
 		case 2:
-		case 4:
 			setupCodeTheme();
 			setupExtendLanguageSupport();
 			handleSettingPage();
 			break;
-		case 5:
-			// 非iframe环境下根据伪装模式设置代码主题
-			if (!isInIframe) {
-				switch (disguiseMode) {
-					case 'code':
-						setupCodeTheme();
-						setupExtendLanguageSupport();
-						break;
-					default:
-						break;
-				}
+		case 3:
+			if (/[\d\w]+_\d+$/.test(lastSegment)) {
+				// 不是章节首页
+				return;
+			}
+			switch (disguiseMode) {
+				case 'code':
+					setupCodeTheme();
+					setupExtendLanguageSupport();
+					break;
+				default:
+					break;
 			}
 			handleChapterPage();
 			break;

@@ -31,7 +31,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const i=document.createElement("style");i.textContent=e,document.head.append(i)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main{width:var(--container-width, "1200px")}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent} ');
 
 (function () {
   'use strict';
@@ -127,9 +127,14 @@ ${blockCommentEnd}`);
     highlightElement(pre, false, (_) => {
       document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
     });
+    return pre;
   }
   function disguiseParagraphs(container) {
     switch (disguiseMode) {
+      case "none":
+        container.style.fontSize = "var(--novel-font-size)";
+        container.style.fontFamily = "var(--novel-font-family)";
+        break;
       case "code":
       default:
         disguiseToCode(container);
@@ -153,6 +158,9 @@ ${blockCommentEnd}`);
     return pre;
   }
   function highlightElement(el, async, callback) {
+    if (el instanceof HTMLElement) {
+      el.style.fontSize = "var(--novel-font-size)";
+    }
     const codes = Array.from(el.querySelectorAll("code"));
     const highlightAll = () => {
       codes.forEach((code) => {
@@ -307,6 +315,11 @@ ${blockCommentEnd}`);
   }
   const isInIframe = window.self !== window.top;
   let disguiseDebug = _GM_getValue("disguiseDebug", false);
+  let novelFontSize = _GM_getValue("novel-font-size", "16px");
+  let novelFontFamily = _GM_getValue(
+    "novel-font-family",
+    `system-ui, -apple-system, '微软雅黑', 'PingFang SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`
+  );
   let disguiseMode = _GM_getValue("disguise-mode", "none");
   let codeLang = _GM_getValue("code-lang", "javascript");
   const defaultCodeSnippet = `var x = 1;
@@ -654,6 +667,8 @@ function foo(bar) {
     const legend = document.createElement("legend");
     legend.innerText = "正文式样";
     containerStyleFieldset.appendChild(legend);
+    const div = document.createElement("div");
+    div.style = "display: flex; flex-wrap: wrap; gap: 0.5rem;";
     const widthInput = document.createElement("input");
     widthInput.value = containerWidth;
     widthInput.size = 10;
@@ -663,10 +678,34 @@ function foo(bar) {
       _GM_setValue("container-width", widthInput.value);
     };
     const widthLabel = document.createElement("label");
-    widthLabel.innerText = "正文宽度：";
+    widthLabel.innerText = "宽度：";
     widthLabel.title = "单位可以是 rem, px, %, svw, vw";
     widthLabel.appendChild(widthInput);
-    containerStyleFieldset.appendChild(widthLabel);
+    div.appendChild(widthLabel);
+    const fontSizeInput = document.createElement("input");
+    fontSizeInput.value = novelFontSize;
+    fontSizeInput.size = 10;
+    fontSizeInput.onchange = () => {
+      novelFontSize = fontSizeInput.value;
+      document.body.style.setProperty("--novel-font-size", novelFontSize);
+      _GM_setValue("novel-font-size", fontSizeInput.value);
+    };
+    const fontSizeLabel = document.createElement("label");
+    fontSizeLabel.innerText = "字体大小：";
+    fontSizeLabel.appendChild(fontSizeInput);
+    div.appendChild(fontSizeLabel);
+    const fontFamilyInput = document.createElement("input");
+    fontFamilyInput.value = novelFontFamily;
+    fontFamilyInput.onchange = () => {
+      novelFontFamily = fontFamilyInput.value;
+      document.body.style.setProperty("--novel-font-family", novelFontFamily);
+      _GM_setValue("novel-font-family", fontFamilyInput.value);
+    };
+    const fontFamilyLabel = document.createElement("label");
+    fontFamilyLabel.innerText = "字体：";
+    fontFamilyLabel.appendChild(fontFamilyInput);
+    div.appendChild(fontFamilyLabel);
+    containerStyleFieldset.appendChild(div);
     return containerStyleFieldset;
   }
   function createSettingForm() {
@@ -748,6 +787,11 @@ function foo(bar) {
       }
     }, 1e3);
     return form;
+  }
+  function setDefaultStyle() {
+    document.body.style.setProperty("--container-width", containerWidth);
+    document.body.style.setProperty("--novel-font-size", novelFontSize);
+    document.body.style.setProperty("--novel-font-family", novelFontFamily);
   }
   function handleBookPage() {
     let finished = false;
@@ -914,14 +958,6 @@ function foo(bar) {
     container.appendChild(articleMain);
   }
   function handleChapterPage() {
-    if (isInIframe) {
-      const mainboxs = document.getElementById("mainboxs");
-      window.parent.postMessage({
-        mainboxs: mainboxs?.innerHTML,
-        href: location.href
-      });
-      return;
-    }
     if (disguiseDebug) {
       disguiseParagraphs(document.getElementById("mainboxs"));
       return;
@@ -931,6 +967,7 @@ function foo(bar) {
     );
     const netxDivs = new Array(nextLinks.length);
     let remainLinks = nextLinks.length;
+    let hasCanvas = false;
     for (let index = 0; index < nextLinks.length; index++) {
       const element = nextLinks[index];
       _GM_xmlhttpRequest({
@@ -938,9 +975,12 @@ function foo(bar) {
         url: element.href,
         responseType: "document",
         onload: (response) => {
-          const div = response.response.getElementById("mainboxs");
+          const doc = response.response;
+          const div = doc.getElementById("mainboxs");
+          if (div.getElementsByTagName("p").length == 0) {
+            hasCanvas = true;
+          }
           netxDivs[index] = div.innerHTML;
-          console.log(div, netxDivs);
           element.remove();
           remainLinks--;
           if (remainLinks == 0) {
@@ -957,6 +997,9 @@ function foo(bar) {
               main.appendChild(document.querySelector("div.prenext"));
               main.appendChild(document.querySelector("div.post-content"));
               main.querySelectorAll(".page-links, .post-content");
+            }
+            if (hasCanvas) {
+              document.body.append("章节不完整");
             }
             disguiseParagraphs(mainboxs);
           }
@@ -980,21 +1023,25 @@ function foo(bar) {
     }
   }
   function handleBiqu33Route() {
-    switch (location.pathname.split("/").length) {
+    const segments = location.pathname.split("/").filter(Boolean);
+    const lastSegment = segments[segments.length - 1];
+    switch (segments.length) {
+      case 0:
+      case 1:
       case 2:
-      case 4:
         setupCodeTheme();
         setupExtendLanguageSupport();
         handleSettingPage();
         break;
-      case 5:
-        if (!isInIframe) {
-          switch (disguiseMode) {
-            case "code":
-              setupCodeTheme();
-              setupExtendLanguageSupport();
-              break;
-          }
+      case 3:
+        if (/[\d\w]+_\d+$/.test(lastSegment)) {
+          return;
+        }
+        switch (disguiseMode) {
+          case "code":
+            setupCodeTheme();
+            setupExtendLanguageSupport();
+            break;
         }
         handleChapterPage();
         break;
@@ -1014,7 +1061,7 @@ function foo(bar) {
       });
     }
   }
-  document.body.style.setProperty("--container-width", containerWidth);
+  setDefaultStyle();
   handleRoute();
   releaseCopy();
 

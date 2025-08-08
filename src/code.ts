@@ -21,7 +21,7 @@ export function setupExtendLanguageSupport() {
 	}
 }
 
-export function disguiseToCode(container: Element) {
+export function disguiseToCode(container: Element): HTMLPreElement {
 	/**
 	 * 将文章段落伪装成代码显示
 	 * @param container - 包含需要伪装的段落元素的容器
@@ -111,10 +111,15 @@ export function disguiseToCode(container: Element) {
 	highlightElement(pre, false, (_) => {
 		document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
 	});
+	return pre;
 }
 
 export function disguiseParagraphs(container: Element) {
 	switch (disguiseMode) {
+		case 'none':
+			(container as HTMLElement).style.fontSize = 'var(--novel-font-size)';
+			(container as HTMLElement).style.fontFamily = 'var(--novel-font-family)';
+			break;
 		case 'code':
 		default:
 			// 伪装成代码
@@ -160,6 +165,9 @@ export function highlightElement(
 	async?: boolean,
 	callback?: (element: Element) => void
 ) {
+	if (el instanceof HTMLElement) {
+		el.style.fontSize = 'var(--novel-font-size)';
+	}
 	// console.log(Prism.hooks.all['complete']);
 	const codes = Array.from(el.querySelectorAll('code'));
 	const highlightAll = () => {

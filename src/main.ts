@@ -1,6 +1,6 @@
 import './style.css';
 import { GM_registerMenuCommand, unsafeWindow } from '$';
-import { containerWidth } from './config';
+import { setDefaultStyle } from './config';
 import { releaseCopy } from './utils';
 import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
@@ -33,6 +33,6 @@ function handleRoute() {
 	}
 }
 
-document.body.style.setProperty('--container-width', containerWidth);
+setDefaultStyle();
 handleRoute();
 releaseCopy();

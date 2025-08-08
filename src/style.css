@@ -21,6 +21,10 @@ body > div.header,
 	width: var(--container-width, '1200px');
 }
 
+span.token.comment {
+	font-family: var(--novel-font-family) !important;
+}
+
 body {
 	backdrop-filter: contrast(110%);
 }

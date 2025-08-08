@@ -4,6 +4,11 @@ import { EditableList, setupEditableList } from './editable-list';
 import { getCodeThemeURL } from './utils';
 
 export let disguiseDebug = GM_getValue('disguiseDebug', false);
+export let novelFontSize = GM_getValue('novel-font-size', '16px');
+export let novelFontFamily = GM_getValue(
+	'novel-font-family',
+	`system-ui, -apple-system, '微软雅黑', 'PingFang SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`
+);
 
 // 是否伪装成代码
 export let disguiseMode = GM_getValue<DisguiseMode>('disguise-mode', 'none');
@@ -399,6 +404,9 @@ function createContainerStyleFieldset(): HTMLFieldSetElement {
 	legend.innerText = '正文式样';
 	containerStyleFieldset.appendChild(legend);
 
+	const div = document.createElement('div');
+	div.style = 'display: flex; flex-wrap: wrap; gap: 0.5rem;';
+
 	const widthInput = document.createElement('input');
 	widthInput.value = containerWidth;
 	widthInput.size = 10;
@@ -409,11 +417,39 @@ function createContainerStyleFieldset(): HTMLFieldSetElement {
 	};
 
 	const widthLabel = document.createElement('label');
-	widthLabel.innerText = '正文宽度：';
+	widthLabel.innerText = '宽度：';
 	widthLabel.title = '单位可以是 rem, px, %, svw, vw';
 	widthLabel.appendChild(widthInput);
+	div.appendChild(widthLabel);
 
-	containerStyleFieldset.appendChild(widthLabel);
+	const fontSizeInput = document.createElement('input');
+	fontSizeInput.value = novelFontSize;
+	fontSizeInput.size = 10;
+	fontSizeInput.onchange = () => {
+		novelFontSize = fontSizeInput.value;
+		document.body.style.setProperty('--novel-font-size', novelFontSize);
+		GM_setValue('novel-font-size', fontSizeInput.value);
+	};
+
+	const fontSizeLabel = document.createElement('label');
+	fontSizeLabel.innerText = '字体大小：';
+	fontSizeLabel.appendChild(fontSizeInput);
+	div.appendChild(fontSizeLabel);
+
+	const fontFamilyInput = document.createElement('input');
+	fontFamilyInput.value = novelFontFamily;
+	fontFamilyInput.onchange = () => {
+		novelFontFamily = fontFamilyInput.value;
+		document.body.style.setProperty('--novel-font-family', novelFontFamily);
+		GM_setValue('novel-font-family', fontFamilyInput.value);
+	};
+
+	const fontFamilyLabel = document.createElement('label');
+	fontFamilyLabel.innerText = '字体：';
+	fontFamilyLabel.appendChild(fontFamilyInput);
+	div.appendChild(fontFamilyLabel);
+
+	containerStyleFieldset.appendChild(div);
 	return containerStyleFieldset;
 }
 
@@ -509,4 +545,10 @@ export function createSettingForm(): HTMLFormElement {
 		}
 	}, 1000);
 	return form;
+}
+
+export function setDefaultStyle() {
+	document.body.style.setProperty('--container-width', containerWidth);
+	document.body.style.setProperty('--novel-font-size', novelFontSize);
+	document.body.style.setProperty('--novel-font-family', novelFontFamily);
 }
