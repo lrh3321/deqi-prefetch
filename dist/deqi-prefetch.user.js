@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-067
+// @version      2025-08-080
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -27,7 +27,6 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
-// @grant        unsafeWindow
 // @run-at       document-end
 // ==/UserScript==
 
@@ -41,7 +40,6 @@
   var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
   var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
   var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  var _unsafeWindow = /* @__PURE__ */ (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   let extendLanguageElement = null;
   function setupExtendLanguageSupport() {
     if (!coreLanguages.has(codeLang)) {
@@ -301,7 +299,7 @@ ${blockCommentEnd}`);
     return `https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/${theme}.min.css`;
   }
   function releaseCopy() {
-    const $ = _unsafeWindow.$ || window.$;
+    const $ = globalThis.$;
     if ($) {
       const doc = $(document);
       doc.off("contextmenu");
@@ -1021,6 +1019,10 @@ function foo(bar) {
         }
       }
     }
+    const children = Array.from(document.body.children).filter((it) => it.id != "main");
+    children.forEach((it) => {
+      it.remove();
+    });
   }
   function handleBiqu33Route() {
     const segments = location.pathname.split("/").filter(Boolean);
@@ -1047,7 +1049,7 @@ function foo(bar) {
         break;
     }
   }
-  window.Prism = _unsafeWindow.Prism = _unsafeWindow.Prism || window.Prism;
+  document.defaultView.Prism = globalThis.Prism;
   function handleRoute() {
     if (location.host.endsWith("deqixs.com")) {
       handleDeqiRoute();

@@ -87,6 +87,11 @@ function handleChapterPage() {
 			}
 		}
 	}
+
+	const children = Array.from(document.body.children).filter((it) => it.id != 'main');
+	children.forEach((it) => {
+		it.remove();
+	});
 }
 
 export function handleBiqu33Route() {

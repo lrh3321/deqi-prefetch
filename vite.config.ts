@@ -39,8 +39,7 @@ export default defineConfig({
 					'GM_getValue',
 					'GM_registerMenuCommand',
 					'GM_setValue',
-					'GM_xmlhttpRequest',
-					'unsafeWindow'
+					'GM_xmlhttpRequest'
 				],
 				'run-at': 'document-end'
 			}

@@ -1,5 +1,3 @@
-import { unsafeWindow } from '$';
-
 /**
  * 获取代码主题的CSS文件URL
  *
@@ -37,7 +35,7 @@ export function getCodeThemeURL(theme: string): string {
  * 主要用于解除页面对复制粘贴和右键菜单的限制。
  */
 export function releaseCopy() {
-	const $ = (unsafeWindow as any).$ || (window as any).$;
+	const $ = (globalThis as any).$;
 	if ($) {
 		const doc = $(document);
 		doc.off('contextmenu');

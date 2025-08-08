@@ -1,12 +1,11 @@
 import './style.css';
-import { GM_registerMenuCommand, unsafeWindow } from '$';
+import { GM_registerMenuCommand } from '$';
 import { setDefaultStyle } from './config';
 import { releaseCopy } from './utils';
 import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 
-(window as any).Prism = (unsafeWindow as any).Prism =
-	(unsafeWindow as any).Prism || (window as any).Prism;
+(document.defaultView as any).Prism = (globalThis as any).Prism;
 
 /**
  * 根据当前页面路径处理不同类型的页面
