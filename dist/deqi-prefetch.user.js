@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-080
+// @version      2025-08-090
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -946,6 +946,34 @@ function foo(bar) {
       handleBookPage();
     }
   }
+  function cleanupBody() {
+    Object.defineProperty(location, "replace", {
+      value: function() {
+        console.warn("location.replace is disabled!");
+        return false;
+      },
+      writable: false,
+      // 禁止重新赋值
+      configurable: false
+      // 禁止删除或重新配置
+    });
+    const ob = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type == "childList") {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType == Node.ELEMENT_NODE) {
+              node.remove();
+            }
+          });
+        }
+      });
+    });
+    ob.observe(document.body, { childList: true });
+    const children = Array.from(document.body.children).filter((it) => it.id != "main");
+    children.forEach((it) => {
+      it.remove();
+    });
+  }
   function handleSettingPage() {
     const settingForm = createSettingForm();
     const articleMain = document.createElement("div");
@@ -955,11 +983,41 @@ function foo(bar) {
     articleMain.appendChild(settingForm);
     container.appendChild(articleMain);
   }
+  function appendRemainPages(netxDivs, hasCanvas) {
+    const articleMain = document.getElementById("article_main");
+    const mainboxs = document.getElementById("mainboxs");
+    netxDivs.forEach((div) => {
+      const next = document.createElement("div");
+      next.innerHTML = div;
+      mainboxs.appendChild(next);
+    });
+    if (articleMain) {
+      articleMain.appendChild(document.querySelector("div.page-links"));
+      articleMain.appendChild(document.getElementById("post-h2"));
+      articleMain.appendChild(mainboxs);
+      articleMain.appendChild(document.querySelector("div.prenext"));
+      articleMain.appendChild(document.querySelector("div.post-content"));
+      articleMain.querySelectorAll(".page-links, .post-content");
+    }
+    if (hasCanvas) {
+      document.body.append("章节不完整");
+    }
+    disguiseParagraphs(mainboxs);
+  }
+  function getMainBox(doc) {
+    if (typeof doc === "string") {
+      const parser = new DOMParser();
+      const realDoc = parser.parseFromString(doc, "text/html");
+      return realDoc.getElementById("mainboxs");
+    }
+    return doc.getElementById("mainboxs");
+  }
   function handleChapterPage() {
     if (disguiseDebug) {
       disguiseParagraphs(document.getElementById("mainboxs"));
       return;
     }
+    const articleMain = document.getElementById("article_main");
     const nextLinks = Array.from(
       document.querySelectorAll("#page-links a.post-page-numbers")
     );
@@ -967,39 +1025,33 @@ function foo(bar) {
     let remainLinks = nextLinks.length;
     let hasCanvas = false;
     for (let index = 0; index < nextLinks.length; index++) {
-      const element = nextLinks[index];
+      const anchor = nextLinks[index];
       _GM_xmlhttpRequest({
         method: "GET",
-        url: element.href,
+        url: anchor.href,
         responseType: "document",
         onload: (response) => {
-          const doc = response.response;
-          const div = doc.getElementById("mainboxs");
-          if (div.getElementsByTagName("p").length == 0) {
-            hasCanvas = true;
+          try {
+            const doc = response.response;
+            const div = getMainBox(doc);
+            if (div.getElementsByTagName("p").length == 0) {
+              hasCanvas = true;
+            }
+            netxDivs[index] = div.innerHTML;
+            anchor.remove();
+            remainLinks--;
+          } catch (error) {
+            const div = document.createElement("div");
+            div.innerText = `error: ${error} with resolve ${anchor.href}`;
+            articleMain?.append(div);
+            if (error instanceof Error) {
+              const div2 = document.createElement("div");
+              div2.innerText = `name: ${error.name}, stack: ${error.stack}`;
+              articleMain?.append(div2);
+            }
           }
-          netxDivs[index] = div.innerHTML;
-          element.remove();
-          remainLinks--;
           if (remainLinks == 0) {
-            const mainboxs = document.getElementById("mainboxs");
-            netxDivs.forEach((div2) => {
-              const next = document.createElement("div");
-              next.innerHTML = div2;
-              mainboxs.appendChild(next);
-            });
-            const main = document.getElementById("article_main");
-            if (main) {
-              main.appendChild(document.querySelector("div.page-links"));
-              main.appendChild(mainboxs);
-              main.appendChild(document.querySelector("div.prenext"));
-              main.appendChild(document.querySelector("div.post-content"));
-              main.querySelectorAll(".page-links, .post-content");
-            }
-            if (hasCanvas) {
-              document.body.append("章节不完整");
-            }
-            disguiseParagraphs(mainboxs);
+            appendRemainPages(netxDivs, hasCanvas);
           }
         }
       });
@@ -1019,10 +1071,7 @@ function foo(bar) {
         }
       }
     }
-    const children = Array.from(document.body.children).filter((it) => it.id != "main");
-    children.forEach((it) => {
-      it.remove();
-    });
+    cleanupBody();
   }
   function handleBiqu33Route() {
     const segments = location.pathname.split("/").filter(Boolean);
@@ -1031,6 +1080,7 @@ function foo(bar) {
       case 0:
       case 1:
       case 2:
+        cleanupBody();
         setupCodeTheme();
         setupExtendLanguageSupport();
         handleSettingPage();

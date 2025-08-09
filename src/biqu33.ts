@@ -10,6 +10,34 @@ import {
 	setupCodeTheme
 } from './config';
 
+function cleanupBody() {
+	Object.defineProperty(location, 'replace', {
+		value: function () {
+			console.warn('location.replace is disabled!');
+			return false;
+		},
+		writable: false, // 禁止重新赋值
+		configurable: false // 禁止删除或重新配置
+	});
+
+	const ob = new MutationObserver((mutations: MutationRecord[]) => {
+		mutations.forEach((mutation) => {
+			if (mutation.type == 'childList') {
+				mutation.addedNodes.forEach((node) => {
+					if (node.nodeType == Node.ELEMENT_NODE) {
+						(node as Element).remove();
+					}
+				});
+			}
+		});
+	});
+	ob.observe(document.body, { childList: true });
+
+	const children = Array.from(document.body.children).filter((it) => it.id != 'main');
+	children.forEach((it) => {
+		it.remove();
+	});
+}
 function handleSettingPage() {
 	const settingForm = createSettingForm();
 	const articleMain = document.createElement('div');
@@ -19,54 +47,82 @@ function handleSettingPage() {
 	articleMain.appendChild(settingForm);
 	container.appendChild(articleMain);
 }
+
+function appendRemainPages(netxDivs: Array<string | undefined>, hasCanvas: boolean) {
+	const articleMain = document.getElementById('article_main');
+	const mainboxs = document.getElementById('mainboxs')!!;
+	netxDivs.forEach((div) => {
+		const next = document.createElement('div');
+		next.innerHTML = div!!;
+		mainboxs.appendChild(next);
+	});
+
+	if (articleMain) {
+		articleMain.appendChild(document.querySelector('div.page-links')!!);
+		articleMain.appendChild(document.getElementById('post-h2')!!);
+		articleMain.appendChild(mainboxs);
+		articleMain.appendChild(document.querySelector('div.prenext')!!);
+		articleMain.appendChild(document.querySelector('div.post-content')!!);
+		articleMain.querySelectorAll('.page-links, .post-content');
+	}
+	if (hasCanvas) {
+		document.body.append('章节不完整');
+	}
+	disguiseParagraphs(mainboxs);
+}
+
+function getMainBox(doc: Document | string): Element {
+	if (typeof doc === 'string') {
+		// 创建解析器
+		const parser = new DOMParser();
+		const realDoc = parser.parseFromString(doc, 'text/html');
+		return realDoc.getElementById('mainboxs')!!;
+	}
+	return doc.getElementById('mainboxs')!!;
+}
 function handleChapterPage() {
 	if (disguiseDebug) {
 		disguiseParagraphs(document.getElementById('mainboxs')!!);
 		return;
 	}
 
+	const articleMain = document.getElementById('article_main');
 	const nextLinks = Array.from(
 		document.querySelectorAll('#page-links a.post-page-numbers')
 	) as HTMLAnchorElement[];
+
 	const netxDivs = new Array<string | undefined>(nextLinks.length);
 	let remainLinks = nextLinks.length;
 	let hasCanvas = false;
 	for (let index = 0; index < nextLinks.length; index++) {
-		const element = nextLinks[index];
+		const anchor = nextLinks[index];
 		GM_xmlhttpRequest({
 			method: 'GET',
-			url: element.href,
+			url: anchor.href,
 			responseType: 'document',
 			onload: (response) => {
-				const doc = response.response;
-				const div = doc.getElementById('mainboxs')!!;
-				if (div.getElementsByTagName('p').length == 0) {
-					hasCanvas = true;
-				}
-				netxDivs[index] = div.innerHTML;
-				// console.log(div, netxDivs);
-				element.remove();
-				remainLinks--;
-				if (remainLinks == 0) {
-					const mainboxs = document.getElementById('mainboxs')!!;
-					netxDivs.forEach((div) => {
-						const next = document.createElement('div');
-						next.innerHTML = div!!;
-						mainboxs.appendChild(next);
-					});
+				try {
+					const doc = response.response;
+					const div: Element = getMainBox(doc);
+					if (div.getElementsByTagName('p').length == 0) {
+						hasCanvas = true;
+					}
+					netxDivs[index] = div.innerHTML;
 
-					const main = document.getElementById('article_main');
-					if (main) {
-						main.appendChild(document.querySelector('div.page-links')!!);
-						main.appendChild(mainboxs);
-						main.appendChild(document.querySelector('div.prenext')!!);
-						main.appendChild(document.querySelector('div.post-content')!!);
-						main.querySelectorAll('.page-links, .post-content');
+					anchor.remove();
+					remainLinks--;
+				} catch (error) {
+					const div = document.createElement('div');
+					div.innerText = `error: ${error} with resolve ${anchor.href}`;
+					articleMain?.append(div);
+					if (error instanceof Error) {
+						const div = document.createElement('div');
+						div.innerText = `name: ${error.name}, stack: ${error.stack}`;
+						articleMain?.append(div);
 					}
-					if (hasCanvas) {
-						document.body.append('章节不完整');
-					}
-					disguiseParagraphs(mainboxs);
+				}
+				if (remainLinks == 0) {
+					appendRemainPages(netxDivs, hasCanvas);
 				}
 			}
 		});
@@ -87,11 +143,9 @@ function handleChapterPage() {
 			}
 		}
 	}
+	cleanupBody();
 
-	const children = Array.from(document.body.children).filter((it) => it.id != 'main');
-	children.forEach((it) => {
-		it.remove();
-	});
+	// document.body.querySelectorAll('[style*="position:fixed"]')
 }
 
 export function handleBiqu33Route() {
@@ -101,6 +155,7 @@ export function handleBiqu33Route() {
 		case 0:
 		case 1:
 		case 2:
+			cleanupBody();
 			setupCodeTheme();
 			setupExtendLanguageSupport();
 			handleSettingPage();
