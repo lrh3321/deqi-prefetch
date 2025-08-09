@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-080
+// @version      2025-08-100
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -30,7 +30,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const i=document.createElement("style");i.textContent=e,document.head.append(i)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc} ');
 
 (function () {
   'use strict';
@@ -791,7 +791,7 @@ function foo(bar) {
     document.body.style.setProperty("--novel-font-size", novelFontSize);
     document.body.style.setProperty("--novel-font-family", novelFontFamily);
   }
-  function handleBookPage() {
+  function handleBookPage$1() {
     let finished = false;
     const itemtxt = document.querySelector(".itemtxt");
     const spans = Array.from(itemtxt.querySelectorAll("p > span"));
@@ -943,8 +943,29 @@ function foo(bar) {
       }
       handleChaperPage();
     } else if (location.pathname.startsWith("/xiaoshuo/")) {
-      handleBookPage();
+      handleBookPage$1();
     }
+  }
+  let bookID = "";
+  const chapterLinks = new Array();
+  const chapterLinkSet = /* @__PURE__ */ new Set();
+  function cleanupBody() {
+    const ob = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type == "childList") {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType == Node.ELEMENT_NODE) {
+              node.remove();
+            }
+          });
+        }
+      });
+    });
+    ob.observe(document.body, { childList: true });
+    const children = Array.from(document.body.children).filter((it) => it.id != "main");
+    children.forEach((it) => {
+      it.remove();
+    });
   }
   function handleSettingPage() {
     const settingForm = createSettingForm();
@@ -955,11 +976,151 @@ function foo(bar) {
     articleMain.appendChild(settingForm);
     container.appendChild(articleMain);
   }
+  function handleBookPage() {
+    const rowDiv = document.querySelector("#main > div.nine-item > div.container > div.row");
+    const moreItem = createAttrOneItem();
+    moreItem.id = "more-item";
+    moreItem.appendChild(createMoreAnchor());
+    const resetItem = createAttrOneItem();
+    resetItem.id = "reset-item";
+    resetItem.appendChild(createResetAnchor());
+    rowDiv.append(moreItem, resetItem);
+    const links = Array.from(rowDiv.querySelectorAll("a[href][title]")).map((it) => {
+      return { href: it.href, title: it.title };
+    });
+    const indexStr = localStorage.getItem(`book_index_${bookID}`);
+    if (indexStr) {
+      const oldLinks = JSON.parse(indexStr);
+      const linkSet = new Set(links.map((it) => it.href));
+      oldLinks.forEach((it) => {
+        if (!linkSet.has(it.href)) {
+          links.push(it);
+          rowDiv.insertBefore(createChapterLink(it.href, it.title), moreItem);
+        }
+      });
+      links.sort((a, b) => {
+        return b.href.localeCompare(a.href);
+      });
+    }
+    chapterLinks.push(...links);
+    chapterLinkSet.clear();
+    chapterLinks.forEach((it) => {
+      chapterLinkSet.add(it.href);
+    });
+    localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
+  }
+  function fetchPreviousChapter(href, limit) {
+    if (limit <= 0) {
+      return;
+    }
+    _GM_xmlhttpRequest({
+      method: "GET",
+      url: href,
+      responseType: "document",
+      onload: (response) => {
+        const link = getPrevLink(response.response);
+        if (!chapterLinkSet.has(href)) {
+          chapterLinkSet.add(href);
+          chapterLinks.push({ title: link.title, href });
+          chapterLinks.sort((a, b) => {
+            return b.href.localeCompare(a.href);
+          });
+          localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
+          const moreItem = document.getElementById("more-item");
+          const element = createChapterLink(href, link.title);
+          moreItem.parentElement?.insertBefore(element, moreItem);
+        }
+        fetchPreviousChapter(link.href, limit - 1);
+      }
+    });
+  }
+  function createAttrOneItem() {
+    const div = document.createElement("div");
+    div.className = "col-md-4 col-sm-12 att-one-item";
+    return div;
+  }
+  function getLastestHref() {
+    const moreItem = document.getElementById("more-item");
+    const lastAnchor = moreItem.previousElementSibling?.querySelector("a")?.href;
+    return lastAnchor;
+  }
+  function createMoreAnchor() {
+    const a = document.createElement("a");
+    a.role = "button";
+    a.onclick = () => {
+      const latest = getLastestHref();
+      console.log("more", latest);
+      fetchPreviousChapter(latest, 10);
+    };
+    a.title = "更多";
+    a.innerHTML = "更多";
+    return a;
+  }
+  function createResetAnchor() {
+    const a = document.createElement("a");
+    a.role = "button";
+    a.onclick = () => {
+      console.log("reset");
+      localStorage.removeItem(`book_index_${bookID}`);
+    };
+    a.title = "重置";
+    a.innerHTML = "重置";
+    return a;
+  }
+  function createChapterLink(href, title) {
+    const div = createAttrOneItem();
+    const a = document.createElement("a");
+    a.href = new URL(href).pathname;
+    a.title = title;
+    a.innerText = title;
+    div.append(a);
+    return div;
+  }
+  function appendRemainPages(netxDivs, hasCanvas) {
+    const articleMain = document.getElementById("article_main");
+    const mainboxs = document.getElementById("mainboxs");
+    netxDivs.forEach((div) => {
+      const next = document.createElement("div");
+      next.innerHTML = div;
+      mainboxs.appendChild(next);
+    });
+    if (articleMain) {
+      articleMain.appendChild(document.querySelector("div.page-links"));
+      articleMain.appendChild(document.getElementById("post-h2"));
+      articleMain.appendChild(mainboxs);
+      articleMain.appendChild(document.querySelector("div.prenext"));
+      articleMain.appendChild(document.querySelector("div.post-content"));
+      if (hasCanvas) {
+        articleMain.append("章节不完整");
+        articleMain.appendChild(document.getElementById("page-links"));
+      }
+    }
+    disguiseParagraphs(mainboxs);
+  }
+  function _ensureDoc(doc) {
+    if (typeof doc === "string") {
+      const parser = new DOMParser();
+      const realDoc = parser.parseFromString(doc, "text/html");
+      return realDoc;
+    }
+    return doc;
+  }
+  function getMainBox(doc) {
+    return _ensureDoc(doc).getElementById("mainboxs");
+  }
+  function getPrevLink(doc) {
+    const rDoc = _ensureDoc(doc);
+    return {
+      href: rDoc.querySelector('.prenext > a[rel="prev"]').href,
+      title: rDoc.getElementById("post-h2").innerText
+    };
+  }
   function handleChapterPage() {
     if (disguiseDebug) {
       disguiseParagraphs(document.getElementById("mainboxs"));
       return;
     }
+    const articleMain = document.getElementById("article_main");
     const nextLinks = Array.from(
       document.querySelectorAll("#page-links a.post-page-numbers")
     );
@@ -967,39 +1128,35 @@ function foo(bar) {
     let remainLinks = nextLinks.length;
     let hasCanvas = false;
     for (let index = 0; index < nextLinks.length; index++) {
-      const element = nextLinks[index];
+      const anchor = nextLinks[index];
       _GM_xmlhttpRequest({
         method: "GET",
-        url: element.href,
+        url: anchor.href,
         responseType: "document",
         onload: (response) => {
-          const doc = response.response;
-          const div = doc.getElementById("mainboxs");
-          if (div.getElementsByTagName("p").length == 0) {
-            hasCanvas = true;
+          try {
+            const doc = response.response;
+            const div = getMainBox(doc);
+            if (div.getElementsByTagName("p").length == 0) {
+              hasCanvas = true;
+            }
+            netxDivs[index] = div.innerHTML;
+            if (!hasCanvas) {
+              anchor.remove();
+            }
+            remainLinks--;
+          } catch (error) {
+            const div = document.createElement("div");
+            div.innerText = `error: ${error} with resolve ${anchor.href}`;
+            articleMain?.append(div);
+            if (error instanceof Error) {
+              const div2 = document.createElement("div");
+              div2.innerText = `name: ${error.name}, stack: ${error.stack}`;
+              articleMain?.append(div2);
+            }
           }
-          netxDivs[index] = div.innerHTML;
-          element.remove();
-          remainLinks--;
           if (remainLinks == 0) {
-            const mainboxs = document.getElementById("mainboxs");
-            netxDivs.forEach((div2) => {
-              const next = document.createElement("div");
-              next.innerHTML = div2;
-              mainboxs.appendChild(next);
-            });
-            const main = document.getElementById("article_main");
-            if (main) {
-              main.appendChild(document.querySelector("div.page-links"));
-              main.appendChild(mainboxs);
-              main.appendChild(document.querySelector("div.prenext"));
-              main.appendChild(document.querySelector("div.post-content"));
-              main.querySelectorAll(".page-links, .post-content");
-            }
-            if (hasCanvas) {
-              document.body.append("章节不完整");
-            }
-            disguiseParagraphs(mainboxs);
+            appendRemainPages(netxDivs, hasCanvas);
           }
         }
       });
@@ -1019,10 +1176,7 @@ function foo(bar) {
         }
       }
     }
-    const children = Array.from(document.body.children).filter((it) => it.id != "main");
-    children.forEach((it) => {
-      it.remove();
-    });
+    cleanupBody();
   }
   function handleBiqu33Route() {
     const segments = location.pathname.split("/").filter(Boolean);
@@ -1031,12 +1185,21 @@ function foo(bar) {
       case 0:
       case 1:
       case 2:
+        cleanupBody();
         setupCodeTheme();
         setupExtendLanguageSupport();
         handleSettingPage();
+        if (segments.length == 2 && segments[0] == "book") {
+          bookID = segments[1];
+          handleBookPage();
+        }
         break;
       case 3:
         if (/[\d\w]+_\d+$/.test(lastSegment)) {
+          const rows = Array.from(document.querySelectorAll("#article_main .row"));
+          rows.forEach((row) => {
+            row.style.display = "flex";
+          });
           return;
         }
         switch (disguiseMode) {

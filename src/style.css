@@ -102,3 +102,20 @@ editable-list ul {
 #article_main {
 	background: transparent;
 }
+
+#article_main #page-links a,
+#article_main #page-links span {
+	padding: 1px 10px;
+	width: 28px;
+	height: 28px;
+	display: inline-block;
+	margin-right: 10px;
+	background: #1a73e8;
+	color: #fff !important;
+	line-height: 25px;
+	text-align: center;
+	text-decoration: none !important;
+}
+#article_main #page-links span {
+	background: #ccc;
+}

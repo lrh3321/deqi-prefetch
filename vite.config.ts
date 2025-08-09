@@ -14,7 +14,7 @@ export default defineConfig({
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				source: 'https://github.com/lrh3321/deqi-prefetch',
 				supportURL: 'https://github.com/lrh3321/deqi-prefetch/issues',
-				version: '2025-08-080',
+				version: '2025-08-100',
 				description: '得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
 				license: 'MIT',
