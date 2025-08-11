@@ -17,7 +17,8 @@ h2.op a {
 
 body > div.container,
 body > div.header,
-#article_main {
+#article_main,
+#ss-reader-main {
 	width: var(--container-width, '1200px');
 }
 
@@ -118,4 +119,18 @@ editable-list ul {
 }
 #article_main #page-links span {
 	background: #ccc;
+}
+/* ddxiaoshuo */
+#ss-reader-main,
+.info-title {
+	border-width: 0px;
+	border-bottom-width: 0px;
+	background-color: transparent !important;
+}
+#ss-reader-main .info-commend,
+#ss-reader-main .reader-hr,
+#ss-reader-main .readSet,
+#ss-reader-main .info-chapters-title,
+#ss-reader-main h1 {
+	display: none;
 }

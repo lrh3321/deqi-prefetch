@@ -50,3 +50,13 @@ export function releaseCopy() {
 }
 
 export const isInIframe = window.self !== window.top;
+
+export function ensureDoc(doc: Document | string): Document {
+	if (typeof doc === 'string') {
+		// 创建解析器
+		const parser = new DOMParser();
+		const realDoc = parser.parseFromString(doc, 'text/html');
+		return realDoc;
+	}
+	return doc;
+}

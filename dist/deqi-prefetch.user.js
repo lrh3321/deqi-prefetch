@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-100
+// @version      2025-08-110
 // @author       LRH3321
-// @description  得奇小说网, biqu33.cc，看单个章节免翻页，把小说伪装成代码
+// @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=deqixs.com
 // @homepageURL  https://greasyfork.org/zh-CN/scripts/537588-deqi-prefech
@@ -15,6 +15,7 @@
 // @match        *://www.deqixs.com/xiaoshuo/*/*.html
 // @match        *://www.deqixs.com/xiaoshuo/*/
 // @match        *://www.biqu33.cc/*
+// @match        *://www.ddxiaoshuo.cc/*
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js
@@ -30,7 +31,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const i=document.createElement("style");i.textContent=e,document.head.append(i)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const i=document.createElement("style");i.textContent=e,document.head.append(i)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{padding:.5rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1{display:none} ');
 
 (function () {
   'use strict';
@@ -312,6 +313,14 @@ ${blockCommentEnd}`);
     document.oncut = null;
   }
   const isInIframe = window.self !== window.top;
+  function ensureDoc(doc) {
+    if (typeof doc === "string") {
+      const parser = new DOMParser();
+      const realDoc = parser.parseFromString(doc, "text/html");
+      return realDoc;
+    }
+    return doc;
+  }
   let disguiseDebug = _GM_getValue("disguiseDebug", false);
   let novelFontSize = _GM_getValue("novel-font-size", "16px");
   let novelFontFamily = _GM_getValue(
@@ -823,7 +832,7 @@ function foo(bar) {
       }
     }
   }
-  function handleSettingPage$1() {
+  function handleSettingPage$2() {
     const settingForm = createSettingForm();
     const container = document.querySelector("div.container");
     container.appendChild(settingForm);
@@ -931,7 +940,7 @@ function foo(bar) {
     if (location.pathname === "/pifu/") {
       setupCodeTheme();
       setupExtendLanguageSupport();
-      handleSettingPage$1();
+      handleSettingPage$2();
     } else if (location.pathname.endsWith(".html")) {
       if (!isInIframe) {
         switch (disguiseMode) {
@@ -949,7 +958,7 @@ function foo(bar) {
   let bookID = "";
   const chapterLinks = new Array();
   const chapterLinkSet = /* @__PURE__ */ new Set();
-  function cleanupBody() {
+  function cleanupBody$1() {
     const ob = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type == "childList") {
@@ -967,7 +976,7 @@ function foo(bar) {
       it.remove();
     });
   }
-  function handleSettingPage() {
+  function handleSettingPage$1() {
     const settingForm = createSettingForm();
     const articleMain = document.createElement("div");
     articleMain.id = "article_main";
@@ -1097,25 +1106,17 @@ function foo(bar) {
     }
     disguiseParagraphs(mainboxs);
   }
-  function _ensureDoc(doc) {
-    if (typeof doc === "string") {
-      const parser = new DOMParser();
-      const realDoc = parser.parseFromString(doc, "text/html");
-      return realDoc;
-    }
-    return doc;
-  }
   function getMainBox(doc) {
-    return _ensureDoc(doc).getElementById("mainboxs");
+    return ensureDoc(doc).getElementById("mainboxs");
   }
   function getPrevLink(doc) {
-    const rDoc = _ensureDoc(doc);
+    const rDoc = ensureDoc(doc);
     return {
       href: rDoc.querySelector('.prenext > a[rel="prev"]').href,
       title: rDoc.getElementById("post-h2").innerText
     };
   }
-  function handleChapterPage() {
+  function handleChapterPage$1() {
     if (disguiseDebug) {
       disguiseParagraphs(document.getElementById("mainboxs"));
       return;
@@ -1176,7 +1177,7 @@ function foo(bar) {
         }
       }
     }
-    cleanupBody();
+    cleanupBody$1();
   }
   function handleBiqu33Route() {
     const segments = location.pathname.split("/").filter(Boolean);
@@ -1185,10 +1186,10 @@ function foo(bar) {
       case 0:
       case 1:
       case 2:
-        cleanupBody();
+        cleanupBody$1();
         setupCodeTheme();
         setupExtendLanguageSupport();
-        handleSettingPage();
+        handleSettingPage$1();
         if (segments.length == 2 && segments[0] == "book") {
           bookID = segments[1];
           handleBookPage();
@@ -1208,6 +1209,107 @@ function foo(bar) {
             setupExtendLanguageSupport();
             break;
         }
+        handleChapterPage$1();
+        break;
+    }
+  }
+  function cleanupBody() {
+    const children = Array.from(document.body.children).filter((it) => it.id != "ss-reader-main");
+    children.forEach((it) => {
+      it.remove();
+    });
+  }
+  function cleanBookPage() {
+    const articleMain = document.createElement("div");
+    articleMain.id = "ss-reader-main";
+    const containers = Array.from(document.body.querySelectorAll(".container"));
+    containers.forEach((container) => {
+      container.className = "";
+      articleMain.appendChild(container);
+    });
+    document.body.appendChild(articleMain);
+    cleanupBody();
+  }
+  function handleSettingPage() {
+    const articleMain = document.getElementById("ss-reader-main");
+    const settingForm = createSettingForm();
+    articleMain.appendChild(settingForm);
+  }
+  function formatArticle() {
+    const prevURL = document.getElementById("prev_url");
+    const infoURL = document.getElementById("info_url");
+    const nextURL = document.getElementById("next_url");
+    prevURL.accessKey = previousChapterAccessKey;
+    prevURL.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
+    infoURL.accessKey = bookPageAccessKey;
+    infoURL.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
+    nextURL.accessKey = nextChapterAccessKey;
+    nextURL.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+    disguiseParagraphs(document.getElementById("article"));
+    document.body.appendChild(document.getElementById("ss-reader-main"));
+    cleanupBody();
+  }
+  function continueFetchPages(curDoc) {
+    const nextURL = curDoc.getElementById("next_url");
+    if (nextURL.textContent.trim() == "下一章") {
+      const t = document.getElementById("next_url");
+      t.parentElement?.replaceChild(nextURL, t);
+      formatArticle();
+    } else {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: nextURL.href,
+        responseType: "document",
+        onload: (response) => {
+          const doc = ensureDoc(response.response);
+          const article = document.getElementById("article");
+          const nextArticle = doc.getElementById("article");
+          const children = Array.from(nextArticle.children);
+          children.forEach((child) => {
+            article.appendChild(child);
+          });
+          continueFetchPages(doc);
+        }
+      });
+    }
+  }
+  function handleChapterPage() {
+    if (disguiseDebug) {
+      disguiseParagraphs(document.getElementById("article"));
+      return;
+    }
+    const readNav = document.querySelector(".read_nav");
+    if (readNav) {
+      readNav.remove();
+    }
+    continueFetchPages(document);
+  }
+  function handleDDxiaoshuoRoute() {
+    document.body.style.display = "flex";
+    document.body.style.justifyContent = "center";
+    const segments = location.pathname.split("/").filter(Boolean);
+    const lastSegment = segments[segments.length - 1];
+    switch (segments.length) {
+      case 0:
+        break;
+      case 1:
+        cleanBookPage();
+        setupCodeTheme();
+        setupExtendLanguageSupport();
+        if (location.pathname == "/history.html") {
+          handleSettingPage();
+        }
+        break;
+      case 2:
+        if (/[\d\w]+_\d+$/.test(lastSegment)) {
+          return;
+        }
+        switch (disguiseMode) {
+          case "code":
+            setupCodeTheme();
+            setupExtendLanguageSupport();
+            break;
+        }
         handleChapterPage();
         break;
     }
@@ -1218,6 +1320,11 @@ function foo(bar) {
       handleDeqiRoute();
       _GM_registerMenuCommand("脚本设置", function() {
         open("/pifu/");
+      });
+    } else if (location.hostname == "www.ddxiaoshuo.cc") {
+      handleDDxiaoshuoRoute();
+      _GM_registerMenuCommand("脚本设置", function() {
+        open("/history.html");
       });
     } else if (location.hostname == "www.biqu33.cc" || location.pathname.startsWith("/book/")) {
       handleBiqu33Route();

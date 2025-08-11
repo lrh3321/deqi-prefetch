@@ -9,6 +9,7 @@ import {
 	previousChapterAccessKey,
 	setupCodeTheme
 } from './config';
+import { ensureDoc } from './utils';
 
 let bookID: string = '';
 const chapterLinks = new Array<ChapterLink>();
@@ -179,22 +180,12 @@ function appendRemainPages(netxDivs: Array<string | undefined>, hasCanvas: boole
 	disguiseParagraphs(mainboxs);
 }
 
-function _ensureDoc(doc: Document | string): Document {
-	if (typeof doc === 'string') {
-		// 创建解析器
-		const parser = new DOMParser();
-		const realDoc = parser.parseFromString(doc, 'text/html');
-		return realDoc;
-	}
-	return doc;
-}
-
 function getMainBox(doc: Document | string): Element {
-	return _ensureDoc(doc).getElementById('mainboxs')!!;
+	return ensureDoc(doc).getElementById('mainboxs')!!;
 }
 
 function getPrevLink(doc: Document | string): ChapterLink {
-	const rDoc = _ensureDoc(doc);
+	const rDoc = ensureDoc(doc);
 	return {
 		href: (rDoc.querySelector('.prenext > a[rel="prev"]') as HTMLAnchorElement).href,
 		title: rDoc.getElementById('post-h2')!!.innerText

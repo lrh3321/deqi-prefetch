@@ -4,6 +4,7 @@ import { setDefaultStyle } from './config';
 import { releaseCopy } from './utils';
 import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
+import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
 
 (document.defaultView as any).Prism = (globalThis as any).Prism;
 
@@ -22,6 +23,12 @@ function handleRoute() {
 
 		GM_registerMenuCommand('脚本设置', function () {
 			open('/pifu/');
+		});
+	} else if (location.hostname == 'www.ddxiaoshuo.cc') {
+		// 顶点小说处理逻辑
+		handleDDxiaoshuoRoute();
+		GM_registerMenuCommand('脚本设置', function () {
+			open('/history.html');
 		});
 	} else if (location.hostname == 'www.biqu33.cc' || location.pathname.startsWith('/book/')) {
 		// biqu33处理逻辑
