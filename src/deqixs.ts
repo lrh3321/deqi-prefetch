@@ -1,15 +1,7 @@
 import { GM_getValue } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
-import {
-	bookPageAccessKey,
-	createSettingForm,
-	disguiseMode,
-	nextChapterAccessKey,
-	previousChapterAccessKey,
-	refreshInterval,
-	setupCodeTheme
-} from './config';
-import { isInIframe } from './utils';
+import { createSettingForm, disguiseMode, refreshInterval, setupCodeTheme } from './config';
+import { isInIframe, NavLinks, setAccessKeys } from './utils';
 function handleBookPage() {
 	let finished = false;
 	const itemtxt = document.querySelector('.itemtxt')!!;
@@ -126,8 +118,6 @@ function handleChaperPage() {
 							element.href = nextChapter;
 							if (nextChapter.endsWith('.html')) {
 								element.innerText = '下一章';
-								element.accessKey = nextChapterAccessKey;
-								element.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
 							} else {
 								element.innerText = '返回目录';
 							}
@@ -139,22 +129,21 @@ function handleChaperPage() {
 		}
 	});
 
+	const nav: NavLinks = {};
 	for (const element of prenexts) {
 		if (element instanceof HTMLAnchorElement) {
 			if (element.textContent == '下一页') {
+				nav.nextAnchor = element;
 				const next = document.createElement('iframe');
 				next.src = element.href;
 				next.style.display = 'none';
 				container && container.appendChild(next);
 			} else if (element.textContent == '上一章') {
-				element.accessKey = previousChapterAccessKey;
-				element.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
+				nav.prevAnchor = element;
 			} else if (element.textContent == '目录') {
-				element.accessKey = bookPageAccessKey;
-				element.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
+				nav.infoAnchor = element;
 			} else if (element.textContent == '下一章') {
-				element.accessKey = nextChapterAccessKey;
-				element.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+				nav.nextAnchor = element;
 				if (!isInIframe && disguiseMode != 'none') {
 					const container = document.querySelector('div.container .con')!!;
 					disguiseParagraphs(container);
@@ -162,6 +151,7 @@ function handleChaperPage() {
 			}
 		}
 	}
+	setAccessKeys(nav);
 }
 export function handleDeqiRoute() {
 	// 设置页面处理逻辑

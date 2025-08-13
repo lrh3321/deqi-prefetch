@@ -1,15 +1,7 @@
 import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
-import {
-	bookPageAccessKey,
-	createSettingForm,
-	disguiseDebug,
-	disguiseMode,
-	nextChapterAccessKey,
-	previousChapterAccessKey,
-	setupCodeTheme
-} from './config';
-import { ensureDoc } from './utils';
+import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
+import { ensureDoc, setAccessKeys } from './utils';
 
 function cleanupBody() {
 	const children = Array.from(document.body.children).filter((it) => it.id != 'ss-reader-main');
@@ -37,18 +29,10 @@ function handleSettingPage() {
 }
 
 function formatArticle() {
-	const prevURL = document.getElementById('prev_url')!! as HTMLAnchorElement;
-	const infoURL = document.getElementById('info_url')!! as HTMLAnchorElement;
-	const nextURL = document.getElementById('next_url')!! as HTMLAnchorElement;
-
-	prevURL.accessKey = previousChapterAccessKey;
-	prevURL.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
-
-	infoURL.accessKey = bookPageAccessKey;
-	infoURL.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
-
-	nextURL.accessKey = nextChapterAccessKey;
-	nextURL.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+	const prevAnchor = document.getElementById('prev_url')!! as HTMLAnchorElement;
+	const infoAnchor = document.getElementById('info_url')!! as HTMLAnchorElement;
+	const nextAnchor = document.getElementById('next_url')!! as HTMLAnchorElement;
+	setAccessKeys({ prevAnchor, infoAnchor, nextAnchor });
 
 	disguiseParagraphs(document.getElementById('article')!!);
 	document.body.appendChild(document.getElementById('ss-reader-main')!!);
@@ -103,6 +87,7 @@ export function handleDDxiaoshuoRoute() {
 	const lastSegment = segments[segments.length - 1];
 	switch (segments.length) {
 		case 0:
+			document.body.style.flexDirection = 'column';
 			break;
 		case 1:
 			cleanBookPage();

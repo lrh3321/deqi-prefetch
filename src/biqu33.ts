@@ -1,15 +1,7 @@
 import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
-import {
-	bookPageAccessKey,
-	createSettingForm,
-	disguiseDebug,
-	disguiseMode,
-	nextChapterAccessKey,
-	previousChapterAccessKey,
-	setupCodeTheme
-} from './config';
-import { ensureDoc } from './utils';
+import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
+import { ensureDoc, NavLinks, setAccessKeys } from './utils';
 
 let bookID: string = '';
 const chapterLinks = new Array<ChapterLink>();
@@ -44,8 +36,6 @@ function handleSettingPage() {
 }
 type ChapterLink = { href: string; title: string };
 function handleBookPage() {
-	//
-	// <div class="col-md-4 col-sm-12 att-one-item"><a href="/book/b77d945f/137225/" title="第六百八十章 玩弄昂霄"> 第六百八十章 玩弄昂霄</a></div>
 	const rowDiv = document.querySelector('#main > div.nine-item > div.container > div.row')!!;
 
 	const moreItem = createAttrOneItem();
@@ -59,9 +49,7 @@ function handleBookPage() {
 	const links = Array.from(rowDiv.querySelectorAll('a[href][title]')).map((it) => {
 		return { href: (it as HTMLAnchorElement).href, title: (it as HTMLAnchorElement).title };
 	});
-	// const lastAnchor = links[links.length - 1].href;
-	// moreItem.previousElementSibling?.querySelector('a')?.href!!;
-	// console.log(lastAnchor);
+
 	const indexStr = localStorage.getItem(`book_index_${bookID}`);
 	if (indexStr) {
 		const oldLinks = JSON.parse(indexStr) as Array<ChapterLink>;
@@ -241,20 +229,19 @@ function handleChapterPage() {
 	}
 
 	const prenexts = document.querySelectorAll('div.prenext a');
+	const nav: NavLinks = {};
 	for (const element of prenexts) {
 		if (element instanceof HTMLAnchorElement) {
 			if (element.textContent == '上一章') {
-				element.accessKey = previousChapterAccessKey;
-				element.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
+				nav.prevAnchor = element;
 			} else if (element.textContent == '章节目录') {
-				element.accessKey = bookPageAccessKey;
-				element.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
+				nav.infoAnchor = element;
 			} else if (element.textContent == '下一章') {
-				element.accessKey = nextChapterAccessKey;
-				element.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+				nav.nextAnchor = element;
 			}
 		}
 	}
+	setAccessKeys(nav);
 	cleanupBody();
 }
 
@@ -281,6 +268,10 @@ export function handleBiqu33Route() {
 				rows.forEach((row) => {
 					(row as HTMLElement).style.display = 'flex';
 				});
+
+				cleanupBody();
+				// const root = document.defaultView as any;
+				// root.isMobile = true;
 				return;
 			}
 			switch (disguiseMode) {

@@ -1,3 +1,5 @@
+import { bookPageAccessKey, nextChapterAccessKey, previousChapterAccessKey } from './config';
+
 /**
  * 获取代码主题的CSS文件URL
  *
@@ -47,6 +49,11 @@ export function releaseCopy() {
 	document.oncontextmenu = null;
 	document.oncopy = null;
 	document.oncut = null;
+
+	document.body.onclick = null;
+	document.body.oncontextmenu = null;
+	document.body.oncopy = null;
+	document.body.oncut = null;
 }
 
 export const isInIframe = window.self !== window.top;
@@ -59,4 +66,27 @@ export function ensureDoc(doc: Document | string): Document {
 		return realDoc;
 	}
 	return doc;
+}
+
+export type NavLinks = {
+	prevAnchor?: HTMLAnchorElement;
+	infoAnchor?: HTMLAnchorElement;
+	nextAnchor?: HTMLAnchorElement;
+};
+
+export function setAccessKeys(nav: NavLinks) {
+	const { prevAnchor, infoAnchor, nextAnchor } = nav;
+
+	if (prevAnchor) {
+		prevAnchor.accessKey = previousChapterAccessKey;
+		prevAnchor.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
+	}
+	if (infoAnchor) {
+		infoAnchor.accessKey = bookPageAccessKey;
+		infoAnchor.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
+	}
+	if (nextAnchor) {
+		nextAnchor.accessKey = nextChapterAccessKey;
+		nextAnchor.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+	}
 }

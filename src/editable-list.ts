@@ -27,6 +27,7 @@ export class EditableList extends HTMLElement {
 
 		this.itemList = this.querySelector('ul.item-list')!!;
 		this.textInput = this.querySelector('.add-new-list-item-input')!!;
+		this.textInput!!.onkeydown = this.onKeydown.bind(this);
 	}
 	// fires after the element has been attached to the DOM
 	connectedCallback() {
@@ -36,10 +37,17 @@ export class EditableList extends HTMLElement {
 		addElementButton?.addEventListener('click', this.addListItem, false);
 	}
 
+	onKeydown(e: KeyboardEvent) {
+		if (e.ctrlKey && e.key === 'Enter') {
+			e.preventDefault();
+			this.addListItem();
+		}
+	}
+
 	// add items to the list
 	addListItem() {
 		const textInput = this.textInput;
-		let snippet = textInput?.value;
+		let snippet = textInput?.value.trim();
 		if (snippet) {
 			this.counter++;
 			const idx = this.counter.toString();

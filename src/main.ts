@@ -5,6 +5,7 @@ import { releaseCopy } from './utils';
 import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
+import { handleCuoCengRoute } from './cuoceng';
 
 (document.defaultView as any).Prism = (globalThis as any).Prism;
 
@@ -30,6 +31,9 @@ function handleRoute() {
 		GM_registerMenuCommand('脚本设置', function () {
 			open('/history.html');
 		});
+	} else if (location.hostname == 'www.cuoceng.com') {
+		// 错层小说处理逻辑
+		handleCuoCengRoute();
 	} else if (location.hostname == 'www.biqu33.cc' || location.pathname.startsWith('/book/')) {
 		// biqu33处理逻辑
 		handleBiqu33Route();

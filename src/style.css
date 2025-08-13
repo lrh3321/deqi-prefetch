@@ -30,6 +30,10 @@ body {
 	backdrop-filter: contrast(110%);
 }
 
+img {
+	visibility: hidden;
+}
+
 form fieldset {
 	display: block;
 	min-inline-size: min-content;
@@ -82,7 +86,9 @@ editable-list .icon {
 }
 
 editable-list textarea {
-	padding: 0.5rem;
+	border-radius: 0.75rem;
+	padding-block: 0.25rem;
+	padding-inline: 0.75rem;
 	width: 95%;
 }
 
@@ -103,7 +109,10 @@ editable-list ul {
 #article_main {
 	background: transparent;
 }
-
+#hp_photos,
+#main {
+	z-index: 9999;
+}
 #article_main #page-links a,
 #article_main #page-links span {
 	padding: 1px 10px;
@@ -120,6 +129,14 @@ editable-list ul {
 #article_main #page-links span {
 	background: #ccc;
 }
+#main a[role='button'] {
+	color: #555555;
+}
+#main a[role='button']:hover {
+	text-decoration: none;
+	color: #fa2080;
+}
+
 /* ddxiaoshuo */
 #ss-reader-main,
 .info-title {
@@ -132,5 +149,13 @@ editable-list ul {
 #ss-reader-main .readSet,
 #ss-reader-main .info-chapters-title,
 #ss-reader-main h1 {
+	display: none;
+}
+
+/* cuoceng */
+body.read_style_1 .header,
+body.read_style_1 #showDetail,
+#readcontent .textbox.cf,
+body.read_style_1 .textinfo {
 	display: none;
 }
