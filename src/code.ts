@@ -7,6 +7,7 @@ import {
 	fakeCodeSnippet,
 	inlineLengthMax
 } from './config';
+import { updateStyle } from './utils';
 
 let extendLanguageElement: HTMLScriptElement | null = null;
 export function setupExtendLanguageSupport() {
@@ -109,12 +110,12 @@ export function disguiseToCode(container: Element): HTMLPreElement {
 	container.parentElement!!.replaceChild(pre, container);
 
 	highlightElement(pre, false, (_) => {
-		document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
+		updateStyle(pre);
 	});
 	return pre;
 }
 
-export function disguiseParagraphs(container: Element) {
+export function disguiseParagraphs(container: Element): Element {
 	switch (disguiseMode) {
 		case 'none':
 			(container as HTMLElement).style.fontSize = 'var(--novel-font-size)';
@@ -123,9 +124,9 @@ export function disguiseParagraphs(container: Element) {
 		case 'code':
 		default:
 			// 伪装成代码
-			disguiseToCode(container);
-			break;
+			return disguiseToCode(container);
 	}
+	return container;
 }
 
 /**

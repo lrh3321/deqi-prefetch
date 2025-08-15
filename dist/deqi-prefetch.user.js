@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-130
+// @version      2025-08-150
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -32,7 +32,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const i=document.createElement("style");i.textContent=e,document.head.append(i)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%)}img{visibility:hidden}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}#hp_photos,#main{z-index:9999}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' [data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%);--primary-color: black;--secondary-color: gray}img{visibility:hidden}form{color:var(--primary-color)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}#hp_photos,#main{z-index:9999}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none}.article-root{justify-self:center;grid-template-rows:auto 1fr auto;height:100vh;display:grid;width:var(--container-width, "1200px");color:var(--primary-color)}.article-root .breadcrumb,.article-root .breadcrumb a{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background-color:transparent;color:var(--secondary-color)}.article-root .breadcrumb li{list-style-type:none;text-wrap:nowrap}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{font-size:1.5rem;display:flex;justify-content:center}.article-root .article-title code{background-color:transparent}.article-root .article-nav{justify-self:center;background:transparent;opacity:.6}.article-root .article-nav a{padding-inline:1rem;background-color:transparent;color:var(--secondary-color)}body[hidden]{display:none!important} ');
 
 (function () {
   'use strict';
@@ -42,6 +42,146 @@
   var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
   var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
   var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  function getCodeThemeURL(theme) {
+    const officialThemes = /* @__PURE__ */ new Set([
+      "prism",
+      "prism-dark",
+      "prism-funky",
+      "prism-okaidia",
+      "prism-twilight",
+      "prism-coy",
+      "prism-solarizedlight",
+      "prism-tomorrow"
+    ]);
+    if (officialThemes.has(theme)) {
+      return `https://dev.prismjs.com/themes/${theme}.min.css`;
+    }
+    return `https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/${theme}.min.css`;
+  }
+  function releaseCopy() {
+    const $ = globalThis.$;
+    if ($) {
+      const doc = $(document);
+      doc.off("contextmenu");
+      doc.off("copy");
+      doc.off("cut");
+    }
+    document.onclick = null;
+    document.oncontextmenu = null;
+    document.oncopy = null;
+    document.oncut = null;
+    document.body.onclick = null;
+    document.body.oncontextmenu = null;
+    document.body.oncopy = null;
+    document.body.oncut = null;
+  }
+  const isInIframe = window.self !== window.top;
+  function ensureDoc(doc) {
+    if (typeof doc === "string") {
+      const parser = new DOMParser();
+      const realDoc = parser.parseFromString(doc, "text/html");
+      return realDoc;
+    }
+    return doc;
+  }
+  function setAccessKeys(nav) {
+    const { prevAnchor, infoAnchor, nextAnchor } = nav;
+    if (prevAnchor) {
+      prevAnchor.accessKey = previousChapterAccessKey;
+      prevAnchor.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
+    }
+    if (infoAnchor) {
+      infoAnchor.accessKey = bookPageAccessKey;
+      infoAnchor.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
+    }
+    if (nextAnchor) {
+      nextAnchor.accessKey = nextChapterAccessKey;
+      nextAnchor.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
+    }
+  }
+  function rebuildChapterBody(page) {
+    const newBody = document.createElement("body");
+    newBody.style = document.body.style.cssText;
+    newBody.dataset.comment = document.body.dataset.comment;
+    const root = document.createElement("div");
+    root.className = "article-root";
+    const header = buildNovelHeader(page);
+    const main = buildNovelMain(page);
+    const footer = buildNovelFooter(page.navigationBar);
+    root.append(header, main, footer);
+    newBody.append(root);
+    document.body.replaceWith(newBody);
+  }
+  function updateStyle(pre) {
+    const computedStyle = getComputedStyle(pre);
+    document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
+    document.body.style.setProperty("--primary-color", computedStyle.color);
+    const comment = pre.querySelector("span.token.comment");
+    if (comment) {
+      const computedStyle2 = getComputedStyle(comment);
+      document.body.style.setProperty("--secondary-color", computedStyle2.color);
+    }
+  }
+  function buildNovelHeader(page) {
+    const { breadcrumbBar, title } = page;
+    const header = document.createElement("header");
+    if (breadcrumbBar) {
+      const breadcrumb = document.createElement("ol");
+      breadcrumb.className = "breadcrumb";
+      breadcrumbBar.querySelectorAll("a").forEach((a) => {
+        const li = document.createElement("li");
+        const newA = a.cloneNode(true);
+        li.appendChild(newA);
+        breadcrumb.appendChild(li);
+        const li2 = document.createElement("li");
+        li2.ariaHidden = "";
+        li2.innerHTML = "&rsaquo;";
+        breadcrumb.appendChild(li2);
+      });
+      breadcrumb.lastElementChild?.remove();
+      if (title) {
+        const li = document.createElement("li");
+        li.innerHTML = title;
+        breadcrumb.appendChild(li);
+      }
+      header.appendChild(breadcrumb);
+    }
+    return header;
+  }
+  function buildNovelMain(page) {
+    const { title, mainSection } = page;
+    const main = document.createElement("main");
+    const article = document.createElement("article");
+    if (title) {
+      const h2 = document.createElement("h2");
+      h2.className = "article-title";
+      h2.innerText = title;
+      h2.title = title;
+      article.appendChild(h2);
+    }
+    const section = document.createElement("section");
+    section.appendChild(mainSection);
+    article.appendChild(section);
+    main.appendChild(article);
+    return main;
+  }
+  function buildNovelFooter(nav) {
+    const footer = document.createElement("footer");
+    const navBar = document.createElement("nav");
+    navBar.className = "article-nav";
+    if (nav.prevAnchor) {
+      navBar.appendChild(nav.prevAnchor);
+    }
+    if (nav.infoAnchor) {
+      navBar.appendChild(nav.infoAnchor);
+    }
+    if (nav.nextAnchor) {
+      navBar.appendChild(nav.nextAnchor);
+    }
+    navBar.insertAdjacentHTML("beforeend", '<a href="/">小说列表</a>');
+    footer.appendChild(navBar);
+    return footer;
+  }
   let extendLanguageElement = null;
   function setupExtendLanguageSupport() {
     if (!coreLanguages.has(codeLang)) {
@@ -125,7 +265,7 @@ ${blockCommentEnd}`);
     const pre = createPreformattedCode(codeSegments.join("\n"));
     container.parentElement.replaceChild(pre, container);
     highlightElement(pre, false, (_) => {
-      document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
+      updateStyle(pre);
     });
     return pre;
   }
@@ -137,9 +277,9 @@ ${blockCommentEnd}`);
         break;
       case "code":
       default:
-        disguiseToCode(container);
-        break;
+        return disguiseToCode(container);
     }
+    return container;
   }
   function createPreformattedCode(snippet) {
     const code = document.createElement("code");
@@ -290,63 +430,6 @@ ${blockCommentEnd}`);
   }
   function setupEditableList() {
     customElements.define("editable-list", EditableList);
-  }
-  function getCodeThemeURL(theme) {
-    const officialThemes = /* @__PURE__ */ new Set([
-      "prism",
-      "prism-dark",
-      "prism-funky",
-      "prism-okaidia",
-      "prism-twilight",
-      "prism-coy",
-      "prism-solarizedlight",
-      "prism-tomorrow"
-    ]);
-    if (officialThemes.has(theme)) {
-      return `https://dev.prismjs.com/themes/${theme}.min.css`;
-    }
-    return `https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/${theme}.min.css`;
-  }
-  function releaseCopy() {
-    const $ = globalThis.$;
-    if ($) {
-      const doc = $(document);
-      doc.off("contextmenu");
-      doc.off("copy");
-      doc.off("cut");
-    }
-    document.onclick = null;
-    document.oncontextmenu = null;
-    document.oncopy = null;
-    document.oncut = null;
-    document.body.onclick = null;
-    document.body.oncontextmenu = null;
-    document.body.oncopy = null;
-    document.body.oncut = null;
-  }
-  const isInIframe = window.self !== window.top;
-  function ensureDoc(doc) {
-    if (typeof doc === "string") {
-      const parser = new DOMParser();
-      const realDoc = parser.parseFromString(doc, "text/html");
-      return realDoc;
-    }
-    return doc;
-  }
-  function setAccessKeys(nav) {
-    const { prevAnchor, infoAnchor, nextAnchor } = nav;
-    if (prevAnchor) {
-      prevAnchor.accessKey = previousChapterAccessKey;
-      prevAnchor.ariaKeyShortcuts = `Alt+${previousChapterAccessKey}`;
-    }
-    if (infoAnchor) {
-      infoAnchor.accessKey = bookPageAccessKey;
-      infoAnchor.ariaKeyShortcuts = `Alt+${bookPageAccessKey}`;
-    }
-    if (nextAnchor) {
-      nextAnchor.accessKey = nextChapterAccessKey;
-      nextAnchor.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
-    }
   }
   let disguiseDebug = _GM_getValue("disguiseDebug", false);
   let novelFontSize = _GM_getValue("novel-font-size", "16px");
@@ -815,9 +898,7 @@ function foo(bar) {
     setTimeout(() => {
       const pre = document.querySelector("pre");
       if (pre) {
-        const computedStyle = getComputedStyle(pre);
-        document.body.style.backgroundColor = computedStyle.backgroundColor;
-        form.style.color = computedStyle.color;
+        updateStyle(pre);
       }
     }, 1e3);
     return form;
@@ -1114,25 +1195,69 @@ function foo(bar) {
     const articleMain = document.getElementById("article_main");
     const mainboxs = document.getElementById("mainboxs");
     netxDivs.forEach((div) => {
-      const next = document.createElement("div");
-      next.innerHTML = div;
-      mainboxs.appendChild(next);
+      if (typeof div === "undefined") {
+        return;
+      }
+      if (typeof div === "string") {
+        const next = document.createElement("div");
+        next.innerHTML = div;
+        mainboxs.appendChild(next);
+      }
     });
-    if (articleMain) {
-      articleMain.appendChild(document.querySelector("div.page-links"));
-      articleMain.appendChild(document.getElementById("post-h2"));
-      articleMain.appendChild(mainboxs);
-      articleMain.appendChild(document.querySelector("div.prenext"));
-      articleMain.appendChild(document.querySelector("div.post-content"));
-      if (hasCanvas) {
-        articleMain.append("章节不完整");
-        articleMain.appendChild(document.getElementById("page-links"));
+    const mainSection = disguiseParagraphs(mainboxs);
+    const prenexts = document.querySelectorAll("div.prenext a");
+    const navigationBar = {};
+    for (const element of prenexts) {
+      if (element instanceof HTMLAnchorElement) {
+        if (element.textContent == "上一章") {
+          navigationBar.prevAnchor = element;
+        } else if (element.textContent == "章节目录") {
+          navigationBar.infoAnchor = element;
+        } else if (element.textContent == "下一章") {
+          navigationBar.nextAnchor = element;
+        }
       }
     }
-    disguiseParagraphs(mainboxs);
+    setAccessKeys(navigationBar);
+    if (articleMain) {
+      if (hasCanvas) {
+        articleMain.appendChild(document.querySelector("div.page-links"));
+        articleMain.appendChild(document.getElementById("post-h2"));
+        articleMain.appendChild(mainboxs);
+        articleMain.appendChild(document.querySelector("div.prenext"));
+        articleMain.appendChild(document.querySelector("div.post-content"));
+        articleMain.append("章节不完整");
+        articleMain.appendChild(document.getElementById("page-links"));
+      } else {
+        const title = document.getElementById("post-h2")?.innerHTML;
+        rebuildChapterBody({
+          breadcrumbBar: document.querySelector("div.page-links"),
+          title,
+          mainSection,
+          navigationBar
+        });
+      }
+    }
   }
   function getMainBox(doc) {
     return ensureDoc(doc).getElementById("mainboxs");
+  }
+  function getCanvasScript(doc) {
+    const document2 = ensureDoc(doc);
+    let scriptCopy = void 0;
+    const scripts = Array.from(document2.body.querySelectorAll("script:not([src])"));
+    scripts.forEach((script) => {
+      if (typeof scriptCopy != "undefined") {
+        return;
+      }
+      if (script.innerHTML.includes(`if(!isMobile)`) && !script.innerHTML.includes(`qrcode`)) {
+        console.log("有手机浏览器限制");
+        scriptCopy = document2.createElement("script");
+        scriptCopy.innerHTML = script.innerHTML;
+        return;
+      }
+    });
+    return scriptCopy;
   }
   function getPrevLink(doc) {
     const rDoc = ensureDoc(doc);
@@ -1165,8 +1290,10 @@ function foo(bar) {
             const div = getMainBox(doc);
             if (div.getElementsByTagName("p").length == 0) {
               hasCanvas = true;
+              netxDivs[index] = getCanvasScript(doc);
+            } else {
+              netxDivs[index] = div.innerHTML;
             }
-            netxDivs[index] = div.innerHTML;
             if (!hasCanvas) {
               anchor.remove();
             }
@@ -1187,20 +1314,6 @@ function foo(bar) {
         }
       });
     }
-    const prenexts = document.querySelectorAll("div.prenext a");
-    const nav = {};
-    for (const element of prenexts) {
-      if (element instanceof HTMLAnchorElement) {
-        if (element.textContent == "上一章") {
-          nav.prevAnchor = element;
-        } else if (element.textContent == "章节目录") {
-          nav.infoAnchor = element;
-        } else if (element.textContent == "下一章") {
-          nav.nextAnchor = element;
-        }
-      }
-    }
-    setAccessKeys(nav);
     cleanupBody$1();
   }
   function handleBiqu33Route() {
@@ -1225,7 +1338,14 @@ function foo(bar) {
           rows.forEach((row) => {
             row.style.display = "flex";
           });
+          const thisWin = document.defaultView;
+          let scriptCopy = getCanvasScript(document);
           cleanupBody$1();
+          if (scriptCopy && !thisWin.isMobile) {
+            document.getElementById("qrcode")?.remove();
+            thisWin.isMobile = true;
+            document.body.appendChild(scriptCopy);
+          }
           return;
         }
         switch (disguiseMode) {
@@ -1264,18 +1384,25 @@ function foo(bar) {
     const prevAnchor = document.getElementById("prev_url");
     const infoAnchor = document.getElementById("info_url");
     const nextAnchor = document.getElementById("next_url");
-    setAccessKeys({ prevAnchor, infoAnchor, nextAnchor });
-    disguiseParagraphs(document.getElementById("article"));
-    document.body.appendChild(document.getElementById("ss-reader-main"));
-    cleanupBody();
+    const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
+    setAccessKeys(navigationBar);
+    const breadcrumbBar = document.querySelector(".info-title");
+    const title = document.title.split("-").shift();
+    const mainSection = disguiseParagraphs(document.getElementById("article"));
+    const page = { breadcrumbBar, title, mainSection, navigationBar };
+    rebuildChapterBody(page);
   }
   function continueFetchPages(curDoc) {
     const nextURL = curDoc.getElementById("next_url");
     if (nextURL.textContent.trim() == "下一章") {
       const t = document.getElementById("next_url");
-      t.parentElement?.replaceChild(nextURL, t);
+      t.replaceWith(nextURL);
       formatArticle();
     } else {
+      if (nextURL.href.startsWith("javascript:")) {
+        console.error("Cannot fetch next page");
+        return;
+      }
       _GM_xmlhttpRequest({
         method: "GET",
         url: nextURL.href,
@@ -1298,10 +1425,7 @@ function foo(bar) {
       disguiseParagraphs(document.getElementById("article"));
       return;
     }
-    const readNav = document.querySelector(".read_nav");
-    if (readNav) {
-      readNav.remove();
-    }
+    document.body.setAttribute("hidden", "");
     continueFetchPages(document);
   }
   function handleDDxiaoshuoRoute() {
@@ -1337,25 +1461,17 @@ function foo(bar) {
   }
   function handleChapterPage() {
     const showReading = document.getElementById("showReading");
-    const article = document.createElement("div");
-    article.innerHTML = showReading.innerHTML;
-    showReading.remove();
-    const readcontent = document.getElementById("readcontent");
-    const bookTitle = readcontent.querySelector(".book_title");
+    const bookTitle = document.querySelector("#readcontent .book_title h1");
     const nextPageBox = document.querySelector(".nextPageBox");
     const prevAnchor = nextPageBox.querySelector(".prev");
     const infoAnchor = nextPageBox.querySelector(".dir");
     const nextAnchor = nextPageBox.querySelector(".next");
-    setAccessKeys({ prevAnchor, infoAnchor, nextAnchor });
-    readcontent.appendChild(bookTitle);
-    readcontent.appendChild(article);
-    disguiseParagraphs(article);
-    readcontent.appendChild(nextPageBox);
-    const body = document.createElement("body");
-    getComputedStyle(document.body);
-    body.style = document.body.style.cssText;
-    document.body = body;
-    body.appendChild(readcontent);
+    const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
+    setAccessKeys(navigationBar);
+    const title = bookTitle.textContent;
+    const breadcrumbBar = document.querySelector(".bookNav");
+    const mainSection = disguiseParagraphs(showReading);
+    rebuildChapterBody({ breadcrumbBar, title, mainSection, navigationBar });
   }
   function handleSettingPage() {
     const settingForm = createSettingForm();

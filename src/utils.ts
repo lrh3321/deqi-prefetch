@@ -90,3 +90,101 @@ export function setAccessKeys(nav: NavLinks) {
 		nextAnchor.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
 	}
 }
+
+export type Page = {
+	breadcrumbBar?: Element;
+	searchForm?: Element;
+	title?: string;
+	mainSection: Element;
+	navigationBar: NavLinks;
+};
+
+export function rebuildChapterBody(page: Page) {
+	const newBody = document.createElement('body');
+	newBody.style = document.body.style.cssText;
+	newBody.dataset.comment = document.body.dataset.comment;
+
+	const root = document.createElement('div');
+	root.className = 'article-root';
+
+	const header = buildNovelHeader(page);
+	const main = buildNovelMain(page);
+	const footer = buildNovelFooter(page.navigationBar);
+
+	root.append(header, main, footer);
+	newBody.append(root);
+	document.body.replaceWith(newBody);
+}
+
+export function updateStyle(pre: HTMLPreElement) {
+	const computedStyle = getComputedStyle(pre);
+	document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
+	document.body.style.setProperty('--primary-color', computedStyle.color);
+	const comment = pre.querySelector('span.token.comment');
+	if (comment) {
+		const computedStyle = getComputedStyle(comment);
+		document.body.style.setProperty('--secondary-color', computedStyle.color);
+	}
+}
+
+function buildNovelHeader(page: Page): HTMLElement {
+	const { breadcrumbBar, title } = page;
+	const header = document.createElement('header');
+	if (breadcrumbBar) {
+		const breadcrumb = document.createElement('ol');
+		breadcrumb.className = 'breadcrumb';
+		breadcrumbBar.querySelectorAll('a').forEach((a) => {
+			const li = document.createElement('li');
+			const newA = a.cloneNode(true);
+			li.appendChild(newA);
+			breadcrumb.appendChild(li);
+
+			const li2 = document.createElement('li');
+			li2.ariaHidden = '';
+			li2.innerHTML = '&rsaquo;';
+			breadcrumb.appendChild(li2);
+		});
+		breadcrumb.lastElementChild?.remove();
+		if (title) {
+			const li = document.createElement('li');
+			li.innerHTML = title;
+			breadcrumb.appendChild(li);
+		}
+		header.appendChild(breadcrumb);
+	}
+	return header;
+}
+function buildNovelMain(page: Page): HTMLElement {
+	const { title, mainSection } = page;
+	const main = document.createElement('main');
+	const article = document.createElement('article');
+	if (title) {
+		const h2 = document.createElement('h2');
+		h2.className = 'article-title';
+		h2.innerText = title;
+		h2.title = title;
+		article.appendChild(h2);
+	}
+	const section = document.createElement('section');
+	section.appendChild(mainSection);
+	article.appendChild(section);
+	main.appendChild(article);
+	return main;
+}
+function buildNovelFooter(nav: NavLinks): HTMLElement {
+	const footer = document.createElement('footer');
+	const navBar = document.createElement('nav');
+	navBar.className = 'article-nav';
+	if (nav.prevAnchor) {
+		navBar.appendChild(nav.prevAnchor);
+	}
+	if (nav.infoAnchor) {
+		navBar.appendChild(nav.infoAnchor);
+	}
+	if (nav.nextAnchor) {
+		navBar.appendChild(nav.nextAnchor);
+	}
+	navBar.insertAdjacentHTML('beforeend', '<a href="/">小说列表</a>');
+	footer.appendChild(navBar);
+	return footer;
+}

@@ -1,34 +1,24 @@
 import { GM_registerMenuCommand } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseMode, setupCodeTheme } from './config';
-import { setAccessKeys } from './utils';
+import { rebuildChapterBody, setAccessKeys } from './utils';
 
 function handleChapterPage() {
 	const showReading = document.getElementById('showReading')!!;
-
-	const article = document.createElement('div');
-	article.innerHTML = showReading.innerHTML;
-	showReading.remove();
-
-	const readcontent = document.getElementById('readcontent')!!;
-	const bookTitle = readcontent.querySelector('.book_title')!!;
+	const bookTitle = document.querySelector('#readcontent .book_title h1')!!;
 	const nextPageBox = document.querySelector('.nextPageBox')!!;
 
 	const prevAnchor = nextPageBox.querySelector('.prev')!! as HTMLAnchorElement;
 	const infoAnchor = nextPageBox.querySelector('.dir')!! as HTMLAnchorElement;
 	const nextAnchor = nextPageBox.querySelector('.next')!! as HTMLAnchorElement;
-	setAccessKeys({ prevAnchor, infoAnchor, nextAnchor });
+	const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
+	setAccessKeys(navigationBar);
 
-	readcontent.appendChild(bookTitle);
-	readcontent.appendChild(article);
-	disguiseParagraphs(article);
-	readcontent.appendChild(nextPageBox);
+	const title = bookTitle.textContent;
+	const breadcrumbBar = document.querySelector('.bookNav')!!;
+	const mainSection = disguiseParagraphs(showReading);
 
-	const body = document.createElement('body');
-	getComputedStyle(document.body);
-	body.style = document.body.style.cssText;
-	document.body = body;
-	body.appendChild(readcontent);
+	rebuildChapterBody({ breadcrumbBar, title, mainSection, navigationBar });
 }
 function handleSettingPage() {
 	const settingForm = createSettingForm();

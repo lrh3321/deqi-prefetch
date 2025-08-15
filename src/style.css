@@ -28,12 +28,16 @@ span.token.comment {
 
 body {
 	backdrop-filter: contrast(110%);
+	--primary-color: black;
+	--secondary-color: gray;
 }
 
 img {
 	visibility: hidden;
 }
-
+form {
+	color: var(--primary-color);
+}
 form fieldset {
 	display: block;
 	min-inline-size: min-content;
@@ -158,4 +162,55 @@ body.read_style_1 #showDetail,
 #readcontent .textbox.cf,
 body.read_style_1 .textinfo {
 	display: none;
+}
+
+/* clean page */
+.article-root {
+	justify-self: center;
+	grid-template-rows: auto 1fr auto;
+	height: 100vh;
+	display: grid;
+	width: var(--container-width, '1200px');
+	color: var(--primary-color);
+}
+.article-root .breadcrumb,
+.article-root .breadcrumb a {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	align-items: center;
+	background-color: transparent;
+	color: var(--secondary-color);
+}
+.article-root .breadcrumb li {
+	list-style-type: none;
+	text-wrap: nowrap;
+}
+.article-root .breadcrumb li[aria-hidden] {
+	opacity: 0.5;
+}
+.article-root .breadcrumb a :hover {
+	opacity: 0.6;
+	text-decoration: underline;
+}
+.article-root .article-title {
+	font-size: 1.5rem;
+	display: flex;
+	justify-content: center;
+}
+.article-root .article-title code {
+	background-color: transparent;
+}
+.article-root .article-nav {
+	justify-self: center;
+	background: transparent;
+	opacity: 0.6;
+}
+.article-root .article-nav a {
+	padding-inline: 1rem;
+	background-color: transparent;
+	color: var(--secondary-color);
+}
+body[hidden] {
+	display: none !important;
 }

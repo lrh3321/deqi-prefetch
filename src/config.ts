@@ -1,7 +1,7 @@
 import { GM_addElement, GM_getValue, GM_setValue } from '$';
 import { highlightElement, setupExtendLanguageSupport } from './code';
 import { EditableList, setupEditableList } from './editable-list';
-import { getCodeThemeURL } from './utils';
+import { getCodeThemeURL, updateStyle } from './utils';
 
 export let disguiseDebug = GM_getValue('disguiseDebug', false);
 export let novelFontSize = GM_getValue('novel-font-size', '16px');
@@ -539,9 +539,7 @@ export function createSettingForm(): HTMLFormElement {
 	setTimeout(() => {
 		const pre = document.querySelector('pre');
 		if (pre) {
-			const computedStyle = getComputedStyle(pre);
-			document.body.style.backgroundColor = computedStyle.backgroundColor;
-			form.style.color = computedStyle.color;
+			updateStyle(pre);
 		}
 	}, 1000);
 	return form;

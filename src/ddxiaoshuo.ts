@@ -1,7 +1,7 @@
 import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
-import { ensureDoc, setAccessKeys } from './utils';
+import { ensureDoc, rebuildChapterBody, setAccessKeys } from './utils';
 
 function cleanupBody() {
 	const children = Array.from(document.body.children).filter((it) => it.id != 'ss-reader-main');
@@ -32,20 +32,28 @@ function formatArticle() {
 	const prevAnchor = document.getElementById('prev_url')!! as HTMLAnchorElement;
 	const infoAnchor = document.getElementById('info_url')!! as HTMLAnchorElement;
 	const nextAnchor = document.getElementById('next_url')!! as HTMLAnchorElement;
-	setAccessKeys({ prevAnchor, infoAnchor, nextAnchor });
 
-	disguiseParagraphs(document.getElementById('article')!!);
-	document.body.appendChild(document.getElementById('ss-reader-main')!!);
-	cleanupBody();
+	const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
+	setAccessKeys(navigationBar);
+
+	const breadcrumbBar = document.querySelector('.info-title') as HTMLElement;
+	const title = document.title.split('-').shift();
+	const mainSection = disguiseParagraphs(document.getElementById('article')!!);
+	const page = { breadcrumbBar, title, mainSection, navigationBar };
+	rebuildChapterBody(page);
 }
 
 function continueFetchPages(curDoc: Document) {
 	const nextURL = curDoc.getElementById('next_url')!! as HTMLAnchorElement;
 	if (nextURL.textContent.trim() == '下一章') {
 		const t = document.getElementById('next_url')!! as HTMLAnchorElement;
-		t.parentElement?.replaceChild(nextURL, t);
+		t.replaceWith(nextURL);
 		formatArticle();
 	} else {
+		if (nextURL.href.startsWith('javascript:')) {
+			console.error('Cannot fetch next page');
+			return;
+		}
 		GM_xmlhttpRequest({
 			method: 'GET',
 			url: nextURL.href,
@@ -70,12 +78,7 @@ function handleChapterPage() {
 		disguiseParagraphs(document.getElementById('article')!!);
 		return;
 	}
-
-	const readNav = document.querySelector('.read_nav');
-	if (readNav) {
-		readNav.remove();
-	}
-
+	document.body.setAttribute('hidden', '');
 	continueFetchPages(document);
 }
 

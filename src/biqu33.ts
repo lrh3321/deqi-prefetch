@@ -1,7 +1,7 @@
 import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
-import { ensureDoc, NavLinks, setAccessKeys } from './utils';
+import { ensureDoc, NavLinks, rebuildChapterBody, setAccessKeys } from './utils';
 
 let bookID: string = '';
 const chapterLinks = new Array<ChapterLink>();
@@ -145,31 +145,81 @@ function createChapterLink(href: string, title: string): HTMLDivElement {
 	return div;
 }
 
-function appendRemainPages(netxDivs: Array<string | undefined>, hasCanvas: boolean) {
+function appendRemainPages(
+	netxDivs: Array<string | HTMLScriptElement | undefined>,
+	hasCanvas: boolean
+) {
 	const articleMain = document.getElementById('article_main');
 	const mainboxs = document.getElementById('mainboxs')!!;
 	netxDivs.forEach((div) => {
-		const next = document.createElement('div');
-		next.innerHTML = div!!;
-		mainboxs.appendChild(next);
+		if (typeof div === 'undefined') {
+			return;
+		}
+		if (typeof div === 'string') {
+			const next = document.createElement('div');
+			next.innerHTML = div!!;
+			mainboxs.appendChild(next);
+			// } else {
+			// 	document.body.appendChild(div);
+		}
 	});
 
-	if (articleMain) {
-		articleMain.appendChild(document.querySelector('div.page-links')!!);
-		articleMain.appendChild(document.getElementById('post-h2')!!);
-		articleMain.appendChild(mainboxs);
-		articleMain.appendChild(document.querySelector('div.prenext')!!);
-		articleMain.appendChild(document.querySelector('div.post-content')!!);
-		if (hasCanvas) {
-			articleMain.append('章节不完整');
-			articleMain.appendChild(document.getElementById('page-links')!!);
+	const mainSection = disguiseParagraphs(mainboxs);
+	const prenexts = document.querySelectorAll('div.prenext a');
+	const navigationBar: NavLinks = {};
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == '上一章') {
+				navigationBar.prevAnchor = element;
+			} else if (element.textContent == '章节目录') {
+				navigationBar.infoAnchor = element;
+			} else if (element.textContent == '下一章') {
+				navigationBar.nextAnchor = element;
+			}
 		}
 	}
-	disguiseParagraphs(mainboxs);
+	setAccessKeys(navigationBar);
+	if (articleMain) {
+		if (hasCanvas) {
+			articleMain.appendChild(document.querySelector('div.page-links')!!);
+			articleMain.appendChild(document.getElementById('post-h2')!!);
+			articleMain.appendChild(mainboxs);
+			articleMain.appendChild(document.querySelector('div.prenext')!!);
+			articleMain.appendChild(document.querySelector('div.post-content')!!);
+			articleMain.append('章节不完整');
+			articleMain.appendChild(document.getElementById('page-links')!!);
+		} else {
+			const title = document.getElementById('post-h2')?.innerHTML;
+			rebuildChapterBody({
+				breadcrumbBar: document.querySelector('div.page-links')!!,
+				title,
+				mainSection,
+				navigationBar
+			});
+		}
+	}
 }
 
 function getMainBox(doc: Document | string): Element {
 	return ensureDoc(doc).getElementById('mainboxs')!!;
+}
+function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined {
+	const document = ensureDoc(doc);
+	let scriptCopy: HTMLScriptElement | undefined = undefined;
+	const scripts = Array.from(document.body.querySelectorAll('script:not([src])'));
+	scripts.forEach((script) => {
+		if (typeof scriptCopy != 'undefined') {
+			return;
+		}
+		if (script.innerHTML.includes(`if(!isMobile)`) && !script.innerHTML.includes(`qrcode`)) {
+			// 有手机浏览器限制
+			console.log('有手机浏览器限制');
+			scriptCopy = document.createElement('script');
+			scriptCopy.innerHTML = script.innerHTML;
+			return;
+		}
+	});
+	return scriptCopy;
 }
 
 function getPrevLink(doc: Document | string): ChapterLink {
@@ -190,7 +240,7 @@ function handleChapterPage() {
 		document.querySelectorAll('#page-links a.post-page-numbers')
 	) as HTMLAnchorElement[];
 
-	const netxDivs = new Array<string | undefined>(nextLinks.length);
+	const netxDivs = new Array<string | HTMLScriptElement | undefined>(nextLinks.length);
 	let remainLinks = nextLinks.length;
 	let hasCanvas = false;
 	for (let index = 0; index < nextLinks.length; index++) {
@@ -205,8 +255,10 @@ function handleChapterPage() {
 					const div: Element = getMainBox(doc);
 					if (div.getElementsByTagName('p').length == 0) {
 						hasCanvas = true;
+						netxDivs[index] = getCanvasScript(doc);
+					} else {
+						netxDivs[index] = div.innerHTML;
 					}
-					netxDivs[index] = div.innerHTML;
 					if (!hasCanvas) {
 						anchor.remove();
 					}
@@ -227,21 +279,6 @@ function handleChapterPage() {
 			}
 		});
 	}
-
-	const prenexts = document.querySelectorAll('div.prenext a');
-	const nav: NavLinks = {};
-	for (const element of prenexts) {
-		if (element instanceof HTMLAnchorElement) {
-			if (element.textContent == '上一章') {
-				nav.prevAnchor = element;
-			} else if (element.textContent == '章节目录') {
-				nav.infoAnchor = element;
-			} else if (element.textContent == '下一章') {
-				nav.nextAnchor = element;
-			}
-		}
-	}
-	setAccessKeys(nav);
 	cleanupBody();
 }
 
@@ -269,9 +306,15 @@ export function handleBiqu33Route() {
 					(row as HTMLElement).style.display = 'flex';
 				});
 
+				const thisWin = document.defaultView as docThis;
+				let scriptCopy = getCanvasScript(document);
+
 				cleanupBody();
-				// const root = document.defaultView as any;
-				// root.isMobile = true;
+				if (scriptCopy && !thisWin.isMobile) {
+					document.getElementById('qrcode')?.remove();
+					thisWin.isMobile = true;
+					document.body.appendChild(scriptCopy);
+				}
 				return;
 			}
 			switch (disguiseMode) {
@@ -288,3 +331,5 @@ export function handleBiqu33Route() {
 			break;
 	}
 }
+
+type docThis = (WindowProxy & typeof globalThis) & { isMobile?: boolean };
