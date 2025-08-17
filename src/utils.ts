@@ -99,7 +99,14 @@ export type Page = {
 	navigationBar: NavLinks;
 };
 
-export function rebuildChapterBody(page: Page) {
+export type CleanPage = {
+	root: HTMLDivElement;
+	header: HTMLElement;
+	main: HTMLElement;
+	footer: HTMLElement;
+};
+
+export function rebuildChapterBody(page: Page): CleanPage {
 	const newBody = document.createElement('body');
 	newBody.style = document.body.style.cssText;
 	newBody.dataset.comment = document.body.dataset.comment;
@@ -114,6 +121,8 @@ export function rebuildChapterBody(page: Page) {
 	root.append(header, main, footer);
 	newBody.append(root);
 	document.body.replaceWith(newBody);
+
+	return { root, header, main, footer };
 }
 
 export function updateStyle(pre: HTMLPreElement) {

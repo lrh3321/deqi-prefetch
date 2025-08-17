@@ -31,7 +31,7 @@ function handleRoute() {
 		GM_registerMenuCommand('脚本设置', function () {
 			open('/history.html');
 		});
-	} else if (location.hostname == 'www.cuoceng.com') {
+	} else if (location.hostname == 'www.cuoceng.com' || location.hostname == 'cuoceng.com') {
 		// 错层小说处理逻辑
 		handleCuoCengRoute();
 	} else if (location.hostname == 'www.biqu33.cc' || location.pathname.startsWith('/book/')) {

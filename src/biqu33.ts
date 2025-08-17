@@ -20,8 +20,13 @@ function cleanupBody() {
 	});
 	ob.observe(document.body, { childList: true });
 
-	const children = Array.from(document.body.children).filter((it) => it.id != 'main');
+	const children = Array.from(document.body.children).filter(
+		(it) => it.id != 'main' && it.id != 'mainboxs'
+	);
 	children.forEach((it) => {
+		if (it.tagName == 'STYLE' || it.className == 'article-root') {
+			return;
+		}
 		it.remove();
 	});
 }
@@ -151,6 +156,7 @@ function appendRemainPages(
 ) {
 	const articleMain = document.getElementById('article_main');
 	const mainboxs = document.getElementById('mainboxs')!!;
+	const scripts: string[] = [];
 	netxDivs.forEach((div) => {
 		if (typeof div === 'undefined') {
 			return;
@@ -159,8 +165,8 @@ function appendRemainPages(
 			const next = document.createElement('div');
 			next.innerHTML = div!!;
 			mainboxs.appendChild(next);
-			// } else {
-			// 	document.body.appendChild(div);
+		} else {
+			scripts.push(div.innerHTML);
 		}
 	});
 
@@ -179,24 +185,40 @@ function appendRemainPages(
 		}
 	}
 	setAccessKeys(navigationBar);
+	const title = document.getElementById('post-h2')?.innerHTML;
+	const page = {
+		breadcrumbBar: document.querySelector('div.page-links')!!,
+		title,
+		mainSection,
+		navigationBar
+	};
 	if (articleMain) {
 		if (hasCanvas) {
-			articleMain.appendChild(document.querySelector('div.page-links')!!);
-			articleMain.appendChild(document.getElementById('post-h2')!!);
-			articleMain.appendChild(mainboxs);
-			articleMain.appendChild(document.querySelector('div.prenext')!!);
-			articleMain.appendChild(document.querySelector('div.post-content')!!);
-			articleMain.append('章节不完整');
-			articleMain.appendChild(document.getElementById('page-links')!!);
+			const styles = Array.from(document.body.querySelectorAll('style'));
+			const pageLinks = document.getElementById('page-links')!!;
+			rebuildChapterBody(page);
+			document.body.append(...styles);
+			const articleFooter = document.querySelector('div.article-root footer')!!;
+			articleFooter.append('章节不完整');
+			articleFooter.appendChild(pageLinks);
+			// cleanupBody();
+			handleCanvasScript(scripts);
 		} else {
-			const title = document.getElementById('post-h2')?.innerHTML;
-			rebuildChapterBody({
-				breadcrumbBar: document.querySelector('div.page-links')!!,
-				title,
-				mainSection,
-				navigationBar
-			});
+			rebuildChapterBody(page);
 		}
+	}
+}
+
+function handleCanvasScript(scripts: string[]) {
+	// #mainboxs
+	if (scripts.length > 0) {
+		console.log('handleCanvasScript');
+	// 	const mainboxs = document.createElement('div');
+	// 	mainboxs.id = 'mainboxs';
+	// 	const scriptElement = document.createElement('script');
+	// 	scriptElement.innerHTML = scripts.shift()!!;
+	// 	document.body.appendChild(mainboxs);
+	// 	mainboxs.after(scriptElement);
 	}
 }
 
@@ -279,7 +301,6 @@ function handleChapterPage() {
 			}
 		});
 	}
-	cleanupBody();
 }
 
 export function handleBiqu33Route() {

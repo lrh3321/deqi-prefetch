@@ -27,12 +27,13 @@ export default defineConfig({
 					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js'
 				],
 				match: [
-					'*://www.deqixs.com/pifu/',
-					'*://www.deqixs.com/xiaoshuo/*/*.html',
-					'*://www.deqixs.com/xiaoshuo/*/',
-					'*://www.biqu33.cc/*',
-					'*://www.ddxiaoshuo.cc/*',
-					'*://www.cuoceng.com/*'
+					'http*://www.deqixs.com/pifu/',
+					'http*://www.deqixs.com/xiaoshuo/*/*.html',
+					'http*://www.deqixs.com/xiaoshuo/*/',
+					'http*://www.biqu33.cc/*',
+					'http*://www.ddxiaoshuo.cc/*',
+					'http*://cuoceng.com/*',
+					'http*://www.cuoceng.com/*'
 				],
 				connect: ['self'],
 				grant: [

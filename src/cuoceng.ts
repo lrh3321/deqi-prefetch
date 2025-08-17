@@ -32,10 +32,6 @@ function handleSettingPage() {
 function cleanBookPage() {}
 
 export function handleCuoCengRoute() {
-	document.body.style.display = 'flex';
-	document.body.style.flexDirection = 'column';
-	document.body.style.justifyContent = 'center';
-
 	const segments = location.pathname.split('/').filter(Boolean);
 	switch (segments.length) {
 		case 0:
