@@ -68,25 +68,21 @@ editable-list li {
 	height: fit-content;
 	display: flex;
 	align-items: baseline;
-
-	--list-display: none;
 }
 
-editable-list li:hover {
-	--list-display: block;
+editable-list figure {
+	margin: 0;
 }
 
-editable-list li:hover .icon {
-	top: 0rem;
-	right: 3rem;
+editable-list figcaption {
+	backdrop-filter: contrast(120%);
+	text-align: end;
 }
 
 editable-list .icon {
 	border: none;
 	cursor: pointer;
-	position: relative;
 	font-size: 1.8rem;
-	display: var(--list-display);
 }
 
 editable-list textarea {
@@ -201,6 +197,16 @@ body.read_style_1 .textinfo {
 .article-root .article-title code {
 	background-color: transparent;
 }
+
+.article-root section.img-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.article-root section.img-container img {
+	visibility: initial;
+}
+
 .article-root .article-nav {
 	justify-self: center;
 	background: transparent;

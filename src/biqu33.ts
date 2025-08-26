@@ -206,19 +206,35 @@ function appendRemainPages(
 	const page = getPage();
 	if (articleMain) {
 		if (hasCanvas) {
-			const styles = Array.from(document.body.querySelectorAll('style'));
-			const pageLinks = document.getElementById('page-links')!!;
 			rebuildChapterBody(page);
-			document.body.append(...styles);
-			const articleFooter = document.querySelector('div.article-root footer')!!;
-			articleFooter.appendChild(pageLinks);
-			articleFooter.append('章节不完整');
+			mainboxs.id = '';
 			handleCanvasScript(scripts);
 		} else {
 			rebuildChapterBody(page);
 		}
 		cleanupBody();
 	}
+}
+
+function mergeCanvases(canvases: HTMLCanvasElement[]): HTMLCanvasElement {
+	const result = document.createElement('canvas');
+	let totalWidth = 0,
+		totalHeight = 0;
+	canvases.forEach((canvas) => {
+		totalHeight += canvas.height;
+		totalWidth = Math.max(totalWidth, canvas.width);
+	});
+	result.width = totalWidth;
+	result.height = totalHeight;
+
+	let heightOffset = 0;
+	canvases.forEach((canvas) => {
+		const ctx = result.getContext('2d');
+		ctx?.drawImage(canvas, 0, heightOffset);
+		heightOffset += canvas.height;
+	});
+
+	return result;
 }
 
 function handleCanvasScript(scripts: string[]) {
@@ -330,6 +346,12 @@ function handleChapterPage() {
 	}
 }
 
+function canvasToImage(canvas: HTMLCanvasElement): HTMLImageElement {
+	const image = new Image();
+	image.src = canvas.toDataURL();
+	return image;
+}
+
 function forCleanCanvas(callback?: () => void) {
 	const thisWin = document.defaultView as docThis;
 	thisWin.cenabled = () => {
@@ -351,22 +373,21 @@ function forCleanCanvas(callback?: () => void) {
 							console.log('done');
 							ob.disconnect();
 
-							const article = document.querySelector('.article-root article');
-							const table = mainboxs.querySelector('table');
-							if (article && table) {
-								const section = document.createElement('section');
-								section.appendChild(table);
-								article.appendChild(section);
-								mainboxs.remove();
+							setTimeout(() => {
+								const article = document.querySelector('.article-root article');
+								const table = mainboxs.querySelector('table');
+								if (article && table) {
+									const section = document.createElement('section');
+									section.className = 'img-container';
+									mainboxs.remove();
 
-								const canvasList = Array.from(table.querySelectorAll('canvas'));
-								canvasList.forEach((canvas) => {
-									if (canvas.id) {
-										canvas.id = '';
-									}
-								});
-							}
-							callback && callback();
+									const canvasList = Array.from(table.querySelectorAll('canvas'));
+									const result = mergeCanvases(canvasList);
+									section.appendChild(canvasToImage(result));
+									article.appendChild(section);
+								}
+								callback && callback();
+							}, 100);
 						}
 					}
 				});

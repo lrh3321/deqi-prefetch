@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-260
+// @version      2025-08-270
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -38,7 +38,7 @@
 
   const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):document.head.appendChild(document.createElement("style")).append(t);})(e));};
 
-  const styleCss = '[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%);--primary-color: black;--secondary-color: gray}img{visibility:hidden}form{color:var(--primary-color)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline;--list-display: none}editable-list li:hover{--list-display: block}editable-list li:hover .icon{top:0rem;right:3rem}editable-list .icon{border:none;cursor:pointer;position:relative;font-size:1.8rem;display:var(--list-display)}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}body>[style*="position:fixed"]{display:none!important}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none}.article-root{justify-self:center;grid-template-rows:auto 1fr auto;height:100vh;display:grid;width:var(--container-width, "1200px");color:var(--primary-color)}.article-root .breadcrumb,.article-root .breadcrumb a{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background-color:transparent;color:var(--secondary-color)}.article-root .breadcrumb li{list-style-type:none;text-wrap:nowrap}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{font-size:1.5rem;display:flex;justify-content:center}.article-root .article-title code{background-color:transparent}.article-root .article-nav{justify-self:center;background:transparent;opacity:.6}.article-root .article-nav a{padding-inline:1rem;background-color:transparent;color:var(--secondary-color)}body[hidden]{display:none!important}';
+  const styleCss = '[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%);--primary-color: black;--secondary-color: gray}img{visibility:hidden}form{color:var(--primary-color)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{border:none;cursor:pointer;font-size:1.8rem}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row{display:none}#article_main{background:transparent}body>[style*="position:fixed"]{display:none!important}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none}.article-root{justify-self:center;grid-template-rows:auto 1fr auto;height:100vh;display:grid;width:var(--container-width, "1200px");color:var(--primary-color)}.article-root .breadcrumb,.article-root .breadcrumb a{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background-color:transparent;color:var(--secondary-color)}.article-root .breadcrumb li{list-style-type:none;text-wrap:nowrap}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{font-size:1.5rem;display:flex;justify-content:center}.article-root .article-title code{background-color:transparent}.article-root section.img-container{display:flex;flex-direction:column}.article-root section.img-container img{visibility:initial}.article-root .article-nav{justify-self:center;background:transparent;opacity:.6}.article-root .article-nav a{padding-inline:1rem;background-color:transparent;color:var(--secondary-color)}body[hidden]{display:none!important}';
   importCSS(styleCss);
   var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
   var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
@@ -423,12 +423,16 @@ addListItem() {
     addCodeSnippet(idx, snippet) {
       const li = document.createElement("li");
       li.dataset.snippetId = idx;
+      const figure = document.createElement("figure");
+      const figcaption = document.createElement("figcaption");
       const button = document.createElement("button");
       const pre = createPreformattedCode(snippet);
       button.classList.add("editable-list-remove-item", "icon");
       button.innerHTML = "&ominus;";
-      li.appendChild(pre);
-      li.appendChild(button);
+      figcaption.appendChild(button);
+      figure.appendChild(figcaption);
+      figure.appendChild(pre);
+      li.appendChild(figure);
       this.itemList?.appendChild(li);
       this.handleRemoveItemListeners([button]);
       highlightElement(pre, false);
@@ -441,8 +445,8 @@ addListItem() {
     removeListItem(e) {
       const parent = e.target?.parentNode;
       if (parent) {
-        parent.remove();
-        this.codeSnippetsStore.delete(parent.dataset.snippetId || "");
+        parent?.parentElement?.parentElement?.remove();
+        this.codeSnippetsStore.delete(parent?.parentElement?.parentElement?.dataset.snippetId || "");
         this.dispatchEvent(new CustomEvent("remove-item"));
       }
     }
@@ -1263,19 +1267,31 @@ function foo(bar) {
     const page = getPage();
     if (articleMain) {
       if (hasCanvas) {
-        const styles = Array.from(document.body.querySelectorAll("style"));
-        const pageLinks = document.getElementById("page-links");
         rebuildChapterBody(page);
-        document.body.append(...styles);
-        const articleFooter = document.querySelector("div.article-root footer");
-        articleFooter.appendChild(pageLinks);
-        articleFooter.append("章节不完整");
+        mainboxs.id = "";
         handleCanvasScript(scripts);
       } else {
         rebuildChapterBody(page);
       }
       cleanupBody$1();
     }
+  }
+  function mergeCanvases(canvases) {
+    const result = document.createElement("canvas");
+    let totalWidth = 0, totalHeight = 0;
+    canvases.forEach((canvas) => {
+      totalHeight += canvas.height;
+      totalWidth = Math.max(totalWidth, canvas.width);
+    });
+    result.width = totalWidth;
+    result.height = totalHeight;
+    let heightOffset = 0;
+    canvases.forEach((canvas) => {
+      const ctx = result.getContext("2d");
+      ctx?.drawImage(canvas, 0, heightOffset);
+      heightOffset += canvas.height;
+    });
+    return result;
   }
   function handleCanvasScript(scripts) {
     if (scripts.length > 0) {
@@ -1378,6 +1394,11 @@ function foo(bar) {
       });
     }
   }
+  function canvasToImage(canvas) {
+    const image = new Image();
+    image.src = canvas.toDataURL();
+    return image;
+  }
   function forCleanCanvas(callback) {
     const thisWin = document.defaultView;
     thisWin.cenabled = () => {
@@ -1396,21 +1417,20 @@ function foo(bar) {
               if (node.tagName == "DIV") {
                 console.log("done");
                 ob.disconnect();
-                const article = document.querySelector(".article-root article");
-                const table = mainboxs.querySelector("table");
-                if (article && table) {
-                  const section = document.createElement("section");
-                  section.appendChild(table);
-                  article.appendChild(section);
-                  mainboxs.remove();
-                  const canvasList = Array.from(table.querySelectorAll("canvas"));
-                  canvasList.forEach((canvas) => {
-                    if (canvas.id) {
-                      canvas.id = "";
-                    }
-                  });
-                }
-                callback && callback();
+                setTimeout(() => {
+                  const article = document.querySelector(".article-root article");
+                  const table = mainboxs.querySelector("table");
+                  if (article && table) {
+                    const section = document.createElement("section");
+                    section.className = "img-container";
+                    mainboxs.remove();
+                    const canvasList = Array.from(table.querySelectorAll("canvas"));
+                    const result = mergeCanvases(canvasList);
+                    section.appendChild(canvasToImage(result));
+                    article.appendChild(section);
+                  }
+                  callback && callback();
+                }, 100);
               }
             }
           });

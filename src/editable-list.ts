@@ -92,13 +92,17 @@ export class EditableList extends HTMLElement {
 	private addCodeSnippet(idx: string, snippet: string) {
 		const li = document.createElement('li');
 		li.dataset.snippetId = idx;
+		const figure = document.createElement('figure');
+		const figcaption = document.createElement('figcaption');
 		const button = document.createElement('button');
 		const pre = createPreformattedCode(snippet);
 
 		button.classList.add('editable-list-remove-item', 'icon');
 		button.innerHTML = '&ominus;';
-		li.appendChild(pre);
-		li.appendChild(button);
+		figcaption.appendChild(button);
+		figure.appendChild(figcaption);
+		figure.appendChild(pre);
+		li.appendChild(figure);
 
 		this.itemList?.appendChild(li);
 		this.handleRemoveItemListeners([button]);
@@ -114,8 +118,8 @@ export class EditableList extends HTMLElement {
 	removeListItem(e: Event) {
 		const parent = (e.target as Node)?.parentNode as HTMLElement;
 		if (parent) {
-			parent.remove();
-			this.codeSnippetsStore.delete(parent.dataset.snippetId || '');
+			parent?.parentElement?.parentElement?.remove();
+			this.codeSnippetsStore.delete(parent?.parentElement?.parentElement?.dataset.snippetId || '');
 			this.dispatchEvent(new CustomEvent('remove-item'));
 		}
 	}
