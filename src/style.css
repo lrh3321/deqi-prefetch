@@ -113,9 +113,9 @@ editable-list ul {
 #article_main {
 	background: transparent;
 }
-#hp_photos,
-#main {
-	z-index: 9999;
+
+body > [style*='position:fixed'] {
+	display: none !important;
 }
 #article_main #page-links a,
 #article_main #page-links span {

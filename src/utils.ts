@@ -54,6 +54,24 @@ export function releaseCopy() {
 	document.body.oncontextmenu = null;
 	document.body.oncopy = null;
 	document.body.oncut = null;
+
+	const native_replaceState = history.replaceState;
+	history.replaceState = function (data: any, unused: string, url?: string | URL | null) {
+		if (url) {
+			if (url instanceof URL) {
+				if (url.hostname != location.hostname) {
+					return;
+				}
+			} else {
+				if (url.startsWith('http://') || url.startsWith('https://')) {
+					if (new URL(url).hostname != location.hostname) {
+						return;
+					}
+				}
+			}
+		}
+		native_replaceState(data, unused, url);
+	};
 }
 
 export const isInIframe = window.self !== window.top;

@@ -1,7 +1,7 @@
 import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
-import { ensureDoc, NavLinks, rebuildChapterBody, setAccessKeys } from './utils';
+import { ensureDoc, NavLinks, Page, rebuildChapterBody, setAccessKeys } from './utils';
 
 let bookID: string = '';
 const chapterLinks = new Array<ChapterLink>();
@@ -12,7 +12,11 @@ function cleanupBody() {
 			if (mutation.type == 'childList') {
 				mutation.addedNodes.forEach((node) => {
 					if (node.nodeType == Node.ELEMENT_NODE) {
-						(node as Element).remove();
+						const el = node as Element;
+						if (el.id == 'mainboxs') {
+							return;
+						}
+						el.remove();
 					}
 				});
 			}
@@ -150,25 +154,8 @@ function createChapterLink(href: string, title: string): HTMLDivElement {
 	return div;
 }
 
-function appendRemainPages(
-	netxDivs: Array<string | HTMLScriptElement | undefined>,
-	hasCanvas: boolean
-) {
-	const articleMain = document.getElementById('article_main');
+function getPage(): Page {
 	const mainboxs = document.getElementById('mainboxs')!!;
-	const scripts: string[] = [];
-	netxDivs.forEach((div) => {
-		if (typeof div === 'undefined') {
-			return;
-		}
-		if (typeof div === 'string') {
-			const next = document.createElement('div');
-			next.innerHTML = div!!;
-			mainboxs.appendChild(next);
-		} else {
-			scripts.push(div.innerHTML);
-		}
-	});
 
 	const mainSection = disguiseParagraphs(mainboxs);
 	const prenexts = document.querySelectorAll('div.prenext a');
@@ -192,6 +179,31 @@ function appendRemainPages(
 		mainSection,
 		navigationBar
 	};
+
+	return page;
+}
+
+function appendRemainPages(
+	netxDivs: Array<string | HTMLScriptElement | undefined>,
+	hasCanvas: boolean
+) {
+	const articleMain = document.getElementById('article_main');
+	const mainboxs = document.getElementById('mainboxs')!!;
+	const scripts: string[] = [];
+	netxDivs.forEach((div) => {
+		if (typeof div === 'undefined') {
+			return;
+		}
+		if (typeof div === 'string') {
+			const next = document.createElement('div');
+			next.innerHTML = div!!;
+			mainboxs.appendChild(next);
+		} else {
+			scripts.push(div.innerHTML);
+		}
+	});
+
+	const page = getPage();
 	if (articleMain) {
 		if (hasCanvas) {
 			const styles = Array.from(document.body.querySelectorAll('style'));
@@ -199,26 +211,30 @@ function appendRemainPages(
 			rebuildChapterBody(page);
 			document.body.append(...styles);
 			const articleFooter = document.querySelector('div.article-root footer')!!;
-			articleFooter.append('章节不完整');
 			articleFooter.appendChild(pageLinks);
-			// cleanupBody();
+			articleFooter.append('章节不完整');
 			handleCanvasScript(scripts);
 		} else {
 			rebuildChapterBody(page);
 		}
+		cleanupBody();
 	}
 }
 
 function handleCanvasScript(scripts: string[]) {
 	// #mainboxs
 	if (scripts.length > 0) {
-		console.log('handleCanvasScript');
-	// 	const mainboxs = document.createElement('div');
-	// 	mainboxs.id = 'mainboxs';
-	// 	const scriptElement = document.createElement('script');
-	// 	scriptElement.innerHTML = scripts.shift()!!;
-	// 	document.body.appendChild(mainboxs);
-	// 	mainboxs.after(scriptElement);
+		console.log('handleCanvasScript', scripts);
+
+		const script = document.createElement('script');
+		script.textContent = scripts.shift()!!;
+		forCleanCanvas(() => {
+			setTimeout(() => {
+				script.remove();
+				handleCanvasScript(scripts);
+			}, 1000);
+		});
+		document.body.appendChild(script);
 	}
 }
 
@@ -241,6 +257,17 @@ function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined 
 			return;
 		}
 	});
+	if (typeof scriptCopy == 'undefined') {
+		scripts.forEach((script) => {
+			if (typeof scriptCopy != 'undefined') {
+				return;
+			}
+			if (script.innerHTML.includes(`display_img_line`)) {
+				scriptCopy = document.createElement('script');
+				scriptCopy.innerHTML = script.innerHTML;
+			}
+		});
+	}
 	return scriptCopy;
 }
 
@@ -303,7 +330,56 @@ function handleChapterPage() {
 	}
 }
 
+function forCleanCanvas(callback?: () => void) {
+	const thisWin = document.defaultView as docThis;
+	thisWin.cenabled = () => {
+		return true;
+	};
+	thisWin.isMobile = true;
+
+	const mainboxs = document.createElement('div');
+	mainboxs.id = 'mainboxs';
+	document.body.appendChild(mainboxs);
+	console.log('forCleanCanvas');
+
+	const ob = new MutationObserver((mutations: MutationRecord[]) => {
+		mutations.forEach((mutation) => {
+			if (mutation.type == 'childList') {
+				mutation.removedNodes.forEach((node) => {
+					if (node.nodeType == Node.ELEMENT_NODE) {
+						if ((node as Element).tagName == 'DIV') {
+							console.log('done');
+							ob.disconnect();
+
+							const article = document.querySelector('.article-root article');
+							const table = mainboxs.querySelector('table');
+							if (article && table) {
+								const section = document.createElement('section');
+								section.appendChild(table);
+								article.appendChild(section);
+								mainboxs.remove();
+
+								const canvasList = Array.from(table.querySelectorAll('canvas'));
+								canvasList.forEach((canvas) => {
+									if (canvas.id) {
+										canvas.id = '';
+									}
+								});
+							}
+							callback && callback();
+						}
+					}
+				});
+			}
+		});
+	});
+	ob.observe(mainboxs, { childList: true, subtree: true });
+}
+
 export function handleBiqu33Route() {
+	if (document.documentElement.lang == 'zh-TW') {
+		document.documentElement.lang = 'zh-CN';
+	}
 	const segments = location.pathname.split('/').filter(Boolean);
 	const lastSegment = segments[segments.length - 1];
 	switch (segments.length) {
@@ -332,7 +408,10 @@ export function handleBiqu33Route() {
 
 				cleanupBody();
 				if (scriptCopy && !thisWin.isMobile) {
-					document.getElementById('qrcode')?.remove();
+					const page = getPage();
+					page.mainSection.innerHTML = '';
+					rebuildChapterBody(page);
+					forCleanCanvas();
 					thisWin.isMobile = true;
 					document.body.appendChild(scriptCopy);
 				}
@@ -353,4 +432,4 @@ export function handleBiqu33Route() {
 	}
 }
 
-type docThis = (WindowProxy & typeof globalThis) & { isMobile?: boolean };
+type docThis = (WindowProxy & typeof globalThis) & { isMobile?: boolean; cenabled(): boolean };
