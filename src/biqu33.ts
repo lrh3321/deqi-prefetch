@@ -7,28 +7,11 @@ let bookID: string = '';
 const chapterLinks = new Array<ChapterLink>();
 const chapterLinkSet = new Set<string>();
 function cleanupBody() {
-	const ob = new MutationObserver((mutations: MutationRecord[]) => {
-		mutations.forEach((mutation) => {
-			if (mutation.type == 'childList') {
-				mutation.addedNodes.forEach((node) => {
-					if (node.nodeType == Node.ELEMENT_NODE) {
-						const el = node as Element;
-						if (el.id == 'mainboxs') {
-							return;
-						}
-						el.remove();
-					}
-				});
-			}
-		});
-	});
-	ob.observe(document.body, { childList: true });
-
 	const children = Array.from(document.body.children).filter(
 		(it) => it.id != 'main' && it.id != 'mainboxs'
 	);
 	children.forEach((it) => {
-		if (it.tagName == 'STYLE' || it.className == 'article-root') {
+		if (it.className == 'article-root') {
 			return;
 		}
 		it.remove();

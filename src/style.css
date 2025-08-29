@@ -8,7 +8,7 @@ img[alt],
 h2 a,
 div.footer,
 div.container > ul.list {
-	display: none;
+	display: none !important;
 }
 
 h2.op a {
@@ -103,16 +103,16 @@ editable-list ul {
 /* biqu33 */
 #header,
 #main .container-fluid,
-#article_main .row {
-	display: none;
+#article_main .row,
+body > [id][style],
+body > [style*='display'],
+body > [style*='position:fixed'] {
+	display: none !important;
 }
 #article_main {
 	background: transparent;
 }
 
-body > [style*='position:fixed'] {
-	display: none !important;
-}
 #article_main #page-links a,
 #article_main #page-links span {
 	padding: 1px 10px;
@@ -149,7 +149,7 @@ body > [style*='position:fixed'] {
 #ss-reader-main .readSet,
 #ss-reader-main .info-chapters-title,
 #ss-reader-main h1 {
-	display: none;
+	display: none !important;
 }
 
 /* cuoceng */
@@ -157,7 +157,7 @@ body.read_style_1 .header,
 body.read_style_1 #showDetail,
 #readcontent .textbox.cf,
 body.read_style_1 .textinfo {
-	display: none;
+	display: none !important;
 }
 
 /* clean page */
