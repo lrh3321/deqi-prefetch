@@ -172,7 +172,7 @@ function createAccessKeysFieldset(): HTMLFieldSetElement {
 	accessKeysFieldset.innerHTML = `<legend>快捷键设置
 	<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Reference/Global_attributes/accesskey#%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8B" target="_blank" style="margin-left: 5rem;">快捷键使用帮助</a>
 </legend>
-<div style="display: flex;gap: 0.5rem;flex-wrap:wrap;">
+<div>
     <label>上一章:
         <select id="previousChapterAccessKey"></select>
     </label>
@@ -243,9 +243,6 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	const disguiseFieldset = document.createElement('fieldset');
 
 	const div = document.createElement('div');
-	div.style.display = 'flex';
-	div.style.flexWrap = 'wrap';
-	div.style.gap = '0.5rem';
 	disguiseFieldset.appendChild(div);
 
 	const codeThemeInput = document.createElement('select');
@@ -405,7 +402,6 @@ function createContainerStyleFieldset(): HTMLFieldSetElement {
 	containerStyleFieldset.appendChild(legend);
 
 	const div = document.createElement('div');
-	div.style = 'display: flex; flex-wrap: wrap; gap: 0.5rem;';
 
 	const widthInput = document.createElement('input');
 	widthInput.value = containerWidth;

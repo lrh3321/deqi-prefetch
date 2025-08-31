@@ -52,6 +52,12 @@ form fieldset {
 	padding-inline: 0.75em;
 }
 
+form fieldset > div {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
 fieldset label {
 	display: flex;
 	width: fit-content;
@@ -59,8 +65,20 @@ fieldset label {
 	white-space: nowrap;
 }
 
+@media (orientation: portrait) {
+	fieldset label {
+		display: flex;
+		flex-wrap: wrap;
+		width: 100%;
+		gap: 0.4rem;
+		white-space: nowrap;
+	}
+}
+
 label input {
 	padding-left: 0.5rem;
+	max-width: 75svw;
+	border: 1px solid light-dark(#767676, #858585);
 }
 
 editable-list li {
@@ -205,6 +223,15 @@ body.read_style_1 .textinfo {
 
 .article-root section.img-container img {
 	visibility: initial;
+}
+
+@media (orientation: landscape) {
+	.article-root section.img-container {
+		align-items: center;
+	}
+	.article-root section.img-container img {
+		max-width: 35rem;
+	}
 }
 
 .article-root .article-nav {

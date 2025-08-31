@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-08-270
+// @version      2025-08-310
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -38,7 +38,7 @@
 
   const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):document.head.appendChild(document.createElement("style")).append(t);})(e));};
 
-  const styleCss = '[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%);--primary-color: black;--secondary-color: gray}img{visibility:hidden}form{color:var(--primary-color)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}label input{padding-left:.5rem}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{border:none;cursor:pointer;font-size:1.8rem}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*="position:fixed"]{display:none!important}#article_main{background:transparent}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}.article-root{justify-self:center;grid-template-rows:auto 1fr auto;height:100vh;display:grid;width:var(--container-width, "1200px");color:var(--primary-color)}.article-root .breadcrumb,.article-root .breadcrumb a{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background-color:transparent;color:var(--secondary-color)}.article-root .breadcrumb li{list-style-type:none;text-wrap:nowrap}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{font-size:1.5rem;display:flex;justify-content:center}.article-root .article-title code{background-color:transparent}.article-root section.img-container{display:flex;flex-direction:column}.article-root section.img-container img{visibility:initial}.article-root .article-nav{justify-self:center;background:transparent;opacity:.6}.article-root .article-nav a{padding-inline:1rem;background-color:transparent;color:var(--secondary-color)}body[hidden]{display:none!important}';
+  const styleCss = '[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{-webkit-backdrop-filter:contrast(110%);backdrop-filter:contrast(110%);--primary-color: black;--secondary-color: gray}img{visibility:hidden}form{color:var(--primary-color)}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}form fieldset>div{display:flex;flex-wrap:wrap;gap:.5rem}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}@media (orientation: portrait){fieldset label{display:flex;flex-wrap:wrap;width:100%;gap:.4rem;white-space:nowrap}}label input{padding-left:.5rem;max-width:75svw;border:1px solid light-dark(#767676,#858585)}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{border:none;cursor:pointer;font-size:1.8rem}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*="position:fixed"]{display:none!important}#article_main{background:transparent}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}.article-root{justify-self:center;grid-template-rows:auto 1fr auto;height:100vh;display:grid;width:var(--container-width, "1200px");color:var(--primary-color)}.article-root .breadcrumb,.article-root .breadcrumb a{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background-color:transparent;color:var(--secondary-color)}.article-root .breadcrumb li{list-style-type:none;text-wrap:nowrap}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{font-size:1.5rem;display:flex;justify-content:center}.article-root .article-title code{background-color:transparent}.article-root section.img-container{display:flex;flex-direction:column}.article-root section.img-container img{visibility:initial}@media (orientation: landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root .article-nav{justify-self:center;background:transparent;opacity:.6}.article-root .article-nav a{padding-inline:1rem;background-color:transparent;color:var(--secondary-color)}body[hidden]{display:none!important}';
   importCSS(styleCss);
   var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
   var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
@@ -607,7 +607,7 @@ switch (x) {
     accessKeysFieldset.innerHTML = `<legend>快捷键设置
 	<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Reference/Global_attributes/accesskey#%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8B" target="_blank" style="margin-left: 5rem;">快捷键使用帮助</a>
 </legend>
-<div style="display: flex;gap: 0.5rem;flex-wrap:wrap;">
+<div>
     <label>上一章:
         <select id="previousChapterAccessKey"></select>
     </label>
@@ -666,9 +666,6 @@ switch (x) {
     setupExtendLanguageSupport();
     const disguiseFieldset = document.createElement("fieldset");
     const div = document.createElement("div");
-    div.style.display = "flex";
-    div.style.flexWrap = "wrap";
-    div.style.gap = "0.5rem";
     disguiseFieldset.appendChild(div);
     const codeThemeInput = document.createElement("select");
     codeThemeInput.name = "theme";
@@ -807,7 +804,6 @@ function foo(bar) {
     legend.innerText = "正文式样";
     containerStyleFieldset.appendChild(legend);
     const div = document.createElement("div");
-    div.style = "display: flex; flex-wrap: wrap; gap: 0.5rem;";
     const widthInput = document.createElement("input");
     widthInput.value = containerWidth;
     widthInput.size = 10;
@@ -1251,8 +1247,15 @@ function foo(bar) {
     const page = getPage();
     if (articleMain) {
       if (hasCanvas) {
-        rebuildChapterBody(page);
+        const cleanPage = rebuildChapterBody(page);
         mainboxs.id = "";
+        const section = cleanPage.main.querySelector("section");
+        const canvasList = Array.from(cleanPage.main.querySelectorAll("canvas"));
+        if (canvasList.length > 0) {
+          section.classList.add("img-container");
+          const result = mergeCanvases(canvasList);
+          section.firstElementChild?.replaceWith(canvasToImage(result));
+        }
         handleCanvasScript(scripts);
       } else {
         rebuildChapterBody(page);

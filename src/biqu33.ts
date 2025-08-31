@@ -189,8 +189,17 @@ function appendRemainPages(
 	const page = getPage();
 	if (articleMain) {
 		if (hasCanvas) {
-			rebuildChapterBody(page);
+			const cleanPage = rebuildChapterBody(page);
 			mainboxs.id = '';
+
+			const section = cleanPage.main.querySelector('section')!!;
+			const canvasList = Array.from(cleanPage.main.querySelectorAll('canvas'));
+			if (canvasList.length > 0) {
+				// 章节第一页就包含图片
+				section.classList.add('img-container');
+				const result = mergeCanvases(canvasList);
+				section.firstElementChild?.replaceWith(canvasToImage(result));
+			}
 			handleCanvasScript(scripts);
 		} else {
 			rebuildChapterBody(page);
