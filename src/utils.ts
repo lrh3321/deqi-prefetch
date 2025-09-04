@@ -136,7 +136,7 @@ export function rebuildChapterBody(page: Page): CleanPage {
 	const main = buildNovelMain(page);
 	const footer = buildNovelFooter(page.navigationBar);
 
-	root.append(header, main, footer);
+	root.append(header, document.createElement('hr'), main, document.createElement('hr'), footer);
 	newBody.append(root);
 	document.body.replaceWith(newBody);
 
@@ -145,8 +145,8 @@ export function rebuildChapterBody(page: Page): CleanPage {
 
 export function updateStyle(pre: HTMLPreElement) {
 	const computedStyle = getComputedStyle(pre);
-	document.body.style.backgroundColor = getComputedStyle(pre).backgroundColor;
 	document.body.style.setProperty('--primary-color', computedStyle.color);
+	document.body.style.setProperty('--primary-bg-color', computedStyle.backgroundColor);
 	const comment = pre.querySelector('span.token.comment');
 	if (comment) {
 		const computedStyle = getComputedStyle(comment);
