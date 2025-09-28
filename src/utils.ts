@@ -174,7 +174,11 @@ function buildNovelHeader(page: Page): HTMLElement {
 		breadcrumb.lastElementChild?.remove();
 		if (title) {
 			const li = document.createElement('li');
-			li.innerHTML = title;
+			if (title.length > 20) {
+				li.innerHTML = title.substring(0, 20) + '...';
+			} else {
+				li.innerHTML = title;
+			}
 			breadcrumb.appendChild(li);
 		}
 		header.appendChild(breadcrumb);

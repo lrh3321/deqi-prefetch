@@ -214,6 +214,8 @@ body:has(.article-root) {
 .article-root .breadcrumb li {
 	list-style-type: none;
 	text-wrap: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
 }
 .article-root .breadcrumb li[aria-hidden] {
 	opacity: 0.5;
