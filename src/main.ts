@@ -23,13 +23,13 @@ function handleRoute() {
 		handleDeqiRoute();
 
 		GM_registerMenuCommand('脚本设置', function () {
-			open('/pifu/');
+			open('/pifu/#script-setting');
 		});
 	} else if (location.hostname == 'www.ddxiaoshuo.cc') {
 		// 顶点小说处理逻辑
 		handleDDxiaoshuoRoute();
 		GM_registerMenuCommand('脚本设置', function () {
-			open('/history.html');
+			open('/history.html#script-setting');
 		});
 	} else if (location.hostname == 'www.cuoceng.com' || location.hostname == 'cuoceng.com') {
 		// 错层小说处理逻辑
@@ -38,7 +38,7 @@ function handleRoute() {
 		// biqu33处理逻辑
 		handleBiqu33Route();
 		GM_registerMenuCommand('脚本设置', function () {
-			open('/');
+			open('/#script-setting');
 		});
 	}
 }

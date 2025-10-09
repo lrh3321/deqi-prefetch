@@ -12,8 +12,8 @@
 	"devDependencies": {
 		"@types/prismjs": "^1.26.5",
 		"prettier": "^3.6.2",
-		"typescript": "^5.9.2",
-		"vite": "^7.1.7",
+		"typescript": "^5.9.3",
+		"vite": "^7.1.9",
 		"vite-plugin-monkey": "^7.1.4"
 	},
 	"packageManager": "yarn@4.9.4"

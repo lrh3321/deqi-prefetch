@@ -449,7 +449,7 @@ function createContainerStyleFieldset(): HTMLFieldSetElement {
 	return containerStyleFieldset;
 }
 
-export function createSettingForm(): HTMLFormElement {
+export function createSettingForm(): HTMLElement {
 	const form = document.createElement('form');
 
 	form.appendChild(createContainerStyleFieldset());
@@ -538,7 +538,20 @@ export function createSettingForm(): HTMLFormElement {
 			updateStyle(pre);
 		}
 	}, 1000);
-	return form;
+
+	const details = document.createElement('details');
+	details.id = 'script-setting';
+	if (location.hash === '#script-setting') {
+		details.open = true;
+		setTimeout(() => {
+			details.scrollIntoView(true);
+		}, 500);
+	}
+	const summary = document.createElement('summary');
+	summary.innerText = '脚本设置';
+	details.appendChild(summary);
+	details.appendChild(form);
+	return details;
 }
 
 export function setDefaultStyle() {

@@ -36,8 +36,13 @@ body {
 img {
 	visibility: hidden;
 }
+details#script-setting > summary,
 form {
 	color: var(--primary-color);
+}
+details#script-setting > summary {
+	font-size: x-large;
+	font-weight: bold;
 }
 form fieldset {
 	display: block;
