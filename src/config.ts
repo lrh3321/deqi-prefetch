@@ -1,5 +1,11 @@
 import { GM_addElement, GM_getValue, GM_setValue } from '$';
-import { highlightElement, setupExtendLanguageSupport } from './code';
+import {
+	avalibleCodeLanguages,
+	avalibleCodeThemes,
+	fakeCodeSnippet,
+	highlightElement,
+	setupExtendLanguageSupport
+} from './code';
 import { EditableList, setupEditableList } from './editable-list';
 import { getCodeThemeURL, updateStyle } from './utils';
 
@@ -7,130 +13,27 @@ export let disguiseDebug = GM_getValue('disguiseDebug', false);
 export let novelFontSize = GM_getValue('novel-font-size', '16px');
 export let novelFontFamily = GM_getValue(
 	'novel-font-family',
-	`system-ui, -apple-system, '微软雅黑', 'PingFang SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`
+	`system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Lantinghei SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`
 );
+export let novelLineHeight = GM_getValue('novel-line-height', '1.9');
+export let novelParaSpacing = GM_getValue('novel-para-spacing', '0.9em');
+// font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
 // 是否伪装成代码
 export let disguiseMode = GM_getValue<DisguiseMode>('disguise-mode', 'none');
 export let codeLang = GM_getValue<string>('code-lang', 'javascript');
-export const defaultCodeSnippet = `var x = 1;
-switch (x) {
-  case 1:
-    console.log('x 等于1');
-  case 2:
-    console.log('x 等于2');
-  default:
-    console.log('x 等于其他值');
-}
-====
-switch (x) {
-  case 1:
-    console.log('x 等于1');
-    break;
-  case 2:
-    console.log('x 等于2');
-    break;
-  default:
-    console.log('x 等于其他值');
-}
-====
-switch (1 + 3) {
-  case 2 + 2:
-    f();
-    break;
-  default:
-    neverHappens();
-}
-====
-var x = 1;
-switch (x) {
-  case true:
-    console.log('x 发生类型转换');
-    break;
-  default:
-    console.log('x 没有发生类型转换');
-}
-`;
-export let fakeCodeSnippet = GM_getValue<string>('fake-codes', defaultCodeSnippet);
-if (fakeCodeSnippet.trim() == '') {
-	fakeCodeSnippet = defaultCodeSnippet;
-}
-
 export let codeTheme = GM_getValue('code-theme', 'prism');
 export let codeParagraphItalic = GM_getValue('code-italic', true);
 export let codeShowLineNumbers = GM_getValue('line-numbers', false);
 
-export let refreshInterval = GM_getValue('refreshInterval', 15 * 60000);
+export let refreshInterval = GM_getValue('refreshInterval', -1);
 
-const avalibleCodeThemes = [
-	{ Name: 'Default', code: 'prism' },
-	{ Name: 'Dark', code: 'prism-dark' },
-	{ Name: 'Funky', code: 'prism-funky' },
-	{ Name: 'Okaidia', code: 'prism-okaidia' },
-	{ Name: 'Twilight', code: 'prism-twilight' },
-	{ Name: 'Coy', code: 'prism-coy' },
-	{ Name: 'Solarized Light', code: 'prism-solarizedlight' },
-	{ Name: 'Tomorrow Night', code: 'prism-tomorrow' },
-	// A wider selection of Prism themes
-	{ Name: 'CB', code: 'prism-cb' },
-	{ Name: 'GHColors', code: 'prism-ghcolors' },
-	{ Name: 'Pojoaque', code: 'prism-pojoaque' },
-	{ Name: 'Xonokai', code: 'prism-xonokai' },
-	{ Name: 'Ateliersulphurpool-light', code: 'prism-base16-ateliersulphurpool.light' },
-	{ Name: 'Hopscotch', code: 'prism-hopscotch' },
-	{ Name: 'Atom Dark', code: 'prism-atom-dark' },
-	{ Name: 'Duotone Dark', code: 'prism-duotone-dark' },
-	{ Name: 'Duotone Sea', code: 'prism-duotone-sea' },
-	{ Name: 'Duotone Space', code: 'prism-duotone-space' },
-	{ Name: 'Duotone Earth', code: 'prism-duotone-earth' },
-	{ Name: 'Duotone Forest', code: 'prism-duotone-forest' },
-	{ Name: 'Duotone Light', code: 'prism-duotone-light' },
-	{ Name: 'VS', code: 'prism-vs' },
-	{ Name: 'VS Code Dark+', code: 'prism-vsc-dark-plus' },
-	{ Name: 'Darcula', code: 'prism-darcula' },
-	{ Name: 'a11y Dark', code: 'prism-a11y-dark' },
-	{ Name: 'Dracula', code: 'prism-dracula' },
-	{ Name: "Synthwave '84", code: 'prism-synthwave84' },
-	{ Name: 'Shades of Purple', code: 'prism-shades-of-purple' },
-	{ Name: 'Material Dark', code: 'prism-material-dark' },
-	{ Name: 'Material Light', code: 'prism-material-light' },
-	{ Name: 'Material Oceanic', code: 'prism-oceanic' },
-	{ Name: 'Nord', code: 'prism-nord' },
-	{ Name: 'Coldark Cold', code: 'prism-coldark-cold' },
-	{ Name: 'Coldark Dark', code: 'prism-coldark-dark' },
-	{ Name: 'Coy without shadows', code: 'prism-coy-without-shadows' },
-	{ Name: 'Gruvbox Dark', code: 'prism-gruvbox-dark' },
-	{ Name: 'Gruvbox Light', code: 'prism-gruvbox-light' },
-	{ Name: 'Lucario', code: 'prism-lucario' },
-	{ Name: 'Night Owl', code: 'prism-night-owl' },
-	{ Name: 'Holi Theme', code: 'prism-holi-theme' },
-	{ Name: 'Z-Touch', code: 'prism-z-touch' },
-	{ Name: 'Solarized Dark Atom', code: 'prism-solarized-dark-atom' },
-	{ Name: 'One Dark', code: 'prism-one-dark' },
-	{ Name: 'One Light', code: 'prism-one-light' },
-	{ Name: 'Laserwave', code: 'prism-laserwave' }
-];
+export let themeMode = GM_getValue<ThemeMode>('theme-mode', 'auto');
 
-const avalibleCodeLanguages = [
-	{ Name: 'Markup — markup, html, xml, svg, mathml, ssml, atom, rss', code: 'markup' },
-	{ Name: 'CSS — css', code: 'css' },
-	{ Name: 'C-like — clike', code: 'clike' },
-	{ Name: 'JavaScript — javascript, js', code: 'javascript' },
-
-	{ Name: 'C —c', code: 'c' },
-	{ Name: 'C# —csharp, cs, dotnet', code: 'csharp' },
-	{ Name: 'C++ —cpp', code: 'cpp' },
-	{ Name: 'Go —go', code: 'go' },
-	{ Name: 'Java —java', code: 'java' },
-	{ Name: 'Kotlin —kotlin, kt, kts', code: 'kotlin' },
-	{ Name: 'PHP —php', code: 'php' },
-	{ Name: 'Python —python, py', code: 'python' },
-	{ Name: 'Rust —rust', code: 'rust' }
-];
-
-export const coreLanguages = new Set(['markup', 'css', 'clike', 'javascript']);
-
-export function changeCodeTheme(theme: string) {
+function changeCodeTheme(theme: string) {
+	if (__LITE__) {
+		return;
+	}
 	GM_setValue('code-theme', theme);
 	codeTheme = theme;
 	codeThemeElement?.remove();
@@ -144,6 +47,9 @@ export function changeCodeTheme(theme: string) {
 let codeThemeElement: HTMLStyleElement | null = null;
 
 export function setupCodeTheme() {
+	if (__LITE__) {
+		return;
+	}
 	codeThemeElement = GM_addElement(document.head, 'link', {
 		href: getCodeThemeURL(codeTheme),
 		rel: 'stylesheet',
@@ -185,11 +91,11 @@ function createAccessKeysFieldset(): HTMLFieldSetElement {
 </div>`;
 	const previousChapterAccessKey = accessKeysFieldset.querySelector<HTMLSelectElement>(
 		'#previousChapterAccessKey'
-	)!!;
+	)!;
 	const bookPageAccessKey =
-		accessKeysFieldset.querySelector<HTMLSelectElement>('#bookPageAccessKey')!!;
+		accessKeysFieldset.querySelector<HTMLSelectElement>('#bookPageAccessKey')!;
 	const nextChapterAccessKey =
-		accessKeysFieldset.querySelector<HTMLSelectElement>('#nextChapterAccessKey')!!;
+		accessKeysFieldset.querySelector<HTMLSelectElement>('#nextChapterAccessKey')!;
 
 	for (let i = 0; i < 10; i++) {
 		const option = document.createElement('option');
@@ -394,84 +300,68 @@ function foo(bar) {
 
 export let containerWidth = GM_getValue('container-width', '1200px');
 
-function createContainerStyleFieldset(): HTMLFieldSetElement {
-	const containerStyleFieldset = document.createElement('fieldset');
-
-	const legend = document.createElement('legend');
-	legend.innerText = '正文式样';
-	containerStyleFieldset.appendChild(legend);
-
-	const div = document.createElement('div');
-
-	const widthInput = document.createElement('input');
-	widthInput.value = containerWidth;
-	widthInput.size = 10;
-	widthInput.onchange = () => {
-		containerWidth = widthInput.value;
-		document.body.style.setProperty('--container-width', containerWidth);
-		GM_setValue('container-width', widthInput.value);
-	};
-
-	const widthLabel = document.createElement('label');
-	widthLabel.innerText = '宽度：';
-	widthLabel.title = '单位可以是 rem, px, %, svw, vw';
-	widthLabel.appendChild(widthInput);
-	div.appendChild(widthLabel);
-
-	const fontSizeInput = document.createElement('input');
-	fontSizeInput.value = novelFontSize;
-	fontSizeInput.size = 10;
-	fontSizeInput.onchange = () => {
-		novelFontSize = fontSizeInput.value;
-		document.body.style.setProperty('--novel-font-size', novelFontSize);
-		GM_setValue('novel-font-size', fontSizeInput.value);
-	};
-
-	const fontSizeLabel = document.createElement('label');
-	fontSizeLabel.innerText = '字体大小：';
-	fontSizeLabel.appendChild(fontSizeInput);
-	div.appendChild(fontSizeLabel);
-
-	const fontFamilyInput = document.createElement('input');
-	fontFamilyInput.value = novelFontFamily;
-	fontFamilyInput.onchange = () => {
-		novelFontFamily = fontFamilyInput.value;
-		document.body.style.setProperty('--novel-font-family', novelFontFamily);
-		GM_setValue('novel-font-family', fontFamilyInput.value);
-	};
-
-	const fontFamilyLabel = document.createElement('label');
-	fontFamilyLabel.innerText = '字体：';
-	fontFamilyLabel.appendChild(fontFamilyInput);
-	div.appendChild(fontFamilyLabel);
-
-	containerStyleFieldset.appendChild(div);
-	return containerStyleFieldset;
-}
-
 export function createSettingForm(): HTMLElement {
 	const form = document.createElement('form');
 
-	form.appendChild(createContainerStyleFieldset());
+	// form.appendChild(createContainerStyleFieldset());
+	if (!__LITE__) {
+		const intervalInput = document.createElement('input');
+		intervalInput.type = 'number';
+		intervalInput.min = '0';
+		intervalInput.valueAsNumber = refreshInterval / 60000;
+		intervalInput.style.width = '4rem';
 
-	const intervalInput = document.createElement('input');
-	intervalInput.type = 'number';
-	intervalInput.min = '0';
-	intervalInput.valueAsNumber = refreshInterval / 60000;
-	intervalInput.style.width = '4rem';
+		const intervalLabel = document.createElement('label');
+		intervalLabel.innerText = '刷新间隔（分钟）：';
+		intervalLabel.appendChild(intervalInput);
+		form.appendChild(intervalLabel);
 
-	const intervalLabel = document.createElement('label');
-	intervalLabel.innerText = '刷新间隔（分钟）：';
-	intervalLabel.appendChild(intervalInput);
-	form.appendChild(intervalLabel);
+		const button = document.createElement('button');
+		button.type = 'submit';
+		button.innerText = '保存刷新设置';
+		button.style.marginLeft = '0.75rem';
+		form.appendChild(button);
 
-	const button = document.createElement('button');
-	button.type = 'submit';
-	button.innerText = '保存刷新设置';
-	button.style.marginLeft = '0.75rem';
-	form.appendChild(button);
+		form.onsubmit = (e) => {
+			e.preventDefault();
+			const interval = parseInt(intervalInput.value) * 60000;
+			if (interval >= 0 && interval != refreshInterval) {
+				GM_setValue('refreshInterval', interval);
+				refreshInterval = interval;
+			}
+		};
+
+		// 延迟设置背景色，确保pre元素已经渲染完成
+		setTimeout(() => {
+			const pre = document.querySelector('pre');
+			if (pre) {
+				updateStyle(pre);
+			}
+		}, 1000);
+	}
 
 	form.appendChild(createAccessKeysFieldset());
+
+	if (!__LITE__) {
+		appendDisguiseCodeFieldset(form);
+	}
+
+	const details = document.createElement('details');
+	details.id = 'script-setting';
+	if (location.hash === '#script-setting') {
+		details.open = true;
+		setTimeout(() => {
+			details.scrollIntoView(true);
+		}, 500);
+	}
+	const summary = document.createElement('summary');
+	summary.innerText = '脚本设置';
+	details.appendChild(summary);
+	details.appendChild(form);
+	return details;
+}
+
+function appendDisguiseCodeFieldset(form: Element) {
 	const disguiseCodeFieldset = createDisguiseCodeFieldset();
 	const updateFieldSetsState = (label: DisguiseMode) => {
 		switch (label) {
@@ -521,41 +411,319 @@ export function createSettingForm(): HTMLElement {
 	form.appendChild(radioDiv);
 
 	form.appendChild(disguiseCodeFieldset);
-
-	form.onsubmit = (e) => {
-		e.preventDefault();
-		const interval = parseInt(intervalInput.value) * 60000;
-		if (interval >= 0 && interval != refreshInterval) {
-			GM_setValue('refreshInterval', interval);
-			refreshInterval = interval;
-		}
-	};
-
-	// 延迟设置背景色，确保pre元素已经渲染完成
-	setTimeout(() => {
-		const pre = document.querySelector('pre');
-		if (pre) {
-			updateStyle(pre);
-		}
-	}, 1000);
-
-	const details = document.createElement('details');
-	details.id = 'script-setting';
-	if (location.hash === '#script-setting') {
-		details.open = true;
-		setTimeout(() => {
-			details.scrollIntoView(true);
-		}, 500);
-	}
-	const summary = document.createElement('summary');
-	summary.innerText = '脚本设置';
-	details.appendChild(summary);
-	details.appendChild(form);
-	return details;
 }
 
 export function setDefaultStyle() {
 	document.body.style.setProperty('--container-width', containerWidth);
 	document.body.style.setProperty('--novel-font-size', novelFontSize);
 	document.body.style.setProperty('--novel-font-family', novelFontFamily);
+}
+
+const FAB_ID = 'deqi-fab';
+const DIALOG_ID = 'deqi-settings-dialog';
+
+// 夜间模式：仅切换 body 上的 data-theme（auto/dark/light）。
+// 具体配色全部在 src/style.css 与 src/config-dialog.css 中定义，这里不含颜色数据。
+// mode: 'auto' = 跟随系统（移除 data-theme，交给 prefers-color-scheme）
+//       'dark' / 'light' = 强制夜间 / 日间
+const applyTheme = (mode?: ThemeMode) => {
+	if (!mode) {
+		mode = themeMode;
+	}
+	if (mode === 'dark' || mode === 'light') {
+		document.body.setAttribute('data-theme', mode);
+	} else {
+		document.body.removeAttribute('data-theme');
+	}
+	if (themeMode != mode) {
+		themeMode = mode!;
+		GM_setValue('theme-mode', mode);
+	}
+};
+
+// 页面设置 —— 修改干净阅读页的 CSS 变量，实时生效
+function buildSettingsDialog() {
+	const dialog = document.createElement('dialog');
+	dialog.id = DIALOG_ID;
+
+	const panel = document.createElement('div');
+	panel.className = 'settings-panel';
+
+	const head = document.createElement('div');
+	head.className = 'settings-head';
+	const title = document.createElement('span');
+	title.textContent = '页面设置';
+	const close = document.createElement('button');
+	close.className = 'settings-close';
+	close.type = 'button';
+	close.setAttribute('aria-label', '关闭');
+	close.textContent = '✕';
+	close.addEventListener('click', () => dialog.close());
+	head.append(title, close);
+
+	const body = document.createElement('div');
+	body.className = 'settings-body';
+
+	const mkRow = (labelText: string) => {
+		const row = document.createElement('div');
+		row.className = 'settings-row';
+		const label = document.createElement('label');
+		label.textContent = labelText;
+		const input = document.createElement('input');
+		row.append(label, input);
+		return { row, input };
+	};
+
+	// 滑动条控件：实时写入 CSS 变量，并持久化
+	const mkRangeRow = (
+		labelText: string,
+		min: string | number,
+		max: string | number,
+		step: string | number,
+		unit: string,
+		varName: string,
+		storeKey: string,
+		fallback: string
+	) => {
+		const row = document.createElement('div');
+		row.className = 'settings-row';
+
+		const label = document.createElement('label');
+		label.textContent = labelText;
+
+		const input = document.createElement('input');
+		input.type = 'range';
+		input.min = String(min);
+		input.max = String(max);
+		input.step = String(step);
+		input.value = String(GM_getValue(varName, fallback) || min);
+
+		const valText = document.createElement('span');
+		valText.className = 'settings-val';
+
+		const apply = () => {
+			document.body.style.setProperty(varName, unit ? `${input.value}${unit}` : input.value);
+			valText.textContent = `${input.value}${unit ?? ''}`;
+			try {
+				GM_setValue(storeKey, input.value);
+			} catch {}
+		};
+		input.addEventListener('input', apply);
+
+		row.append(label, input, valText);
+		return { row, input, apply };
+	};
+
+	// 夜间模式（默认跟随浏览器 / 强制夜间 / 强制日间）
+	const themeRow = document.createElement('div');
+	themeRow.className = 'settings-row';
+	const themeLabel = document.createElement('label');
+	themeLabel.textContent = '夜间模式';
+	const themeSelect = document.createElement('select');
+	[
+		['auto', '跟随系统'],
+		['dark', '夜间'],
+		['light', '日间']
+	].forEach(([v, text]) => {
+		const o = document.createElement('option');
+		o.value = v;
+		o.textContent = text;
+		themeSelect.appendChild(o);
+	});
+	themeSelect.value = themeMode;
+	themeSelect.addEventListener('change', () => {
+		applyTheme(themeSelect.value as ThemeMode);
+	});
+	themeRow.append(themeLabel, themeSelect);
+
+	// 容宽
+	const widthRow = mkRow('宽度');
+	widthRow.input.type = 'text';
+	widthRow.input.value = containerWidth;
+	widthRow.input.addEventListener('change', () => {
+		const v = widthRow.input.value.trim() || '1200px';
+		document.body.style.setProperty('--container-width', v);
+		try {
+			GM_setValue('container-width', v);
+		} catch {}
+	});
+
+	// 正文字号
+	const fontSizeRow = mkRow('字体大小');
+	fontSizeRow.input.type = 'text';
+	fontSizeRow.input.value = novelFontSize;
+	fontSizeRow.input.addEventListener('change', () => {
+		const v = fontSizeRow.input.value.trim() || '16px';
+		document.body.style.setProperty('--novel-font-size', v);
+		try {
+			GM_setValue('novel-font-size', v);
+		} catch {}
+	});
+
+	// 字体
+	const fontFamilyRow = mkRow('字体');
+	fontFamilyRow.input.type = 'text';
+	fontFamilyRow.input.value = novelFontFamily;
+	fontFamilyRow.input.placeholder = '系统默认';
+	const DEFAULT_FAMILY = `system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Segoe UI', Roboto, sans-serif`;
+	fontFamilyRow.input.addEventListener('change', () => {
+		const family = fontFamilyRow.input.value.trim();
+		document.body.style.setProperty('--novel-font-family', family || DEFAULT_FAMILY);
+		try {
+			GM_setValue('novel-font-family', family);
+		} catch {}
+	});
+
+	// 快捷设置字体按钮（预设字体）
+	const fontQuickRow = document.createElement('div');
+	fontQuickRow.className = 'settings-font-quick';
+	const fontPresets = [
+		// 通用 / Windows
+		['系统默认', DEFAULT_FAMILY],
+		['宋体', `SimSun, '宋体', serif`],
+		['黑体', `SimHei, '黑体', sans-serif`],
+		['楷体', `KaiTi, '楷体', serif`],
+		['微软雅黑', `'Microsoft YaHei', '微软雅黑', sans-serif`],
+		// macOS / iOS
+		['苹方', `'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif`],
+		['宋体-简', `'Songti SC', 'STSong', 'SimSun', serif`],
+		['楷体-简', `'Kaiti SC', 'STKaiti', 'KaiTi', serif`],
+		['华文黑体', `'STHeiti', 'Heiti SC', 'PingFang SC', sans-serif`],
+		['华文宋体', `'STSong', 'Songti SC', 'SimSun', serif`],
+		// Android / 开源
+		['思源黑体', `'Noto Sans CJK SC', 'Source Han Sans SC', 'HarmonyOS Sans SC', sans-serif`],
+		['思源宋体', `'Noto Serif CJK SC', 'Source Han Serif SC', 'SimSun', serif`],
+		['鸿蒙', `'HarmonyOS Sans SC', 'HarmonyOS Sans', 'Noto Sans CJK SC', sans-serif`],
+		['霞鹜文楷', `'LXGW WenKai', 'Kaiti SC', 'KaiTi', serif`]
+	];
+	const syncFontQuick = () => {
+		const current = novelFontFamily;
+		fontQuickRow.querySelectorAll('button').forEach((b) => {
+			b.classList.toggle('active', b.dataset.family?.trim() === current);
+		});
+	};
+	fontPresets.forEach(([label, family]) => {
+		const b = document.createElement('button');
+		b.type = 'button';
+		b.textContent = label;
+		b.dataset.family = family;
+		b.addEventListener('click', () => {
+			document.body.style.setProperty('--novel-font-family', family);
+			fontFamilyRow.input.value = family;
+			try {
+				GM_setValue('novel-font-family', family);
+			} catch {}
+			syncFontQuick();
+		});
+		fontQuickRow.appendChild(b);
+	});
+	fontFamilyRow.input.addEventListener('change', syncFontQuick);
+
+	// 行间距
+	const lineHeightRow = mkRangeRow(
+		'行间距',
+		1,
+		3,
+		0.05,
+		'',
+		'--novel-line-height',
+		'novel-line-height',
+		'1.9'
+	);
+
+	// 段间距（单位是 em，相对正文字号）
+	const paraSpacingRow = mkRangeRow(
+		'段间距',
+		0,
+		3,
+		0.1,
+		'em',
+		'--novel-para-spacing',
+		'novel-para-spacing',
+		'0.9em'
+	);
+
+	body.append(
+		themeRow,
+		widthRow.row,
+		fontSizeRow.row,
+		fontFamilyRow.row,
+		fontQuickRow,
+		lineHeightRow.row,
+		paraSpacingRow.row
+	);
+	syncFontQuick();
+
+	const hint = document.createElement('div');
+	hint.className = 'settings-hint';
+	hint.textContent = '宽度单位可为 rem、px、%、svw、vw；修改后即时生效。';
+	body.appendChild(hint);
+
+	panel.append(head, body);
+	dialog.appendChild(panel);
+	document.body.appendChild(dialog);
+	return dialog;
+}
+
+export function showConfigDialog() {
+	const dialog = document.getElementById(DIALOG_ID) as HTMLDialogElement | null;
+	if (dialog && typeof dialog.showModal === 'function') {
+		dialog.showModal();
+	}
+}
+
+function buildFab() {
+	const wrap = document.createElement('div');
+	wrap.id = FAB_ID;
+
+	// 子按钮
+	const menu = document.createElement('div');
+	menu.className = 'fab-menu';
+
+	const mkSub = (icon: string, label: string, onClick: any) => {
+		const b = document.createElement('button');
+		b.type = 'button';
+		b.innerHTML = `<span class="fab-icon">${icon}</span><span>${label}</span>`;
+		b.addEventListener('click', onClick);
+		menu.appendChild(b);
+		return b;
+	};
+
+	mkSub('⬆', '滚动到顶部', () => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }));
+	mkSub('⬇', '滚动到底部', () =>
+		window.scrollTo({
+			top: document.documentElement.scrollHeight,
+			left: 0,
+			behavior: 'smooth'
+		})
+	);
+	mkSub('⚙', '页面设置', showConfigDialog);
+
+	// 主按钮
+	const toggle = document.createElement('button');
+	toggle.className = 'fab-toggle';
+	toggle.type = 'button';
+	toggle.setAttribute('aria-label', '展开操作');
+	toggle.textContent = '+';
+	toggle.addEventListener('click', () => wrap.classList.toggle('open'));
+
+	// 点击空白处收起
+	document.addEventListener('click', (e) => {
+		if (e.target instanceof Node) {
+			if (wrap.classList.contains('open') && !wrap.contains(e.target)) {
+				wrap.classList.remove('open');
+			}
+		}
+	});
+	menu.addEventListener('click', () => wrap.classList.remove('open'));
+
+	wrap.append(menu, toggle);
+	document.body.appendChild(wrap);
+}
+
+export function setupConfigButton() {
+	if (document.getElementById(FAB_ID)) return;
+
+	buildSettingsDialog();
+	buildFab();
 }

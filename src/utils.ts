@@ -1,4 +1,20 @@
-import { bookPageAccessKey, nextChapterAccessKey, previousChapterAccessKey } from './config';
+import { GM_log, GM_xmlhttpRequest, GmLogType } from '$';
+import {
+	bookPageAccessKey,
+	nextChapterAccessKey,
+	previousChapterAccessKey,
+	setupConfigButton
+} from './config';
+// import VConsole from 'vconsole';
+// const vConsole = new VConsole({ theme: 'dark' });
+// console.log(vConsole.version);
+
+export let VM_log: GmLogType = GM_log;
+
+// VM_log = function (message: any): void {
+// 	GM_log(message);
+// 	console.log(message);
+// };
 
 /**
  * 获取代码主题的CSS文件URL
@@ -37,14 +53,14 @@ export function getCodeThemeURL(theme: string): string {
  * 主要用于解除页面对复制粘贴和右键菜单的限制。
  */
 export function releaseCopy() {
-	const $ = (globalThis as any).$;
+	const $ = (document.defaultView as any).$;
 	if ($) {
+		GM_log('has jQuery');
 		const doc = $(document);
 		doc.off('contextmenu');
 		doc.off('copy');
 		doc.off('cut');
 	}
-
 	document.onclick = null;
 	document.oncontextmenu = null;
 	document.oncopy = null;
@@ -55,6 +71,7 @@ export function releaseCopy() {
 	document.body.oncopy = null;
 	document.body.oncut = null;
 
+	// oxlint-disable-next-line typescript/unbound-method
 	const native_replaceState = history.replaceState;
 	history.replaceState = function (data: any, unused: string, url?: string | URL | null) {
 		if (url) {
@@ -86,13 +103,7 @@ export function ensureDoc(doc: Document | string): Document {
 	return doc;
 }
 
-export type NavLinks = {
-	prevAnchor?: HTMLAnchorElement;
-	infoAnchor?: HTMLAnchorElement;
-	nextAnchor?: HTMLAnchorElement;
-};
-
-export function setAccessKeys(nav: NavLinks) {
+function setAccessKeys(nav: NavLinks) {
 	const { prevAnchor, infoAnchor, nextAnchor } = nav;
 
 	if (prevAnchor) {
@@ -108,21 +119,6 @@ export function setAccessKeys(nav: NavLinks) {
 		nextAnchor.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
 	}
 }
-
-export type Page = {
-	breadcrumbBar?: Element;
-	searchForm?: Element;
-	title?: string;
-	mainSection: Element;
-	navigationBar: NavLinks;
-};
-
-export type CleanPage = {
-	root: HTMLDivElement;
-	header: HTMLElement;
-	main: HTMLElement;
-	footer: HTMLElement;
-};
 
 export function rebuildChapterBody(page: Page): CleanPage {
 	const newBody = document.createElement('body');
@@ -140,7 +136,31 @@ export function rebuildChapterBody(page: Page): CleanPage {
 	newBody.append(root);
 	document.body.replaceWith(newBody);
 
+	const scripts = Array.from(document.head.querySelectorAll('script'));
+	scripts.forEach((it) => it.remove());
+
+	setupConfigButton();
+	boilerplate();
+
 	return { root, header, main, footer };
+}
+
+function boilerplate() {
+	ensureMeta('viewport', 'width=device-width');
+	ensureMeta('text-scale', 'scale');
+}
+
+function ensureMeta(name: string, content: string) {
+	const docHeader = document.head;
+	const meta = docHeader.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+	if (meta) {
+		meta.content = content;
+	} else {
+		const meta = document.createElement('meta');
+		meta.name = name;
+		meta.content = content;
+		docHeader.appendChild(meta);
+	}
 }
 
 export function updateStyle(pre: HTMLPreElement) {
@@ -152,6 +172,101 @@ export function updateStyle(pre: HTMLPreElement) {
 		const computedStyle = getComputedStyle(comment);
 		document.body.style.setProperty('--secondary-color', computedStyle.color);
 	}
+}
+
+export function paragraphsFromElement(el: Element): HTMLParagraphElement[] {
+	const paragraphs: HTMLParagraphElement[] = [];
+
+	let paragraph = el.ownerDocument.createElement('p');
+	const appendParagraph = () => {
+		if (paragraph.textContent?.trim() || paragraph.children.length > 0) {
+			if (paragraph.querySelector('p')) {
+				const children = Array.from(paragraph.children);
+				children.forEach((it) => {
+					if (it instanceof HTMLParagraphElement) {
+						paragraphs.push(it);
+					} else {
+						if (it.textContent?.trim() || it instanceof HTMLImageElement) {
+							const p = el.ownerDocument.createElement('p');
+							paragraphs.push(p);
+						}
+					}
+				});
+			} else {
+				paragraphs.push(paragraph);
+			}
+		}
+		paragraph = el.ownerDocument.createElement('p');
+	};
+
+	for (const node of Array.from(el.childNodes)) {
+		if (node.nodeType === Node.ELEMENT_NODE && (node as Element).matches('br')) {
+			appendParagraph();
+		} else if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+			paragraph.append(node.textContent.trim());
+		} else {
+			if (
+				!(
+					node instanceof HTMLAnchorElement ||
+					node instanceof HTMLScriptElement ||
+					node instanceof HTMLUListElement
+				)
+			) {
+				if (node instanceof HTMLParagraphElement) {
+					if (node.querySelector('br')) {
+						for (const subNode of Array.from(node.childNodes)) {
+							if (subNode.nodeType === Node.ELEMENT_NODE && (subNode as Element).matches('br')) {
+								appendParagraph();
+							} else if (subNode.nodeType === Node.TEXT_NODE && subNode.textContent) {
+								paragraph.append(subNode.textContent.trim());
+							}
+						}
+						node.innerHTML = '';
+					}
+				}
+				paragraph.append(node.cloneNode(true));
+			}
+		}
+	}
+	appendParagraph();
+
+	const demo = paragraphs.filter((p) => p.querySelector('p'));
+	if (demo.length > 0) {
+		GM_log('nest', demo);
+	}
+
+	return paragraphs;
+}
+
+type ParseFragmentCallback = (doc: Document) => FragmentPage;
+
+export async function fetchChaperFragmentPage(
+	href: string,
+	callback: ParseFragmentCallback
+): Promise<FragmentPage> {
+	VM_log(`fetchChaperFragmentPage: ${href}`);
+	const p = new Promise<FragmentPage>((resolve, reject) => {
+		GM_xmlhttpRequest({
+			method: 'GET',
+			url: href,
+			responseType: 'document',
+			onload: (response) => {
+				const doc = ensureDoc(response.response);
+				const f = callback(doc);
+				VM_log(f);
+				resolve(f);
+			},
+			onerror: (response) => {
+				VM_log(['fetchChaperFragmentPage error', response]);
+				reject(response);
+			},
+			ontimeout: () => {
+				VM_log('fetchChaperFragmentPage timeout');
+				reject('timeout');
+			}
+		});
+	});
+	return p;
 }
 
 function buildNovelHeader(page: Page): HTMLElement {
@@ -197,8 +312,15 @@ function buildNovelMain(page: Page): HTMLElement {
 		article.appendChild(h2);
 	}
 	const section = document.createElement('section');
+
 	section.appendChild(mainSection);
 	article.appendChild(section);
+	if (mainSection.querySelector('img')) {
+		const imgSection = document.createElement('section');
+		imgSection.classList.add('img-container');
+		mainSection.querySelectorAll('img').forEach((img) => imgSection.appendChild(img));
+		article.appendChild(imgSection);
+	}
 	main.appendChild(article);
 	return main;
 }
@@ -217,5 +339,45 @@ function buildNovelFooter(nav: NavLinks): HTMLElement {
 	}
 	navBar.insertAdjacentHTML('beforeend', '<a href="/">小说列表</a>');
 	footer.appendChild(navBar);
+	setAccessKeys(nav);
 	return footer;
+}
+
+export function freezePage() {
+	const noop = () => {};
+
+	// 1. 清空所有定时器 ID（暴力法：从 1 到最大 ID 清一遍）
+	const maxId = setTimeout(noop, 0);
+	for (let i = 0; i <= maxId; i++) {
+		clearTimeout(i);
+		clearInterval(i);
+	}
+
+	const window = document.defaultView!;
+
+	// 2. 移除 document/window 上常见监听
+	['click', 'mousedown', 'mouseup', 'keydown', 'keyup', 'submit', 'scroll', 'touchstart'].forEach(
+		(type) => {
+			document.removeEventListener(type, noop, true);
+			window.removeEventListener(type, noop, true);
+		}
+	);
+
+	// 3. 禁用动态脚本入口
+	window.eval = noop;
+	(window as any).setTimeout = noop;
+	(window as any).setInterval = noop;
+	(window as any).requestAnimationFrame = noop;
+
+	// 4. 禁用动态 script 插入
+	// oxlint-disable-next-line typescript/unbound-method
+	const origAppend = Node.prototype.appendChild;
+	Node.prototype.appendChild = function <T extends Node>(node: T): T {
+		if (node instanceof Element && node.tagName === 'SCRIPT') return node;
+		return origAppend.call(this, node) as T;
+	};
+
+	// 5. 冻结表单、链接
+	document.querySelectorAll('a').forEach((a) => (a.onclick = (e) => e.preventDefault()));
+	document.querySelectorAll('form').forEach((f) => (f.onsubmit = (e) => e.preventDefault()));
 }

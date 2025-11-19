@@ -1,4 +1,4 @@
-/// <reference types="vite/client" />
+/// <reference types="vite-plus/client" />
 /// <reference types="vite-plugin-monkey/client" />
 //// <reference types="vite-plugin-monkey/global" />
 /// <reference types="@types/prismjs/index" />
@@ -187,3 +187,34 @@ declare namespace Prism {
 	const plugins: Record<string, any>;
 	const themes: Record<string, any>;
 }
+
+declare const __LITE__: boolean;
+
+type ThemeMode = 'dark' | 'light' | 'auto';
+
+type PageURL = { next?: string; nextChapter?: string };
+
+type FragmentPage = PageURL & {
+	paragraphs: HTMLParagraphElement[];
+};
+
+type Page = {
+	breadcrumbBar?: Element;
+	searchForm?: Element;
+	title?: string;
+	mainSection: Element;
+	navigationBar: NavLinks;
+};
+
+type CleanPage = {
+	root: HTMLDivElement;
+	header: HTMLElement;
+	main: HTMLElement;
+	footer: HTMLElement;
+};
+
+type NavLinks = {
+	prevAnchor?: HTMLAnchorElement;
+	infoAnchor?: HTMLAnchorElement;
+	nextAnchor?: HTMLAnchorElement;
+};

@@ -1,7 +1,12 @@
-import { GM_xmlhttpRequest } from '$';
-import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
-import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
-import { ensureDoc, rebuildChapterBody, setAccessKeys } from './utils';
+import { disguiseParagraphs } from './code';
+import { createSettingForm } from './config';
+import {
+	fetchChaperFragmentPage,
+	isInIframe,
+	paragraphsFromElement,
+	rebuildChapterBody,
+	VM_log
+} from './utils';
 
 function cleanupBody() {
 	const children = Array.from(document.body.children).filter((it) => it.id != 'ss-reader-main');
@@ -23,63 +28,9 @@ function cleanBookPage() {
 	cleanupBody();
 }
 function handleSettingPage() {
-	const articleMain = document.getElementById('ss-reader-main')!!;
+	const articleMain = document.getElementById('ss-reader-main')!;
 	const settingForm = createSettingForm();
 	articleMain.appendChild(settingForm);
-}
-
-function formatArticle() {
-	const prevAnchor = document.getElementById('prev_url')!! as HTMLAnchorElement;
-	const infoAnchor = document.getElementById('info_url')!! as HTMLAnchorElement;
-	const nextAnchor = document.getElementById('next_url')!! as HTMLAnchorElement;
-
-	const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
-	setAccessKeys(navigationBar);
-
-	const breadcrumbBar = document.querySelector('.info-title') as HTMLElement;
-	const title = document.title.split('-').shift();
-	const mainSection = disguiseParagraphs(document.getElementById('article')!!);
-	const page = { breadcrumbBar, title, mainSection, navigationBar };
-	rebuildChapterBody(page);
-}
-
-function continueFetchPages(curDoc: Document) {
-	const nextURL = curDoc.getElementById('next_url')!! as HTMLAnchorElement;
-	if (nextURL.textContent.trim() == '下一章') {
-		const t = document.getElementById('next_url')!! as HTMLAnchorElement;
-		t.replaceWith(nextURL);
-		formatArticle();
-	} else {
-		if (nextURL.href.startsWith('javascript:')) {
-			console.error('Cannot fetch next page');
-			return;
-		}
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: nextURL.href,
-			responseType: 'document',
-			onload: (response) => {
-				const doc = ensureDoc(response.response);
-				const article = document.getElementById('article')!!;
-				const nextArticle = doc.getElementById('article')!!;
-				const children = Array.from(nextArticle.children);
-				children.forEach((child) => {
-					article.appendChild(child);
-				});
-
-				continueFetchPages(doc);
-			}
-		});
-	}
-}
-
-function handleChapterPage() {
-	if (disguiseDebug) {
-		disguiseParagraphs(document.getElementById('article')!!);
-		return;
-	}
-	document.body.setAttribute('hidden', '');
-	continueFetchPages(document);
 }
 
 export function handleDDxiaoshuoRoute() {
@@ -94,8 +45,6 @@ export function handleDDxiaoshuoRoute() {
 			break;
 		case 1:
 			cleanBookPage();
-			setupCodeTheme();
-			setupExtendLanguageSupport();
 			if (location.pathname == '/history.html') {
 				handleSettingPage();
 			}
@@ -105,17 +54,130 @@ export function handleDDxiaoshuoRoute() {
 				// 不是章节首页
 				return;
 			}
-			switch (disguiseMode) {
-				case 'code':
-					setupCodeTheme();
-					setupExtendLanguageSupport();
-					break;
-				default:
-					break;
-			}
 			handleChapterPage();
 			break;
 		default:
 			break;
 	}
+}
+
+function handleChapterPage() {
+	VM_log('handleChapterPage');
+
+	const con = document.getElementById('article')!;
+	let multiPage = false;
+	if (isInIframe) {
+		return;
+	}
+	const a = document.getElementById('next_url') as HTMLAnchorElement | null;
+
+	if (a) {
+		VM_log(a.textContent);
+		if (a.textContent.includes('下一页')) {
+			multiPage = true;
+			void (async () => {
+				let counter = 0;
+				let next = await fetchChaperFragmentPage(a.href, parseFragmentPage);
+				con.append(...next.paragraphs);
+				while (next.next && counter < 20) {
+					counter++;
+					next = await fetchChaperFragmentPage(next.next, parseFragmentPage);
+					VM_log(`result: ${a.href} ${next.paragraphs.length}`);
+					con.append(...next.paragraphs);
+				}
+
+				if (next.nextChapter) {
+					a.textContent = '下一章';
+					a.href = next.nextChapter;
+				}
+
+				const page = getChapterPage();
+				rebuildChapterBody(page);
+			})();
+		} else if (a.textContent.includes('下一章')) {
+			(() => {
+				const page = getChapterPage();
+				rebuildChapterBody(page);
+			})();
+			multiPage = true;
+		}
+	}
+
+	if (!multiPage) {
+		const page = getChapterPage();
+		rebuildChapterBody(page);
+	}
+
+	document.head.querySelectorAll('link[href][rel="stylesheet"]').forEach((ln) => ln.remove());
+}
+
+function parseFragmentPage(doc: Document): FragmentPage {
+	const nestedCon = doc.getElementById('article')!;
+	VM_log('content', nestedCon.outerHTML);
+
+	const paragraphs = paragraphsFromElement(nestedCon);
+
+	let next: HTMLAnchorElement | undefined;
+	let nextChapter: HTMLAnchorElement | undefined;
+
+	const element = doc.getElementById('next_url');
+	if (element) {
+		if (element instanceof HTMLAnchorElement) {
+			if (element.textContent.includes('下一页')) {
+				next = element;
+			} else if (element.textContent.includes('下一章')) {
+				nextChapter = element;
+			}
+		}
+	}
+
+	return {
+		next: next?.href,
+		nextChapter: nextChapter?.href,
+		paragraphs: paragraphs
+	};
+}
+
+function getChapterPage(): Page {
+	let con = document.getElementById('article')!;
+	con.className = '';
+	if (con.tagName == 'ARTICLE') {
+		const d = document.createElement('div');
+		d.innerHTML = con.innerHTML;
+		con.replaceWith(d);
+		con = d;
+	}
+	const mainSection = disguiseParagraphs(con);
+
+	const prenexts = [
+		document.getElementById('prev_url') as HTMLAnchorElement | null,
+		document.getElementById('info_url') as HTMLAnchorElement | null,
+		document.getElementById('next_url') as HTMLAnchorElement | null
+	];
+	const navigationBar: NavLinks = {};
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			element.className = '';
+			if (element.textContent.includes('上一章')) {
+				element.innerHTML = '上一章';
+				navigationBar.prevAnchor = element;
+			} else if (element.textContent.includes('目录')) {
+				element.innerHTML = '目录';
+				navigationBar.infoAnchor = element;
+			} else if (element.textContent.includes('下一章')) {
+				element.innerHTML = '下一章';
+				navigationBar.nextAnchor = element;
+			}
+		}
+	}
+	const breadcrumbBar = document.querySelector('.info-title') as HTMLElement;
+	const title = document.title.split('-').shift();
+	const page = {
+		breadcrumbBar,
+		title,
+		mainSection,
+		navigationBar
+	};
+
+	return page;
 }
