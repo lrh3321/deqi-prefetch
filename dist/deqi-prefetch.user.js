@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2025-10-090
+// @version      2025-11-200
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -11,6 +11,8 @@
 // @supportURL   https://github.com/lrh3321/deqi-prefetch/issues
 // @downloadURL  https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
 // @updateURL    https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
+// @match        http*://www.sudugu.org/*
+// @match        http*://www.sudugu.org/i/pifu.aspx
 // @match        http*://www.deqixs.com/pifu/
 // @match        http*://www.deqixs.com/xiaoshuo/*/*.html
 // @match        http*://www.deqixs.com/xiaoshuo/*/
@@ -27,6 +29,7 @@
 // @grant        GM_addStyle
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
+// @grant        GM_log
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
@@ -36,15 +39,17 @@
 (function () {
   'use strict';
 
-  const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):document.head.appendChild(document.createElement("style")).append(t);})(e));};
+  const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):(document.head||document.documentElement).appendChild(document.createElement("style")).append(t);})(e));};
 
   const styleCss = '[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:var(--container-width, "1200px")}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color: black;--primary-bg-color: #f5f2f0;--secondary-color: gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{display:block;min-inline-size:min-content;margin-inline:2px;margin-top:1rem;margin-bottom:1rem;border-width:2px;border-style:groove;border-color:gray;border-image:initial;padding-block:.35em .625em;padding-inline:.75em}form fieldset>div{display:flex;flex-wrap:wrap;gap:.5rem}fieldset label{display:flex;width:fit-content;gap:.4rem;white-space:nowrap}@media (orientation: portrait){fieldset label{display:flex;flex-wrap:wrap;width:100%;gap:.4rem;white-space:nowrap}}label input{padding-left:.5rem;max-width:75svw;border:1px solid light-dark(#767676,#858585)}editable-list li{width:fit-content;height:fit-content;display:flex;align-items:baseline}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{border:none;cursor:pointer;font-size:1.8rem}editable-list textarea{border-radius:.75rem;padding-block:.25rem;padding-inline:.75rem;width:95%}editable-list ul{display:flex;max-width:80svw;flex-wrap:wrap;justify-content:flex-start;column-gap:1rem}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*="position:fixed"]{display:none!important}#article_main{background:transparent}#article_main #page-links a,#article_main #page-links span{padding:1px 10px;width:28px;height:28px;display:inline-block;margin-right:10px;background:#1a73e8;color:#fff!important;line-height:25px;text-align:center;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{text-decoration:none;color:#fa2080}#ss-reader-main,.info-title{border-width:0px;border-bottom-width:0px;background-color:transparent!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}body:has(.article-root){--primary-color: black;--primary-bg-color: #f5f2f0;background-color:color-mix(in srgb,var(--primary-bg-color) 80%,var(--primary-color) 20%)}.article-root{justify-self:center;grid-template-rows:auto 1fr auto;height:100vh;display:grid;width:var(--container-width, "1200px");color:var(--primary-color)}.article-root header{opacity:.6;line-height:2rem;margin-top:.5rem;background-color:color-mix(in srgb,var(--primary-bg-color) 90%,var(--primary-color) 10%)}.article-root .breadcrumb,.article-root .breadcrumb a{display:flex;flex-wrap:wrap;gap:1rem;margin:0;align-items:center;background-color:transparent;color:var(--secondary-color)}.article-root .breadcrumb li{list-style-type:none;text-wrap:nowrap;overflow-x:hidden;text-overflow:ellipsis}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{font-size:1.5rem;display:flex;justify-content:center}.article-root .article-title code{background-color:transparent}.article-root section.img-container{display:flex;flex-direction:column}.article-root section.img-container img{visibility:initial}@media (orientation: landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root footer{opacity:.6;line-height:2rem;margin-bottom:.5rem}.article-root .article-nav{justify-self:center;background-color:lch(from var(--primary-bg-color) l c h / .75);border-radius:.75rem}.article-root .article-nav a{padding-inline:1rem;background-color:transparent;color:var(--secondary-color)}.article-root hr{width:90%}body[hidden]{display:none!important}';
   importCSS(styleCss);
   var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
   var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+  var _GM_log = (() => typeof GM_log != "undefined" ? GM_log : void 0)();
   var _GM_registerMenuCommand = (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
   var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  let VM_log = _GM_log;
   function getCodeThemeURL(theme) {
     const officialThemes = new Set([
       "prism",
@@ -62,8 +67,9 @@
     return `https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/${theme}.min.css`;
   }
   function releaseCopy() {
-    const $ = globalThis.$;
+    const $ = document.defaultView.$;
     if ($) {
+      _GM_log("has jQuery");
       const doc = $(document);
       doc.off("contextmenu");
       doc.off("copy");
@@ -943,6 +949,7 @@ function foo(bar) {
     document.body.style.setProperty("--novel-font-family", novelFontFamily);
   }
   function handleBookPage$1() {
+    VM_log("handleBookPage");
     let finished = false;
     const itemtxt = document.querySelector(".itemtxt");
     const spans = Array.from(itemtxt.querySelectorAll("p > span"));
@@ -975,108 +982,99 @@ function foo(bar) {
     }
   }
   function handleSettingPage$3() {
+    VM_log("handleSettingPage");
     const settingForm = createSettingForm();
     const container = document.querySelector("div.container");
     container.appendChild(settingForm);
   }
-  function handleChaperPage() {
-    const container = document.querySelector("div.container");
-    if (location.pathname.includes("-") && container && isInIframe) {
-      const con = container.querySelector("div.con");
-      let nextHref = "";
-      let nextChapter = "";
-      const prenexts2 = document.querySelectorAll("div.prenext a");
-      for (const element of prenexts2) {
-        if (element instanceof HTMLAnchorElement) {
-          if (element.textContent == "下一页") {
-            nextHref = element.href;
-            break;
-          }
-          if (element.textContent == "下一章") {
-            nextChapter = element.href;
-            break;
-          }
-        }
-      }
-      window.parent.postMessage({
-        con: con.innerHTML,
-        next: nextHref,
-        nextChapter,
-        href: location.href
-      });
-      return;
-    }
-    if (_GM_getValue("disguiseDebug", false)) {
-      disguiseParagraphs(document.querySelector("div.container .con"));
-      return;
-    }
-    const prenexts = container.querySelectorAll("div.prenext a");
-    window.addEventListener("message", (e) => {
-      if (e.data.con) {
-        const next = document.createElement("div");
-        next.className = "con";
-        next.innerHTML = e.data.con;
-        const container2 = document.querySelector("div.container .con");
-        next.querySelectorAll("p").forEach((p) => container2.appendChild(p));
-      }
-      if (e.data.next) {
-        const iframe = document.querySelector("iframe");
-        if (iframe) {
-          iframe.contentWindow.location.replace(e.data.next);
-        }
-      } else {
-        console.debug("no next");
-        if (!isInIframe && disguiseMode != "none") {
-          const container2 = document.querySelector("div.container .con");
-          disguiseParagraphs(container2);
-        }
-        const iframe = document.querySelector("iframe");
-        if (iframe) {
-          iframe.remove();
-        }
-        const nextChapter = e.data.nextChapter;
-        if (nextChapter) {
+  async function fetchChaperFragmentPage(href) {
+    const p = new Promise((resolve, reject) => {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: href,
+        responseType: "document",
+        onload: (response) => {
+          const doc = ensureDoc(response.response);
+          const container = doc.querySelector("div.container");
+          const nestedCon = doc.querySelector("div.container .con");
+          const paragraphs = Array.from(nestedCon.querySelectorAll("p"));
+          const prenexts = container.querySelectorAll("div.prenext a");
+          let next;
+          let nextChapter;
           for (const element of prenexts) {
             if (element instanceof HTMLAnchorElement) {
               if (element.textContent == "下一页") {
-                element.href = nextChapter;
-                if (nextChapter.endsWith(".html")) {
-                  element.innerText = "下一章";
-                } else {
-                  element.innerText = "返回目录";
-                }
+                next = element;
+                break;
+              } else if (element.textContent == "下一章") {
+                nextChapter = element;
                 break;
               }
             }
           }
+          VM_log({
+            next: next?.href,
+            nextChapter: nextChapter?.href,
+            paragraphs
+          });
+          resolve({
+            next: next?.href,
+            nextChapter: nextChapter?.href,
+            paragraphs
+          });
+        },
+        onerror: (response) => {
+          VM_log(["handleSettingPage error", response]);
+          reject(response);
+        },
+        ontimeout: () => {
+          VM_log("handleSettingPage timeout");
+          reject("timeout");
         }
-      }
+      });
     });
-    const nav = {};
+    return p;
+  }
+  function handleChaperPage() {
+    VM_log("handleChaperPage");
+    const container = document.querySelector("div.container");
+    const prenexts = container.querySelectorAll("div.prenext a");
+    const con = document.querySelector("div.container .con");
     for (const element of prenexts) {
       if (element instanceof HTMLAnchorElement) {
         if (element.textContent == "下一页") {
-          nav.nextAnchor = element;
-          const next = document.createElement("iframe");
-          next.src = element.href;
-          next.style.display = "none";
-          container && container.appendChild(next);
-        } else if (element.textContent == "上一章") {
-          nav.prevAnchor = element;
-        } else if (element.textContent == "目录") {
-          nav.infoAnchor = element;
+          (async () => {
+            let counter = 0;
+            let next = await fetchChaperFragmentPage(element.href);
+            con.append(...next.paragraphs);
+            while (next.next && counter < 20) {
+              counter++;
+              next = await fetchChaperFragmentPage(next.next);
+              con.append(...next.paragraphs);
+            }
+            if (next.nextChapter) {
+              element.textContent = "下一章";
+              element.href = next.nextChapter;
+            }
+            const page = getChapterPage();
+            rebuildChapterBody(page);
+          })();
+          break;
         } else if (element.textContent == "下一章") {
-          nav.nextAnchor = element;
-          if (!isInIframe && disguiseMode != "none") {
-            const container2 = document.querySelector("div.container .con");
-            disguiseParagraphs(container2);
-          }
+          (async () => {
+            const page = getChapterPage();
+            rebuildChapterBody(page);
+          })();
+          break;
         }
       }
     }
-    setAccessKeys(nav);
   }
   function handleDeqiRoute() {
+    if (isSudugu()) {
+      handleSuduguRoute();
+      return;
+    }
     if (location.pathname === "/pifu/") {
       setupCodeTheme();
       setupExtendLanguageSupport();
@@ -1094,6 +1092,57 @@ function foo(bar) {
     } else if (location.pathname.startsWith("/xiaoshuo/")) {
       handleBookPage$1();
     }
+  }
+  function handleSuduguRoute() {
+    VM_log("handleSuduguRoute");
+    if (location.pathname === "/i/pifu.aspx") {
+      setupCodeTheme();
+      setupExtendLanguageSupport();
+      handleSettingPage$3();
+    } else if (location.pathname.endsWith(".html")) {
+      if (!isInIframe) {
+        switch (disguiseMode) {
+          case "code":
+            setupCodeTheme();
+            setupExtendLanguageSupport();
+            break;
+        }
+      }
+      handleChaperPage();
+    } else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) {
+      handleBookPage$1();
+    }
+  }
+  function isSudugu() {
+    return location.host.endsWith("sudugu.org");
+  }
+  function getChapterPage() {
+    const con = document.querySelector("div.container .con");
+    con.className = "";
+    const mainSection = disguiseParagraphs(con);
+    const prenexts = document.querySelectorAll("div.prenext a");
+    const navigationBar = {};
+    for (const element of prenexts) {
+      if (element instanceof HTMLAnchorElement) {
+        if (element.textContent == "上一章") {
+          navigationBar.prevAnchor = element;
+        } else if (element.textContent == "目录" || element.textContent == "章节目录") {
+          navigationBar.infoAnchor = element;
+        } else if (element.textContent == "下一章") {
+          navigationBar.nextAnchor = element;
+        }
+      }
+    }
+    setAccessKeys(navigationBar);
+    const breadcrumbBar = document.querySelector("div.container > div.submenu h1");
+    const title = con.querySelector("p")?.textContent;
+    const page = {
+      breadcrumbBar,
+      title,
+      mainSection,
+      navigationBar
+    };
+    return page;
   }
   let bookID = "";
   const chapterLinks = new Array();
@@ -1646,11 +1695,16 @@ function foo(bar) {
     }
   }
   document.defaultView.Prism = globalThis.Prism;
+  VM_log("init");
   function handleRoute() {
-    if (location.host.endsWith("deqixs.com")) {
+    if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org")) {
       handleDeqiRoute();
       _GM_registerMenuCommand("脚本设置", function() {
-        open("/pifu/#script-setting");
+        if (location.host.endsWith("deqixs.com")) {
+          open("/pifu/#script-setting");
+        } else {
+          open("/i/pifu.aspx#script-setting");
+        }
       });
     } else if (location.hostname == "www.ddxiaoshuo.cc") {
       handleDDxiaoshuoRoute();

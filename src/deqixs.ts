@@ -1,8 +1,18 @@
-import { GM_getValue } from '$';
+import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseMode, refreshInterval, setupCodeTheme } from './config';
-import { isInIframe, NavLinks, setAccessKeys } from './utils';
+import {
+	ensureDoc,
+	isInIframe,
+	NavLinks,
+	Page,
+	rebuildChapterBody,
+	setAccessKeys,
+	VM_log
+} from './utils';
 function handleBookPage() {
+	VM_log('handleBookPage');
+
 	let finished = false;
 	const itemtxt = document.querySelector('.itemtxt')!!;
 	const spans = Array.from(itemtxt.querySelectorAll('p > span'));
@@ -43,117 +53,115 @@ function handleBookPage() {
 }
 
 function handleSettingPage() {
+	VM_log('handleSettingPage');
 	const settingForm = createSettingForm();
 	const container = document.querySelector('div.container')!!;
 	container.appendChild(settingForm);
 }
 
-function handleChaperPage() {
-	const container = document.querySelector('div.container')!!;
-	if (location.pathname.includes('-') && container && isInIframe) {
-		const con = container.querySelector('div.con');
+type FragmentPage = {
+	next?: string;
+	nextChapter?: string;
+	paragraphs: HTMLParagraphElement[];
+};
 
-		let nextHref = '';
-		let nextChapter = '';
-		const prenexts = document.querySelectorAll('div.prenext a');
-		for (const element of prenexts) {
-			if (element instanceof HTMLAnchorElement) {
-				if (element.textContent == '下一页') {
-					nextHref = element.href;
-					break;
-				}
-				if (element.textContent == '下一章') {
-					nextChapter = element.href;
-					break;
-				}
-			}
-		}
+async function fetchChaperFragmentPage(href: string): Promise<FragmentPage> {
+	const p = new Promise<FragmentPage>((resolve, reject) => {
+		GM_xmlhttpRequest({
+			method: 'GET',
+			url: href,
+			responseType: 'document',
+			onload: (response) => {
+				const doc = ensureDoc(response.response);
+				const container = doc.querySelector('div.container')!!;
+				const nestedCon = doc.querySelector('div.container .con')!!;
 
-		window.parent.postMessage({
-			con: con!!.innerHTML,
-			next: nextHref,
-			nextChapter: nextChapter,
-			href: location.href
-		});
-		return;
-	}
+				const paragraphs = Array.from(nestedCon.querySelectorAll('p'));
+				const prenexts = container.querySelectorAll('div.prenext a');
+				let next: HTMLAnchorElement | undefined;
+				let nextChapter: HTMLAnchorElement | undefined;
 
-	if (GM_getValue('disguiseDebug', false)) {
-		disguiseParagraphs(document.querySelector('div.container .con')!!);
-		return;
-	}
-
-	const prenexts = container.querySelectorAll('div.prenext a');
-
-	window.addEventListener('message', (e) => {
-		if (e.data.con) {
-			const next = document.createElement('div');
-			next.className = 'con';
-			next.innerHTML = e.data.con;
-			const container = document.querySelector('div.container .con')!!;
-			next.querySelectorAll('p').forEach((p) => container.appendChild(p));
-		}
-
-		if (e.data.next) {
-			const iframe = document.querySelector('iframe');
-			if (iframe) {
-				iframe.contentWindow!!.location.replace(e.data.next);
-			}
-		} else {
-			console.debug('no next');
-			if (!isInIframe && disguiseMode != 'none') {
-				const container = document.querySelector('div.container .con')!!;
-				disguiseParagraphs(container);
-			}
-			const iframe = document.querySelector('iframe');
-			if (iframe) {
-				iframe.remove();
-			}
-
-			const nextChapter = e.data.nextChapter;
-			if (nextChapter) {
 				for (const element of prenexts) {
 					if (element instanceof HTMLAnchorElement) {
 						if (element.textContent == '下一页') {
-							element.href = nextChapter;
-							if (nextChapter.endsWith('.html')) {
-								element.innerText = '下一章';
-							} else {
-								element.innerText = '返回目录';
-							}
+							next = element;
+							break;
+						} else if (element.textContent == '下一章') {
+							nextChapter = element;
 							break;
 						}
 					}
 				}
-			}
-		}
-	});
 
-	const nav: NavLinks = {};
+				VM_log({
+					next: next?.href,
+					nextChapter: nextChapter?.href,
+					paragraphs: paragraphs
+				});
+				resolve({
+					next: next?.href,
+					nextChapter: nextChapter?.href,
+					paragraphs: paragraphs
+				});
+			},
+			onerror: (response) => {
+				VM_log(['handleSettingPage error', response]);
+				reject(response);
+			},
+			ontimeout: () => {
+				VM_log('handleSettingPage timeout');
+				reject('timeout');
+			}
+		});
+	});
+	return p;
+}
+
+function handleChaperPage() {
+	VM_log('handleChaperPage');
+
+	const container = document.querySelector('div.container')!!;
+	const prenexts = container.querySelectorAll('div.prenext a');
+
+	const con = document.querySelector('div.container .con')!!;
 	for (const element of prenexts) {
 		if (element instanceof HTMLAnchorElement) {
 			if (element.textContent == '下一页') {
-				nav.nextAnchor = element;
-				const next = document.createElement('iframe');
-				next.src = element.href;
-				next.style.display = 'none';
-				container && container.appendChild(next);
-			} else if (element.textContent == '上一章') {
-				nav.prevAnchor = element;
-			} else if (element.textContent == '目录') {
-				nav.infoAnchor = element;
+				(async () => {
+					let counter = 0;
+					let next = await fetchChaperFragmentPage(element.href);
+					con.append(...next.paragraphs);
+					while (next.next && counter < 20) {
+						counter++;
+						next = await fetchChaperFragmentPage(next.next);
+						con.append(...next.paragraphs);
+					}
+
+					if (next.nextChapter) {
+						element.textContent = '下一章';
+						element.href = next.nextChapter;
+					}
+
+					const page = getChapterPage();
+					rebuildChapterBody(page);
+				})();
+				break;
 			} else if (element.textContent == '下一章') {
-				nav.nextAnchor = element;
-				if (!isInIframe && disguiseMode != 'none') {
-					const container = document.querySelector('div.container .con')!!;
-					disguiseParagraphs(container);
-				}
+				(async () => {
+					const page = getChapterPage();
+					rebuildChapterBody(page);
+				})();
+				break;
 			}
 		}
 	}
-	setAccessKeys(nav);
 }
 export function handleDeqiRoute() {
+	if (isSudugu()) {
+		handleSuduguRoute();
+		return;
+	}
+
 	// 设置页面处理逻辑
 	if (location.pathname === '/pifu/') {
 		setupCodeTheme();
@@ -178,4 +186,67 @@ export function handleDeqiRoute() {
 		// 书籍主页处理逻辑
 		handleBookPage();
 	}
+}
+
+function handleSuduguRoute() {
+	VM_log('handleSuduguRoute');
+	// 设置页面处理逻辑
+	if (location.pathname === '/i/pifu.aspx') {
+		setupCodeTheme();
+		setupExtendLanguageSupport();
+		handleSettingPage();
+	}
+	// 章节页面处理逻辑
+	else if (location.pathname.endsWith('.html')) {
+		// 非iframe环境下根据伪装模式设置代码主题
+		if (!isInIframe) {
+			switch (disguiseMode) {
+				case 'code':
+					setupCodeTheme();
+					setupExtendLanguageSupport();
+					break;
+				default:
+					break;
+			}
+		}
+		handleChaperPage();
+	} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) {
+		// 书籍主页处理逻辑
+		handleBookPage();
+	}
+}
+
+function isSudugu(): boolean {
+	return location.host.endsWith('sudugu.org');
+}
+
+function getChapterPage(): Page {
+	const con = document.querySelector('div.container .con')!;
+	con.className = '';
+	const mainSection = disguiseParagraphs(con);
+
+	const prenexts = document.querySelectorAll('div.prenext a');
+	const navigationBar: NavLinks = {};
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == '上一章') {
+				navigationBar.prevAnchor = element;
+			} else if (element.textContent == '目录' || element.textContent == '章节目录') {
+				navigationBar.infoAnchor = element;
+			} else if (element.textContent == '下一章') {
+				navigationBar.nextAnchor = element;
+			}
+		}
+	}
+	setAccessKeys(navigationBar);
+	const breadcrumbBar = document.querySelector('div.container > div.submenu h1')!!;
+	const title = con.querySelector('p')?.textContent;
+	const page = {
+		breadcrumbBar,
+		title,
+		mainSection,
+		navigationBar
+	};
+
+	return page;
 }

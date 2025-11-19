@@ -5,6 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@babel/runtime@npm:^7.17.2":
+  version: 7.28.4
+  resolution: "@babel/runtime@npm:7.28.4"
+  checksum: 10c0/792ce7af9750fb9b93879cc9d1db175701c4689da890e6ced242ea0207c9da411ccf16dc04e689cc01158b28d7898c40d75598f4559109f761c12ce01e959bf7
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.25.9":
   version: 0.25.9
   resolution: "@esbuild/aix-ppc64@npm:0.25.9"
@@ -547,6 +554,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"copy-text-to-clipboard@npm:^3.0.1":
+  version: 3.2.2
+  resolution: "copy-text-to-clipboard@npm:3.2.2"
+  checksum: 10c0/451796734a380f7da7b0af27c4d94e449719d3a2f2170e99c7e46eeee54cf3c4b4fdeabc185f6d6e8cbdf932e350831d05e8387c4bae8dcedb7fb961c600ddd4
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.11.0":
+  version: 3.47.0
+  resolution: "core-js@npm:3.47.0"
+  checksum: 10c0/9b1a7088b7c660c7b8f1d4c90bb1816a8d5352ebdcb7bc742e3a0e4eb803316b5aa17bacb8769522342196351a5430178f46914644f2bfdb94ce0ced3c7fd523
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
@@ -608,8 +629,9 @@ __metadata:
     "@types/prismjs": "npm:^1.26.5"
     prettier: "npm:^3.6.2"
     typescript: "npm:^5.9.3"
-    vite: "npm:^7.1.9"
-    vite-plugin-monkey: "npm:^7.1.4"
+    vconsole: "npm:^3.15.1"
+    vite: "npm:^7.2.2"
+    vite-plugin-monkey: "npm:^7.1.5"
   languageName: unknown
   linkType: soft
 
@@ -1180,6 +1202,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mutation-observer@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "mutation-observer@npm:1.0.3"
+  checksum: 10c0/2f010fdec4b860a6576558013bcaa691c4912e287ea1dc99ea3b9360b52586267b291e7a2a88c0f2a9b399b4ef1e116ce8c0f839f88d2d7c9b4323fb0badc321
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.11":
   version: 3.3.11
   resolution: "nanoid@npm:3.3.11"
@@ -1635,9 +1664,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-monkey@npm:^7.1.4":
-  version: 7.1.4
-  resolution: "vite-plugin-monkey@npm:7.1.4"
+"vconsole@npm:^3.15.1":
+  version: 3.15.1
+  resolution: "vconsole@npm:3.15.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.17.2"
+    copy-text-to-clipboard: "npm:^3.0.1"
+    core-js: "npm:^3.11.0"
+    mutation-observer: "npm:^1.0.3"
+  checksum: 10c0/1e62132b719e324eb7d533c94f38e9db288a9d0c9e85c8752ba742adee4e5925df10d4b43d05ba0cd264d99c32817f9f9c8f24fe391a7d8837469bd318d1b2ac
+  languageName: node
+  linkType: hard
+
+"vite-plugin-monkey@npm:^7.1.5":
+  version: 7.1.5
+  resolution: "vite-plugin-monkey@npm:7.1.5"
   dependencies:
     acorn: "npm:^8.15.0"
     acorn-walk: "npm:^8.3.4"
@@ -1655,13 +1696,13 @@ __metadata:
   peerDependenciesMeta:
     vite:
       optional: true
-  checksum: 10c0/bbbca87c9fc68d7c3d86cc9b0ae020a987faa5ddc688e44128a1201f1ef25b6b4ac9cdca378f492116a458d7ad77d60b43b64408e73240e0ce92ca648930e092
+  checksum: 10c0/63fa578f14a06ffff7107e53f510735ec4bd98a25a91fa65a0ed5bdc7eb731d0fd6afdc35191816d189c9f8228a7830501050fc6ca38879ca2a7c36343d6b947
   languageName: node
   linkType: hard
 
-"vite@npm:^7.1.9":
-  version: 7.1.9
-  resolution: "vite@npm:7.1.9"
+"vite@npm:^7.2.2":
+  version: 7.2.2
+  resolution: "vite@npm:7.2.2"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -1710,7 +1751,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/f628f903a137c1410232558bde99c223ea00a090bda6af77752c61f912955f0050aac12d3cfe024d08a0f150ff6fab61b3d0be75d634a59b94d49f525392e1f7
+  checksum: 10c0/9c76ee441f8dbec645ddaecc28d1f9cf35670ffa91cff69af7b1d5081545331603f0b1289d437b2fa8dc43cdc77b4d96b5bd9c9aed66310f490cb1a06f9c814c
   languageName: node
   linkType: hard
 

@@ -4,3 +4,6 @@ build:
 [doc('格式化源代码')]
 format:
     npx prettier --write ./
+
+webdav:
+    dufs -A dist

@@ -1,13 +1,16 @@
 import './style.css';
+
 import { GM_registerMenuCommand } from '$';
 import { setDefaultStyle } from './config';
-import { releaseCopy } from './utils';
+import { releaseCopy, VM_log } from './utils';
 import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
 import { handleCuoCengRoute } from './cuoceng';
 
 (document.defaultView as any).Prism = (globalThis as any).Prism;
+
+VM_log('init');
 
 /**
  * 根据当前页面路径处理不同类型的页面
@@ -18,12 +21,16 @@ import { handleCuoCengRoute } from './cuoceng';
  * 3. 其他情况则处理书籍主页
  */
 function handleRoute() {
-	if (location.host.endsWith('deqixs.com')) {
+	if (location.host.endsWith('deqixs.com') || location.host.endsWith('sudugu.org')) {
 		// 得奇小说处理逻辑
 		handleDeqiRoute();
 
 		GM_registerMenuCommand('脚本设置', function () {
-			open('/pifu/#script-setting');
+			if (location.host.endsWith('deqixs.com')) {
+				open('/pifu/#script-setting');
+			} else {
+				open('/i/pifu.aspx#script-setting');
+			}
 		});
 	} else if (location.hostname == 'www.ddxiaoshuo.cc') {
 		// 顶点小说处理逻辑

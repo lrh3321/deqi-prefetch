@@ -1,4 +1,15 @@
+import { GM_log, GmLogType } from '$';
 import { bookPageAccessKey, nextChapterAccessKey, previousChapterAccessKey } from './config';
+// import VConsole from 'vconsole';
+// const vConsole = new VConsole({ theme: 'dark' });
+// console.log(vConsole.version);
+
+export let VM_log: GmLogType = GM_log;
+
+// VM_log = function (message: any): void {
+// 	GM_log(message);
+// 	console.log(message);
+// };
 
 /**
  * 获取代码主题的CSS文件URL
@@ -37,14 +48,14 @@ export function getCodeThemeURL(theme: string): string {
  * 主要用于解除页面对复制粘贴和右键菜单的限制。
  */
 export function releaseCopy() {
-	const $ = (globalThis as any).$;
+	const $ = (document.defaultView as any).$;
 	if ($) {
+		GM_log('has jQuery');
 		const doc = $(document);
 		doc.off('contextmenu');
 		doc.off('copy');
 		doc.off('cut');
 	}
-
 	document.onclick = null;
 	document.oncontextmenu = null;
 	document.oncopy = null;
