@@ -19,7 +19,7 @@ body > div.container,
 body > div.header,
 #article_main,
 #ss-reader-main {
-	width: var(--container-width, '1200px');
+	width: min(calc(100svw - 1em), var(--container-width, '1200px'));
 }
 
 span.token.comment {
@@ -184,6 +184,24 @@ body.read_style_1 .textinfo {
 	display: none !important;
 }
 
+/* sudugu */
+@media screen and (max-width: 1200px) {
+	#list.dir {
+		margin: 0px;
+		width: calc(100svw - 30px);
+		ul li {
+			float: left;
+			width: 33%;
+		}
+	}
+
+	.container .itemtxt {
+		float: unset;
+		padding-right: unset;
+		width: unset;
+	}
+}
+
 /* clean page */
 body:has(.article-root) {
 	--primary-color: black;
@@ -195,7 +213,7 @@ body:has(.article-root) {
 	grid-template-rows: auto 1fr auto;
 	height: 100vh;
 	display: grid;
-	width: var(--container-width, '1200px');
+	width: min(100svw, var(--container-width, '1200px'));
 	color: var(--primary-color);
 }
 
@@ -245,6 +263,13 @@ body:has(.article-root) {
 
 .article-root section.img-container img {
 	visibility: initial;
+}
+
+.article-root section p {
+	text-indent: 2em;
+	margin-top: unset;
+	margin-bottom: 0.5em;
+	line-height: 120%;
 }
 
 @media (orientation: landscape) {

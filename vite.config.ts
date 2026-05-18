@@ -1,8 +1,17 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite-plus';
 import monkey from 'vite-plugin-monkey';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+	lint: { options: { typeAware: true, typeCheck: true } },
+	fmt: {
+		useTabs: true,
+		singleQuote: true,
+		trailingComma: 'none',
+		printWidth: 100,
+		sortPackageJson: false,
+		ignorePatterns: ['*.user.js']
+	},
 	plugins: [
 		monkey({
 			entry: 'src/main.ts',
@@ -14,7 +23,7 @@ export default defineConfig({
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				source: 'https://github.com/lrh3321/deqi-prefetch',
 				supportURL: 'https://github.com/lrh3321/deqi-prefetch/issues',
-				version: '2025-11-200',
+				version: '2026-05-180',
 				description:
 					'得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
