@@ -23,7 +23,7 @@ export default defineConfig({
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				source: 'https://github.com/lrh3321/deqi-prefetch',
 				supportURL: 'https://github.com/lrh3321/deqi-prefetch/issues',
-				version: '2026-05-180',
+				version: '2026-09-110',
 				description:
 					'得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
@@ -36,6 +36,9 @@ export default defineConfig({
 					'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js'
 				],
 				match: [
+					'http*://*.shudugu.org/*',
+					'http*://*.deqixs.org/*',
+					'http*://*.kudushu.org/*',
 					'http*://www.sudugu.org/*',
 					'http*://www.sudugu.org/i/pifu.aspx',
 					'http*://www.deqixs.com/pifu/',

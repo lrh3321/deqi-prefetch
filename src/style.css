@@ -211,7 +211,7 @@ body:has(.article-root) {
 .article-root {
 	justify-self: center;
 	grid-template-rows: auto 1fr auto;
-	height: 100vh;
+	max-height: 100vh;
 	display: grid;
 	width: min(100svw, var(--container-width, '1200px'));
 	color: var(--primary-color);
@@ -249,8 +249,14 @@ body:has(.article-root) {
 }
 .article-root .article-title {
 	font-size: 1.5rem;
-	display: flex;
+	display: inline-block;
 	justify-content: center;
+
+	max-width: 95svw;
+	min-width: 0;
+	white-space: nowrap; /* 禁止换行 */
+	overflow: hidden; /* 隐藏溢出部分 */
+	text-overflow: ellipsis; /* 溢出部分显示为 ... */
 }
 .article-root .article-title code {
 	background-color: transparent;

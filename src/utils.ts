@@ -165,6 +165,51 @@ export function updateStyle(pre: HTMLPreElement) {
 	}
 }
 
+export function paragraphsFromElement(el: Element): HTMLParagraphElement[] {
+	const paragraphs: HTMLParagraphElement[] = [];
+
+	let paragraph = el.ownerDocument.createElement('p');
+	const appendParagraph = () => {
+		if (paragraph.textContent?.trim() || paragraph.children.length > 0) {
+			paragraphs.push(paragraph);
+		}
+		paragraph = el.ownerDocument.createElement('p');
+	};
+
+	for (const node of Array.from(el.childNodes)) {
+		if (node.nodeType === Node.ELEMENT_NODE && (node as Element).matches('br')) {
+			appendParagraph();
+		} else if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+			paragraph.append(node.textContent.trim());
+		} else {
+			if (
+				!(
+					node instanceof HTMLAnchorElement ||
+					node instanceof HTMLScriptElement ||
+					node instanceof HTMLUListElement
+				)
+			) {
+				if (node instanceof HTMLParagraphElement) {
+					if (node.querySelector('br')) {
+						for (const subNode of Array.from(node.childNodes)) {
+							if (subNode.nodeType === Node.ELEMENT_NODE && (subNode as Element).matches('br')) {
+								appendParagraph();
+							} else if (subNode.nodeType === Node.TEXT_NODE && subNode.textContent) {
+								paragraph.append(subNode.textContent.trim());
+							}
+						}
+						node.innerHTML = '';
+					}
+				}
+				paragraph.append(node.cloneNode(true));
+			}
+		}
+	}
+	appendParagraph();
+
+	return paragraphs;
+}
+
 function buildNovelHeader(page: Page): HTMLElement {
 	const { breadcrumbBar, title } = page;
 	const header = document.createElement('header');

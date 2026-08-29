@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2026-05-180
+// @version      2026-09-110
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -11,6 +11,9 @@
 // @supportURL   https://github.com/lrh3321/deqi-prefetch/issues
 // @downloadURL  https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
 // @updateURL    https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
+// @match        http*://*.shudugu.org/*
+// @match        http*://*.deqixs.org/*
+// @match        http*://*.kudushu.org/*
 // @match        http*://www.sudugu.org/*
 // @match        http*://www.sudugu.org/i/pifu.aspx
 // @match        http*://www.deqixs.com/pifu/
@@ -37,7 +40,7 @@
 // ==/UserScript==
 
 (function() {
-  'use strict';
+	"use strict";
 	var s = new Set();
 	var _css = async (t) => {
 		if (s.has(t)) return;
@@ -47,13 +50,13 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}body:has(.article-root){--primary-color:black;--primary-bg-color:#f5f2f0;background-color:color-mix(in srgb, var(--primary-bg-color) 80%, var(--primary-color) 20%)}.article-root{height:100vh;width:min(100svw, var(--container-width,\"1200px\"));color:var(--primary-color);grid-template-rows:auto 1fr auto;justify-self:center;display:grid}.article-root header{opacity:.6;background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;line-height:2rem}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{justify-content:center;font-size:1.5rem;display:flex}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial}.article-root section p{text-indent:2em;margin-top:unset;margin-bottom:.5em;line-height:120%}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root footer{opacity:.6;margin-bottom:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .75);border-radius:.75rem;justify-self:center}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;padding-inline:1rem}.article-root hr{width:90%}body[hidden]{display:none!important}");
-	var _GM_addElement = typeof GM_addElement != "undefined" ? GM_addElement : void 0;
-	var _GM_getValue = typeof GM_getValue != "undefined" ? GM_getValue : void 0;
-	var _GM_log = typeof GM_log != "undefined" ? GM_log : void 0;
-	var _GM_registerMenuCommand = typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0;
-	var _GM_setValue = typeof GM_setValue != "undefined" ? GM_setValue : void 0;
-	var _GM_xmlhttpRequest = typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0;
+	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}body:has(.article-root){--primary-color:black;--primary-bg-color:#f5f2f0;background-color:color-mix(in srgb, var(--primary-bg-color) 80%, var(--primary-color) 20%)}.article-root{max-height:100vh;width:min(100svw, var(--container-width,\"1200px\"));color:var(--primary-color);grid-template-rows:auto 1fr auto;justify-self:center;display:grid}.article-root header{opacity:.6;background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;line-height:2rem}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{white-space:nowrap;text-overflow:ellipsis;justify-content:center;min-width:0;max-width:95svw;font-size:1.5rem;display:inline-block;overflow:hidden}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial}.article-root section p{text-indent:2em;margin-top:unset;margin-bottom:.5em;line-height:120%}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root footer{opacity:.6;margin-bottom:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .75);border-radius:.75rem;justify-self:center}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;padding-inline:1rem}.article-root hr{width:90%}body[hidden]{display:none!important}");
+	var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
+	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+	var _GM_log = (() => typeof GM_log != "undefined" ? GM_log : void 0)();
+	var _GM_registerMenuCommand = (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
+	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+	var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
 	var VM_log = _GM_log;
 	function getCodeThemeURL(theme) {
 		if (new Set([
@@ -145,6 +148,28 @@
 			const computedStyle = getComputedStyle(comment);
 			document.body.style.setProperty("--secondary-color", computedStyle.color);
 		}
+	}
+	function paragraphsFromElement(el) {
+		const paragraphs = [];
+		let paragraph = el.ownerDocument.createElement("p");
+		const appendParagraph = () => {
+			if (paragraph.textContent?.trim() || paragraph.children.length > 0) paragraphs.push(paragraph);
+			paragraph = el.ownerDocument.createElement("p");
+		};
+		for (const node of Array.from(el.childNodes)) if (node.nodeType === Node.ELEMENT_NODE && node.matches("br")) appendParagraph();
+		else if (node.nodeType === Node.TEXT_NODE && node.textContent) paragraph.append(node.textContent.trim());
+		else if (!(node instanceof HTMLAnchorElement || node instanceof HTMLScriptElement || node instanceof HTMLUListElement)) {
+			if (node instanceof HTMLParagraphElement) {
+				if (node.querySelector("br")) {
+					for (const subNode of Array.from(node.childNodes)) if (subNode.nodeType === Node.ELEMENT_NODE && subNode.matches("br")) appendParagraph();
+					else if (subNode.nodeType === Node.TEXT_NODE && subNode.textContent) paragraph.append(subNode.textContent.trim());
+					node.innerHTML = "";
+				}
+			}
+			paragraph.append(node.cloneNode(true));
+		}
+		appendParagraph();
+		return paragraphs;
 	}
 	function buildNovelHeader(page) {
 		const { breadcrumbBar, title } = page;
@@ -238,8 +263,6 @@
 			case "markup":
 				blockCommentStart = "<!--";
 				blockCommentEnd = "-->";
-				break;
-			default: break;
 		}
 		const codeSegments = [];
 		paragraphs.forEach((p) => {
@@ -469,7 +492,7 @@ switch (x) {
 	var codeTheme = _GM_getValue("code-theme", "prism");
 	var codeParagraphItalic = _GM_getValue("code-italic", true);
 	var codeShowLineNumbers = _GM_getValue("line-numbers", false);
-	var refreshInterval = _GM_getValue("refreshInterval", 15 * 6e4);
+	var refreshInterval = _GM_getValue("refreshInterval", 9e5);
 	var avalibleCodeThemes = [
 		{
 			Name: "Default",
@@ -992,9 +1015,7 @@ function foo(bar) {
 				case "none":
 					disguiseCodeFieldset.style.display = "none";
 					break;
-				case "code":
-					disguiseCodeFieldset.style.display = "block";
-					break;
+				case "code": disguiseCodeFieldset.style.display = "block";
 			}
 		};
 		updateFieldSetsState(disguiseMode);
@@ -1057,7 +1078,7 @@ function foo(bar) {
 		document.body.style.setProperty("--novel-font-size", novelFontSize);
 		document.body.style.setProperty("--novel-font-family", novelFontFamily);
 	}
-	function handleBookPage$1() {
+	function handleBookPage$2() {
 		VM_log("handleBookPage");
 		let finished = false;
 		const itemtxt = document.querySelector(".itemtxt");
@@ -1092,7 +1113,7 @@ function foo(bar) {
 		const settingForm = createSettingForm();
 		document.querySelector("div.container").appendChild(settingForm);
 	}
-	async function fetchChaperFragmentPage(href) {
+	async function fetchChaperFragmentPage$1(href) {
 		return new Promise((resolve, reject) => {
 			_GM_xmlhttpRequest({
 				method: "GET",
@@ -1101,8 +1122,7 @@ function foo(bar) {
 				onload: (response) => {
 					const doc = ensureDoc(response.response);
 					const container = doc.querySelector("div.container");
-					const nestedCon = doc.querySelector("div.container .con");
-					const paragraphs = Array.from(nestedCon.querySelectorAll("p"));
+					const paragraphs = paragraphsFromElement(doc.querySelector("div.container .con"));
 					const prenexts = container.querySelectorAll("div.prenext a");
 					let next;
 					let nextChapter;
@@ -1141,27 +1161,29 @@ function foo(bar) {
 		VM_log("handleChaperPage");
 		const prenexts = document.querySelector("div.container").querySelectorAll("div.prenext a");
 		const con = document.querySelector("div.container .con");
+		const paragraphs = paragraphsFromElement(con);
+		con.replaceChildren(...paragraphs);
 		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
 			if (element.textContent == "下一页") {
 				(async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage(element.href);
+					let next = await fetchChaperFragmentPage$1(element.href);
 					con.append(...next.paragraphs);
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage(next.next);
+						next = await fetchChaperFragmentPage$1(next.next);
 						con.append(...next.paragraphs);
 					}
 					if (next.nextChapter) {
 						element.textContent = "下一章";
 						element.href = next.nextChapter;
 					}
-					rebuildChapterBody(getChapterPage());
+					rebuildChapterBody(getChapterPage$1());
 				})();
 				break;
 			} else if (element.textContent == "下一章") {
-				(async () => {
-					rebuildChapterBody(getChapterPage());
+				(() => {
+					rebuildChapterBody(getChapterPage$1());
 				})();
 				break;
 			}
@@ -1181,11 +1203,9 @@ function foo(bar) {
 				case "code":
 					setupCodeTheme();
 					setupExtendLanguageSupport();
-					break;
-				default: break;
 			}
 			handleChaperPage();
-		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$1();
+		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$2();
 	}
 	function handleSuduguRoute() {
 		VM_log("handleSuduguRoute");
@@ -1198,16 +1218,14 @@ function foo(bar) {
 				case "code":
 					setupCodeTheme();
 					setupExtendLanguageSupport();
-					break;
-				default: break;
 			}
 			handleChaperPage();
-		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$1();
+		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$2();
 	}
 	function isSudugu() {
-		return location.host.endsWith("sudugu.org");
+		return location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org");
 	}
-	function getChapterPage() {
+	function getChapterPage$1() {
 		const con = document.querySelector("div.container .con");
 		con.className = "";
 		const mainSection = disguiseParagraphs(con);
@@ -1221,7 +1239,6 @@ function foo(bar) {
 		setAccessKeys(navigationBar);
 		return {
 			breadcrumbBar: document.querySelector("div.container > div.submenu h1"),
-			title: con.querySelector("p")?.textContent,
 			mainSection,
 			navigationBar
 		};
@@ -1244,7 +1261,7 @@ function foo(bar) {
 		articleMain.appendChild(settingForm);
 		container.appendChild(articleMain);
 	}
-	function handleBookPage() {
+	function handleBookPage$1() {
 		const rowDiv = document.querySelector("#main > div.nine-item > div.container > div.row");
 		const moreItem = createAttrOneItem();
 		moreItem.id = "more-item";
@@ -1455,7 +1472,7 @@ function foo(bar) {
 			title: rDoc.getElementById("post-h2").innerText
 		};
 	}
-	function handleChapterPage$2() {
+	function handleChapterPage$3() {
 		if (disguiseDebug) {
 			disguiseParagraphs(document.getElementById("mainboxs"));
 			return;
@@ -1555,7 +1572,7 @@ function foo(bar) {
 				handleSettingPage$2();
 				if (segments.length == 2 && segments[0] == "book") {
 					bookID = segments[1];
-					handleBookPage();
+					handleBookPage$1();
 				}
 				break;
 			case 3:
@@ -1580,12 +1597,8 @@ function foo(bar) {
 					case "code":
 						setupCodeTheme();
 						setupExtendLanguageSupport();
-						break;
-					default: break;
 				}
-				handleChapterPage$2();
-				break;
-			default: break;
+				handleChapterPage$3();
 		}
 	}
 	function cleanupBody() {
@@ -1648,7 +1661,7 @@ function foo(bar) {
 			});
 		}
 	}
-	function handleChapterPage$1() {
+	function handleChapterPage$2() {
 		if (disguiseDebug) {
 			disguiseParagraphs(document.getElementById("article"));
 			return;
@@ -1677,15 +1690,11 @@ function foo(bar) {
 					case "code":
 						setupCodeTheme();
 						setupExtendLanguageSupport();
-						break;
-					default: break;
 				}
-				handleChapterPage$1();
-				break;
-			default: break;
+				handleChapterPage$2();
 		}
 	}
-	function handleChapterPage() {
+	function handleChapterPage$1() {
 		const showReading = document.getElementById("showReading");
 		const bookTitle = document.querySelector("#readcontent .book_title h1");
 		const nextPageBox = document.querySelector(".nextPageBox");
@@ -1736,18 +1745,142 @@ function foo(bar) {
 					case "code":
 						setupCodeTheme();
 						setupExtendLanguageSupport();
-						break;
-					default: break;
 				}
-				handleChapterPage();
-				break;
-			default: break;
+				handleChapterPage$1();
 		}
+	}
+	function handleKudushuRoute() {
+		VM_log("handleKudushuRoute");
+		if (/\/book\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/index\.html/.test(location.pathname)) handleBookPage();
+		else if (/\/html\/[^/]+\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/[^/]+\.html/.test(location.pathname)) handleChapterPage();
+	}
+	function handleBookPage() {
+		VM_log("handleBookPage");
+	}
+	function handleChapterPage() {
+		VM_log("handleChapterPage");
+		const container = document.getElementById("novelcontent");
+		const ul = document.querySelector("ul");
+		if (ul) document.getElementById("novelbody")?.append(ul);
+		const prenexts = Array.from(container.querySelectorAll("#novelcontent ul li a")).filter((it) => it instanceof HTMLAnchorElement).map((it) => it.cloneNode(true));
+		container.querySelector("ul")?.remove();
+		document.getElementById("content_tip")?.remove();
+		const con = container;
+		const paragraphs = paragraphsFromElement(con);
+		con.replaceChildren(...paragraphs.filter((p) => p.textContent.length > 0 && !p.textContent.includes("本章未完")));
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == "下—页") {
+				(async () => {
+					let counter = 0;
+					let next = await fetchChaperFragmentPage(element.href);
+					con.append(...next.paragraphs);
+					while (next.next && counter < 20) {
+						counter++;
+						next = await fetchChaperFragmentPage(next.next);
+						con.append(...next.paragraphs);
+					}
+					if (next.nextChapter) {
+						Array.from(document.querySelectorAll("#novelbody ul li p a")).forEach((a) => {
+							console.log("UL", a.outerHTML);
+							if (a instanceof HTMLAnchorElement && a.textContent.includes("下")) {
+								a.textContent = "下一章";
+								a.href = next.nextChapter || a.href;
+							}
+						});
+						element.textContent = "下一章";
+						element.href = next.nextChapter;
+					}
+					rebuildChapterBody(getChapterPage());
+				})();
+				break;
+			} else if (element.textContent == "下—章") {
+				(() => {
+					rebuildChapterBody(getChapterPage());
+				})();
+				break;
+			}
+		}
+	}
+	async function fetchChaperFragmentPage(href) {
+		VM_log("fetchChaperFragmentPage", href);
+		return new Promise((resolve, reject) => {
+			_GM_xmlhttpRequest({
+				method: "GET",
+				url: href,
+				responseType: "document",
+				onload: (response) => {
+					const container = ensureDoc(response.response).getElementById("novelcontent");
+					const nestedCon = container;
+					const ul = container.querySelector("ul");
+					ul.remove();
+					const paragraphs = paragraphsFromElement(nestedCon);
+					const prenexts = ul.querySelectorAll("ul li a");
+					let next;
+					let nextChapter;
+					for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+						if (element.textContent == "下—页") {
+							next = element;
+							break;
+						} else if (element.textContent == "下—章") {
+							nextChapter = element;
+							nextChapter.textContent = "下一章";
+							break;
+						}
+					}
+					VM_log({
+						next: next?.href,
+						nextChapter: nextChapter?.href,
+						paragraphs
+					});
+					resolve({
+						next: next?.href,
+						nextChapter: nextChapter?.href,
+						paragraphs: paragraphs?.filter((p) => p.textContent.length > 0 && !p.textContent.includes("本章未完"))
+					});
+				},
+				onerror: (response) => {
+					VM_log(["handleSettingPage error", response]);
+					reject(response);
+				},
+				ontimeout: () => {
+					VM_log("handleSettingPage timeout");
+					reject("timeout");
+				}
+			});
+		});
+	}
+	function getChapterPage() {
+		const con = document.getElementById("novelcontent");
+		con.className = "";
+		con.id = "";
+		const mainSection = disguiseParagraphs(con);
+		let content_tip = document.getElementById("content_tip");
+		while (content_tip) {
+			content_tip.remove();
+			content_tip = document.getElementById("content_tip");
+		}
+		const title = document.getElementById("chaptertitle")?.textContent;
+		const prenexts = Array.from(document.querySelectorAll("#novelbody ul li p a")).map((a) => a.cloneNode(true));
+		const navigationBar = {};
+		for (const element of prenexts) if (element.textContent == "上一章" || element.textContent.includes("上")) {
+			element.textContent = "上—章";
+			navigationBar.prevAnchor = element;
+		} else if (element.textContent == "目录" || element.textContent == "章节目录" || element.textContent == "返 回 目 录" || element.textContent.includes("录")) {
+			element.textContent = "目录";
+			navigationBar.infoAnchor = element;
+		} else if (element.textContent == "下一章") navigationBar.nextAnchor = element;
+		else console.log(element.outerHTML);
+		setAccessKeys(navigationBar);
+		return {
+			mainSection,
+			title,
+			navigationBar
+		};
 	}
 	document.defaultView.Prism = globalThis.Prism;
 	VM_log("init");
 	function handleRoute() {
-		if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org")) {
+		if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org") || location.host.endsWith("deqixs.org")) {
 			handleDeqiRoute();
 			_GM_registerMenuCommand("脚本设置", function() {
 				if (location.host.endsWith("deqixs.com")) open("/pifu/#script-setting");
@@ -1759,6 +1892,7 @@ function foo(bar) {
 				open("/history.html#script-setting");
 			});
 		} else if (location.hostname == "www.cuoceng.com" || location.hostname == "cuoceng.com") handleCuoCengRoute();
+		else if (location.hostname.endsWith("kudushu.org")) handleKudushuRoute();
 		else if (location.hostname == "www.biqu33.cc" || location.pathname.startsWith("/book/")) {
 			handleBiqu33Route();
 			_GM_registerMenuCommand("脚本设置", function() {

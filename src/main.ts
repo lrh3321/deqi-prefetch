@@ -7,6 +7,7 @@ import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
 import { handleCuoCengRoute } from './cuoceng';
+import { handleKudushuRoute } from './kudushu';
 
 (document.defaultView as any).Prism = (globalThis as any).Prism;
 
@@ -21,7 +22,12 @@ VM_log('init');
  * 3. 其他情况则处理书籍主页
  */
 function handleRoute() {
-	if (location.host.endsWith('deqixs.com') || location.host.endsWith('sudugu.org')) {
+	if (
+		location.host.endsWith('deqixs.com') ||
+		location.host.endsWith('sudugu.org') ||
+		location.host.endsWith('shudugu.org') ||
+		location.host.endsWith('deqixs.org')
+	) {
 		// 得奇小说处理逻辑
 		handleDeqiRoute();
 
@@ -41,6 +47,9 @@ function handleRoute() {
 	} else if (location.hostname == 'www.cuoceng.com' || location.hostname == 'cuoceng.com') {
 		// 错层小说处理逻辑
 		handleCuoCengRoute();
+	} else if (location.hostname.endsWith('kudushu.org') ) {
+		// 苦读书处理逻辑
+		handleKudushuRoute();
 	} else if (location.hostname == 'www.biqu33.cc' || location.pathname.startsWith('/book/')) {
 		// biqu33处理逻辑
 		handleBiqu33Route();
