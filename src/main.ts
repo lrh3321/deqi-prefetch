@@ -1,12 +1,15 @@
 import './style.css';
+import './config-dialog.css';
 
-import { GM_registerMenuCommand } from '$';
-import { setDefaultStyle } from './config';
+import { GM_registerMenuCommand, GM_openInTab } from '$';
+import { setDefaultStyle, showConfigDialog } from './config';
 import { releaseCopy, VM_log } from './utils';
 import { handleDeqiRoute } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
 import { handleCuoCengRoute } from './cuoceng';
+import { handleKudushuRoute } from './kudushu';
+import { handleBuoloumaoRoute } from './boluomao';
 
 (document.defaultView as any).Prism = (globalThis as any).Prism;
 
@@ -21,33 +24,46 @@ VM_log('init');
  * 3. 其他情况则处理书籍主页
  */
 function handleRoute() {
-	if (location.host.endsWith('deqixs.com') || location.host.endsWith('sudugu.org')) {
+	if (
+		location.host.endsWith('deqixs.com') ||
+		location.host.endsWith('sudugu.org') ||
+		location.host.endsWith('shudugu.org') ||
+		location.host.endsWith('deqixs.org')
+	) {
 		// 得奇小说处理逻辑
 		handleDeqiRoute();
 
 		GM_registerMenuCommand('脚本设置', function () {
 			if (location.host.endsWith('deqixs.com')) {
-				open('/pifu/#script-setting');
+				GM_openInTab('/pifu/#script-setting');
 			} else {
-				open('/i/pifu.aspx#script-setting');
+				GM_openInTab('/i/pifu.aspx#script-setting');
 			}
 		});
 	} else if (location.hostname == 'www.ddxiaoshuo.cc') {
 		// 顶点小说处理逻辑
 		handleDDxiaoshuoRoute();
 		GM_registerMenuCommand('脚本设置', function () {
-			open('/history.html#script-setting');
+			GM_openInTab('/history.html#script-setting');
 		});
 	} else if (location.hostname == 'www.cuoceng.com' || location.hostname == 'cuoceng.com') {
 		// 错层小说处理逻辑
 		handleCuoCengRoute();
+	} else if (location.hostname.endsWith('kudushu.org')) {
+		// 苦读书处理逻辑
+		handleKudushuRoute();
+	} else if (location.hostname.endsWith('boluomao1.com')) {
+		// 菠萝猫处理逻辑
+		handleBuoloumaoRoute();
 	} else if (location.hostname == 'www.biqu33.cc' || location.pathname.startsWith('/book/')) {
 		// biqu33处理逻辑
 		handleBiqu33Route();
 		GM_registerMenuCommand('脚本设置', function () {
-			open('/#script-setting');
+			GM_openInTab('/#script-setting');
 		});
 	}
+
+	GM_registerMenuCommand('脚本设置', showConfigDialog);
 }
 
 setDefaultStyle();

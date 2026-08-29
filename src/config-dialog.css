@@ -1,0 +1,170 @@
+:root {
+	--fab-accent: #a4774b;
+	--fab-bg: #f3efe8;
+}
+
+/* 悬浮容器（右下角） */
+#deqi-fab {
+	position: fixed;
+	right: 1.25rem;
+	bottom: 1.25rem;
+	z-index: 2147483000;
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: flex-end;
+	gap: 0.6rem;
+}
+
+/* 子按钮组 */
+#deqi-fab .fab-menu {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.5rem;
+	opacity: 0;
+	transform: translateY(0.5rem);
+	pointer-events: none;
+	transition:
+		opacity 0.18s ease,
+		transform 0.18s ease;
+}
+#deqi-fab.open .fab-menu {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+#deqi-fab .fab-menu button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	border: 1px solid color-mix(in srgb, var(--fab-accent) 25%, transparent);
+	background: color-mix(in srgb, var(--fab-bg) 88%, white);
+	color: #2b2b2b;
+	box-shadow: 0 3px 10px rgb(0 0 0 / 0.18);
+	border-radius: 999px;
+	padding: 0.45rem 0.9rem;
+	font-size: 0.9rem;
+	cursor: pointer;
+	white-space: nowrap;
+	transition:
+		background-color 0.15s ease,
+		transform 0.1s ease;
+}
+#deqi-fab .fab-menu button:hover {
+	background: var(--fab-accent);
+	color: #fff;
+}
+#deqi-fab .fab-menu button:active {
+	transform: scale(0.95);
+}
+#deqi-fab .fab-menu button .fab-icon {
+	font-size: 1rem;
+	line-height: 1;
+}
+
+/* 主悬浮按钮 */
+#deqi-fab .fab-toggle {
+	width: 3.15rem;
+	height: 3.15rem;
+	border-radius: 50%;
+	border: none;
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+	font-size: 1.6rem;
+	color: #fff;
+	background: linear-gradient(135deg, #b08968, var(--fab-accent));
+	box-shadow: 0 5px 16px rgb(0 0 0 / 0.28);
+	transition: transform 0.2s ease;
+}
+#deqi-fab .fab-toggle:hover {
+	transform: scale(1.06);
+}
+#deqi-fab .fab-toggle:active {
+	transform: scale(0.94);
+}
+
+/* 全屏设置对话框 */
+#deqi-settings-dialog {
+	width: 100vw;
+	height: 100dvh;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+}
+#deqi-settings-dialog::backdrop {
+	background: rgb(0 0 0 / 0.45);
+	backdrop-filter: blur(2px);
+}
+#deqi-settings-dialog .settings-panel {
+	width: min(90vw, 40rem);
+	max-height: 88dvh;
+	overflow: auto;
+	margin: auto;
+	margin-top: 5dvh;
+	background: var(--card-bg-color, #fffdf8);
+	color: var(--primary-color, #2b2b2b);
+	border: 1px solid var(--separator-color, rgb(155 145 132 / 0.25));
+	border-radius: 0.9rem;
+	box-shadow: 0 20px 60px rgb(0 0 0 / 0.3);
+	font-size: 0.95rem;
+}
+#deqi-settings-dialog .settings-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.9rem 1.2rem;
+	border-bottom: 1px solid var(--separator-color, rgb(155 145 132 / 0.25));
+	font-size: 1.05rem;
+	font-weight: 700;
+	position: sticky;
+	top: 0;
+	background: inherit;
+	z-index: 1;
+}
+#deqi-settings-dialog .settings-close {
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font-size: 1.4rem;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0.2rem 0.4rem;
+	border-radius: 0.4rem;
+}
+#deqi-settings-dialog .settings-close:hover {
+	background: rgb(0 0 0 / 0.08);
+}
+#deqi-settings-dialog .settings-body {
+	padding: 1.1rem 1.2rem 1.4rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+}
+#deqi-settings-dialog .settings-row {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+#deqi-settings-dialog .settings-row label {
+	flex: 0 0 auto;
+	min-width: 4.5rem;
+}
+#deqi-settings-dialog .settings-row input[type='text'],
+#deqi-settings-dialog .settings-row input[type='number'] {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 0.4rem 0.6rem;
+	border: 1px solid var(--separator-color, rgb(155 145 132 / 0.4));
+	border-radius: 0.45rem;
+	background: var(--primary-bg-color, #f3efe8);
+	color: inherit;
+}
+#deqi-settings-dialog .settings-hint {
+	opacity: 0.65;
+	font-size: 0.82rem;
+}

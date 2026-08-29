@@ -11,7 +11,7 @@ function cleanupBody() {
 		(it) => it.id != 'main' && it.id != 'mainboxs'
 	);
 	children.forEach((it) => {
-		if (it.className == 'article-root') {
+		if (it.className == 'article-root' || it.id === 'deqi-fab' || it instanceof HTMLDialogElement) {
 			return;
 		}
 		it.remove();
@@ -22,13 +22,13 @@ function handleSettingPage() {
 	const articleMain = document.createElement('div');
 	articleMain.id = 'article_main';
 	articleMain.classList = 'container';
-	const container = document.getElementById('main')!!;
+	const container = document.getElementById('main')!;
 	articleMain.appendChild(settingForm);
 	container.appendChild(articleMain);
 }
 type ChapterLink = { href: string; title: string };
 function handleBookPage() {
-	const rowDiv = document.querySelector('#main > div.nine-item > div.container > div.row')!!;
+	const rowDiv = document.querySelector('#main > div.nine-item > div.container > div.row')!;
 
 	const moreItem = createAttrOneItem();
 	moreItem.id = 'more-item';
@@ -84,7 +84,7 @@ function fetchPreviousChapter(href: string, limit: number) {
 				});
 				localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
 
-				const moreItem = document.getElementById('more-item')!!;
+				const moreItem = document.getElementById('more-item')!;
 				const element = createChapterLink(href, link.title);
 				moreItem.parentElement?.insertBefore(element, moreItem);
 			}
@@ -100,9 +100,9 @@ function createAttrOneItem(): HTMLDivElement {
 }
 
 function getLastestHref(): string {
-	const moreItem = document.getElementById('more-item')!!;
-	const lastAnchor = moreItem.previousElementSibling?.querySelector('a')?.href!!;
-	return lastAnchor;
+	const moreItem = document.getElementById('more-item')!;
+	const lastAnchor = moreItem.previousElementSibling?.querySelector('a')?.href;
+	return lastAnchor!;
 }
 function createMoreAnchor(): HTMLAnchorElement {
 	const a = document.createElement('a');
@@ -138,7 +138,7 @@ function createChapterLink(href: string, title: string): HTMLDivElement {
 }
 
 function getPage(): Page {
-	const mainboxs = document.getElementById('mainboxs')!!;
+	const mainboxs = document.getElementById('mainboxs')!;
 
 	const mainSection = disguiseParagraphs(mainboxs);
 	const prenexts = document.querySelectorAll('div.prenext a');
@@ -157,7 +157,7 @@ function getPage(): Page {
 	setAccessKeys(navigationBar);
 	const title = document.getElementById('post-h2')?.innerHTML;
 	const page = {
-		breadcrumbBar: document.querySelector('div.page-links')!!,
+		breadcrumbBar: document.querySelector('div.page-links')!,
 		title,
 		mainSection,
 		navigationBar
@@ -171,7 +171,7 @@ function appendRemainPages(
 	hasCanvas: boolean
 ) {
 	const articleMain = document.getElementById('article_main');
-	const mainboxs = document.getElementById('mainboxs')!!;
+	const mainboxs = document.getElementById('mainboxs')!;
 	const scripts: string[] = [];
 	netxDivs.forEach((div) => {
 		if (typeof div === 'undefined') {
@@ -179,7 +179,7 @@ function appendRemainPages(
 		}
 		if (typeof div === 'string') {
 			const next = document.createElement('div');
-			next.innerHTML = div!!;
+			next.innerHTML = div!;
 			mainboxs.appendChild(next);
 		} else {
 			scripts.push(div.innerHTML);
@@ -192,7 +192,7 @@ function appendRemainPages(
 			const cleanPage = rebuildChapterBody(page);
 			mainboxs.id = '';
 
-			const section = cleanPage.main.querySelector('section')!!;
+			const section = cleanPage.main.querySelector('section')!;
 			const canvasList = Array.from(cleanPage.main.querySelectorAll('canvas'));
 			if (canvasList.length > 0) {
 				// 章节第一页就包含图片
@@ -235,7 +235,7 @@ function handleCanvasScript(scripts: string[]) {
 		console.log('handleCanvasScript', scripts);
 
 		const script = document.createElement('script');
-		script.textContent = scripts.shift()!!;
+		script.textContent = scripts.shift()!;
 		forCleanCanvas(() => {
 			setTimeout(() => {
 				script.remove();
@@ -247,7 +247,7 @@ function handleCanvasScript(scripts: string[]) {
 }
 
 function getMainBox(doc: Document | string): Element {
-	return ensureDoc(doc).getElementById('mainboxs')!!;
+	return ensureDoc(doc).getElementById('mainboxs')!;
 }
 function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined {
 	const document = ensureDoc(doc);
@@ -283,12 +283,12 @@ function getPrevLink(doc: Document | string): ChapterLink {
 	const rDoc = ensureDoc(doc);
 	return {
 		href: (rDoc.querySelector('.prenext > a[rel="prev"]') as HTMLAnchorElement).href,
-		title: rDoc.getElementById('post-h2')!!.innerText
+		title: rDoc.getElementById('post-h2')!.innerText
 	};
 }
 function handleChapterPage() {
 	if (disguiseDebug) {
-		disguiseParagraphs(document.getElementById('mainboxs')!!);
+		disguiseParagraphs(document.getElementById('mainboxs')!);
 		return;
 	}
 

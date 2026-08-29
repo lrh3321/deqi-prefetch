@@ -23,30 +23,30 @@ function cleanBookPage() {
 	cleanupBody();
 }
 function handleSettingPage() {
-	const articleMain = document.getElementById('ss-reader-main')!!;
+	const articleMain = document.getElementById('ss-reader-main')!;
 	const settingForm = createSettingForm();
 	articleMain.appendChild(settingForm);
 }
 
 function formatArticle() {
-	const prevAnchor = document.getElementById('prev_url')!! as HTMLAnchorElement;
-	const infoAnchor = document.getElementById('info_url')!! as HTMLAnchorElement;
-	const nextAnchor = document.getElementById('next_url')!! as HTMLAnchorElement;
+	const prevAnchor = document.getElementById('prev_url')! as HTMLAnchorElement;
+	const infoAnchor = document.getElementById('info_url')! as HTMLAnchorElement;
+	const nextAnchor = document.getElementById('next_url')! as HTMLAnchorElement;
 
 	const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
 	setAccessKeys(navigationBar);
 
 	const breadcrumbBar = document.querySelector('.info-title') as HTMLElement;
 	const title = document.title.split('-').shift();
-	const mainSection = disguiseParagraphs(document.getElementById('article')!!);
+	const mainSection = disguiseParagraphs(document.getElementById('article')!);
 	const page = { breadcrumbBar, title, mainSection, navigationBar };
 	rebuildChapterBody(page);
 }
 
 function continueFetchPages(curDoc: Document) {
-	const nextURL = curDoc.getElementById('next_url')!! as HTMLAnchorElement;
+	const nextURL = curDoc.getElementById('next_url')! as HTMLAnchorElement;
 	if (nextURL.textContent.trim() == '下一章') {
-		const t = document.getElementById('next_url')!! as HTMLAnchorElement;
+		const t = document.getElementById('next_url')! as HTMLAnchorElement;
 		t.replaceWith(nextURL);
 		formatArticle();
 	} else {
@@ -60,8 +60,8 @@ function continueFetchPages(curDoc: Document) {
 			responseType: 'document',
 			onload: (response) => {
 				const doc = ensureDoc(response.response);
-				const article = document.getElementById('article')!!;
-				const nextArticle = doc.getElementById('article')!!;
+				const article = document.getElementById('article')!;
+				const nextArticle = doc.getElementById('article')!;
 				const children = Array.from(nextArticle.children);
 				children.forEach((child) => {
 					article.appendChild(child);
@@ -75,7 +75,7 @@ function continueFetchPages(curDoc: Document) {
 
 function handleChapterPage() {
 	if (disguiseDebug) {
-		disguiseParagraphs(document.getElementById('article')!!);
+		disguiseParagraphs(document.getElementById('article')!);
 		return;
 	}
 	document.body.setAttribute('hidden', '');

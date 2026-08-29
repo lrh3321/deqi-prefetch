@@ -202,26 +202,46 @@ body.read_style_1 .textinfo {
 	}
 }
 
-/* clean page */
-body:has(.article-root) {
-	--primary-color: black;
-	--primary-bg-color: #f5f2f0;
-	background-color: color-mix(in srgb, var(--primary-bg-color) 80%, var(--primary-color) 20%);
-}
-.article-root {
-	justify-self: center;
-	grid-template-rows: auto 1fr auto;
-	height: 100vh;
-	display: grid;
-	width: min(100svw, var(--container-width, '1200px'));
-	color: var(--primary-color);
+/* 菠萝包 */
+#captcha-form > div.ui-image > img#ui-captcha-image {
+	display: inline !important;
+	visibility: visible !important;
 }
 
-.article-root header {
-	opacity: 0.6;
+/* clean page */
+body:has(.article-root) {
+	--primary-color: #2b2b2b;
+	--primary-bg-color: #f3efe8;
+	--secondary-color: #9b9184;
+	--card-bg-color: #fffdf8;
+	--accent-color: #a4774b;
+	--separator-color: color-mix(in srgb, var(--secondary-color) 25%, transparent);
+	margin: 0;
+	min-height: 100svh;
+	color: var(--primary-color);
+	background-color: color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);
+}
+
+/* article-root 跟随文档正常滚动（头部、阅读区、底部导航依次排列），
+   不固定停靠在视口某一侧。宽度用 min(100svw, 容器宽) 并水平居中，
+   因此在整屏、手机竖屏，或只占左/右半屏时都能自适应。 */
+.article-root {
+	width: min(100svw, var(--container-width, 1200px));
+	margin-inline: auto;
+	color: var(--primary-color);
+	padding-bottom: 1.5rem;
+}
+
+.article-root > header {
+	opacity: 0.75;
 	line-height: 2rem;
 	margin-top: 0.5rem;
+	padding-inline: 1rem;
+	border-bottom: 1px solid var(--separator-color);
 	background-color: color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);
+}
+.article-root > header:empty {
+	display: none;
 }
 
 .article-root .breadcrumb,
@@ -234,6 +254,14 @@ body:has(.article-root) {
 	background-color: transparent;
 	color: var(--secondary-color);
 }
+.article-root .breadcrumb {
+	flex-wrap: wrap;
+	/* max-width: 44rem; */
+	margin-inline: auto;
+	padding-inline: 1rem;
+	list-style: none;
+	gap: 0.4rem 1rem;
+}
 .article-root .breadcrumb li {
 	list-style-type: none;
 	text-wrap: nowrap;
@@ -243,14 +271,43 @@ body:has(.article-root) {
 .article-root .breadcrumb li[aria-hidden] {
 	opacity: 0.5;
 }
-.article-root .breadcrumb a :hover {
+.article-root .breadcrumb a:hover {
 	opacity: 0.6;
 	text-decoration: underline;
 }
+
+/* 中间阅读区（随文档滚动） */
+.article-root > main {
+	min-height: 0;
+}
+
+/* 居中卡片式文章，限定一个舒适的阅读宽度 */
+.article-root article {
+	/* max-width: 44rem; */
+	margin-block: 1rem;
+	margin-inline: auto;
+	padding: clamp(1rem, 3.5vw, 2rem) clamp(1rem, 4vw, 2.5rem) 2.5rem;
+	background: var(--card-bg-color);
+	border: 1px solid var(--separator-color);
+	border-radius: 0.9rem;
+	box-shadow:
+		0 1px 2px rgb(0 0 0 / 0.04),
+		0 10px 30px rgb(0 0 0 / 0.06);
+}
+
 .article-root .article-title {
-	font-size: 1.5rem;
-	display: flex;
-	justify-content: center;
+	display: block;
+	font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+	font-weight: 700;
+	line-height: 1.4;
+	padding-bottom: 0.75rem;
+	margin-bottom: 1rem;
+	border-bottom: 1px dashed var(--separator-color);
+	max-width: 100%;
+	min-width: 0;
+	white-space: nowrap; /* 禁止换行 */
+	overflow: hidden; /* 隐藏溢出部分 */
+	text-overflow: ellipsis; /* 溢出部分显示为 ... */
 }
 .article-root .article-title code {
 	background-color: transparent;
@@ -263,13 +320,19 @@ body:has(.article-root) {
 
 .article-root section.img-container img {
 	visibility: initial;
+	border-radius: 0.5rem;
 }
 
 .article-root section p {
 	text-indent: 2em;
-	margin-top: unset;
-	margin-bottom: 0.5em;
-	line-height: 120%;
+	margin: 0 0 0.9em;
+	line-height: 1.9;
+	font-size: 1.0625rem;
+	letter-spacing: 0.015em;
+	color: var(--primary-color);
+	/* 超长无空格单词强制换行，避免撑出横向滚动条 */
+	overflow-wrap: anywhere;
+	word-break: break-word;
 }
 
 @media (orientation: landscape) {
@@ -281,27 +344,97 @@ body:has(.article-root) {
 	}
 }
 
-.article-root footer {
-	opacity: 0.6;
+/* 代码阅读页（sudugu 等：pre > code 语法高亮） */
+.article-root pre {
+	margin-block: 0.5rem;
+	padding: 1rem 1.25rem;
+	font-family:
+		ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, 'Courier New',
+		monospace;
+	font-size: 0.875rem;
+	line-height: 1.75;
+	tab-size: 4;
+	text-indent: 0;
+	color: var(--primary-color);
+	background: color-mix(in srgb, var(--primary-bg-color) 45%, var(--card-bg-color) 55%);
+	border: 1px solid var(--separator-color);
+	border-radius: 0.6rem;
+	/* 长行在本块内部横向滚动，不会撑出页面级横向滚动条 */
+	overflow-x: auto;
+}
+.article-root pre code {
+	display: block;
+	text-indent: 0;
+	white-space: inherit;
+}
+
+/* 行号列对齐 */
+.article-root pre.line-numbers .line-numbers-rows {
+	border-right-color: var(--separator-color);
+}
+
+.article-root > footer {
+	opacity: 0.9;
 	line-height: 2rem;
-	margin-bottom: 0.5rem;
+	padding-block: 0.5rem;
 }
 
 .article-root .article-nav {
 	justify-self: center;
-	background-color: lch(from var(--primary-bg-color) l c h / 0.75);
-	border-radius: 0.75rem;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.4rem;
+	width: fit-content;
+	margin-inline: auto;
+	padding: 0.35rem;
+	background-color: lch(from var(--primary-bg-color) l c h / 0.8);
+	border: 1px solid var(--separator-color);
+	border-radius: 999px;
+	backdrop-filter: blur(6px);
 }
 .article-root .article-nav a {
-	padding-inline: 1rem;
+	padding: 0.35rem 1rem;
 	background-color: transparent;
 	color: var(--secondary-color);
+	text-decoration: none;
+	border-radius: 999px;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+.article-root .article-nav a:hover {
+	background-color: var(--accent-color);
+	color: #fff;
 }
 
 .article-root hr {
-	width: 90%;
+	width: 100%;
+	margin-block: 0;
+	border: 0;
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		var(--secondary-color) 20%,
+		var(--secondary-color) 80%,
+		transparent
+	);
+	opacity: 0.4;
 }
 
 body[hidden] {
 	display: none !important;
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+	body:has(.article-root) {
+		--primary-color: #d7d3cb;
+		--primary-bg-color: #1c1b19;
+		--secondary-color: #8d8577;
+		--card-bg-color: #262420;
+		--accent-color: #c08d5e;
+		background-color: color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);
+	}
 }

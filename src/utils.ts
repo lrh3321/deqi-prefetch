@@ -1,5 +1,5 @@
 import { GM_log, GmLogType } from '$';
-import { bookPageAccessKey, nextChapterAccessKey, previousChapterAccessKey } from './config';
+import { bookPageAccessKey, nextChapterAccessKey, previousChapterAccessKey, setupConfigButton } from './config';
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole({ theme: 'dark' });
 // console.log(vConsole.version);
@@ -151,6 +151,11 @@ export function rebuildChapterBody(page: Page): CleanPage {
 	newBody.append(root);
 	document.body.replaceWith(newBody);
 
+	const scripts = Array.from(document.head.querySelectorAll('script'));
+	scripts.forEach((it) => it.remove());
+
+	setupConfigButton()
+
 	return { root, header, main, footer };
 }
 
@@ -163,6 +168,70 @@ export function updateStyle(pre: HTMLPreElement) {
 		const computedStyle = getComputedStyle(comment);
 		document.body.style.setProperty('--secondary-color', computedStyle.color);
 	}
+}
+
+export function paragraphsFromElement(el: Element): HTMLParagraphElement[] {
+	const paragraphs: HTMLParagraphElement[] = [];
+
+	let paragraph = el.ownerDocument.createElement('p');
+	const appendParagraph = () => {
+		if (paragraph.textContent?.trim() || paragraph.children.length > 0) {
+			if (paragraph.querySelector('p')) {
+				const children = Array.from(paragraph.children);
+				children.forEach((it) => {
+					if (it instanceof HTMLParagraphElement) {
+						paragraphs.push(it);
+					} else {
+						if (it.textContent?.trim() || it instanceof HTMLImageElement) {
+							const p = el.ownerDocument.createElement('p');
+							paragraphs.push(p);
+						}
+					}
+				});
+			} else {
+				paragraphs.push(paragraph);
+			}
+		}
+		paragraph = el.ownerDocument.createElement('p');
+	};
+
+	for (const node of Array.from(el.childNodes)) {
+		if (node.nodeType === Node.ELEMENT_NODE && (node as Element).matches('br')) {
+			appendParagraph();
+		} else if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+			paragraph.append(node.textContent.trim());
+		} else {
+			if (
+				!(
+					node instanceof HTMLAnchorElement ||
+					node instanceof HTMLScriptElement ||
+					node instanceof HTMLUListElement
+				)
+			) {
+				if (node instanceof HTMLParagraphElement) {
+					if (node.querySelector('br')) {
+						for (const subNode of Array.from(node.childNodes)) {
+							if (subNode.nodeType === Node.ELEMENT_NODE && (subNode as Element).matches('br')) {
+								appendParagraph();
+							} else if (subNode.nodeType === Node.TEXT_NODE && subNode.textContent) {
+								paragraph.append(subNode.textContent.trim());
+							}
+						}
+						node.innerHTML = '';
+					}
+				}
+				paragraph.append(node.cloneNode(true));
+			}
+		}
+	}
+	appendParagraph();
+
+	const demo = paragraphs.filter((p) => p.querySelector('p'));
+	if (demo.length > 0) {
+		GM_log('nest', demo);
+	}
+
+	return paragraphs;
 }
 
 function buildNovelHeader(page: Page): HTMLElement {
@@ -208,6 +277,7 @@ function buildNovelMain(page: Page): HTMLElement {
 		article.appendChild(h2);
 	}
 	const section = document.createElement('section');
+
 	section.appendChild(mainSection);
 	article.appendChild(section);
 	main.appendChild(article);

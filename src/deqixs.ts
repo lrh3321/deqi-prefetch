@@ -6,6 +6,7 @@ import {
 	isInIframe,
 	NavLinks,
 	Page,
+	paragraphsFromElement,
 	rebuildChapterBody,
 	setAccessKeys,
 	VM_log
@@ -14,7 +15,7 @@ function handleBookPage() {
 	VM_log('handleBookPage');
 
 	let finished = false;
-	const itemtxt = document.querySelector('.itemtxt')!!;
+	const itemtxt = document.querySelector('.itemtxt')!;
 	const spans = Array.from(itemtxt.querySelectorAll('p > span'));
 
 	spans.forEach((span) => {
@@ -28,11 +29,11 @@ function handleBookPage() {
 	settingAnchor.style.float = 'right';
 	settingAnchor.style.marginRight = '0.5rem';
 	settingAnchor.innerText = '脚本设置';
-	itemtxt.firstElementChild!!.appendChild(settingAnchor);
+	itemtxt.firstElementChild!.appendChild(settingAnchor);
 
 	if (!finished) {
-		const title = itemtxt.querySelector('h1>a')!!.textContent;
-		const latestChapter = itemtxt.querySelector('ul>li>a')!!.textContent;
+		const title = itemtxt.querySelector('h1>a')!.textContent;
+		const latestChapter = itemtxt.querySelector('ul>li>a')!.textContent;
 
 		const current = document.createElement('p');
 		current.innerText = `当前时间：${new Date().toTimeString()}`;
@@ -55,7 +56,7 @@ function handleBookPage() {
 function handleSettingPage() {
 	VM_log('handleSettingPage');
 	const settingForm = createSettingForm();
-	const container = document.querySelector('div.container')!!;
+	const container = document.querySelector('div.container')!;
 	container.appendChild(settingForm);
 }
 
@@ -73,10 +74,10 @@ async function fetchChaperFragmentPage(href: string): Promise<FragmentPage> {
 			responseType: 'document',
 			onload: (response) => {
 				const doc = ensureDoc(response.response);
-				const container = doc.querySelector('div.container')!!;
-				const nestedCon = doc.querySelector('div.container .con')!!;
+				const container = doc.querySelector('div.container')!;
+				const nestedCon = doc.querySelector('div.container .con')!;
 
-				const paragraphs = Array.from(nestedCon.querySelectorAll('p'));
+				const paragraphs = paragraphsFromElement(nestedCon);
 				const prenexts = container.querySelectorAll('div.prenext a');
 				let next: HTMLAnchorElement | undefined;
 				let nextChapter: HTMLAnchorElement | undefined;
@@ -120,14 +121,17 @@ async function fetchChaperFragmentPage(href: string): Promise<FragmentPage> {
 function handleChaperPage() {
 	VM_log('handleChaperPage');
 
-	const container = document.querySelector('div.container')!!;
+	const container = document.querySelector('div.container')!;
 	const prenexts = container.querySelectorAll('div.prenext a');
 
-	const con = document.querySelector('div.container .con')!!;
+	const con = document.querySelector('div.container .con')!;
+	const paragraphs = paragraphsFromElement(con);
+	con.replaceChildren(...paragraphs);
+
 	for (const element of prenexts) {
 		if (element instanceof HTMLAnchorElement) {
 			if (element.textContent == '下一页') {
-				(async () => {
+				void (async () => {
 					let counter = 0;
 					let next = await fetchChaperFragmentPage(element.href);
 					con.append(...next.paragraphs);
@@ -147,7 +151,7 @@ function handleChaperPage() {
 				})();
 				break;
 			} else if (element.textContent == '下一章') {
-				(async () => {
+				(() => {
 					const page = getChapterPage();
 					rebuildChapterBody(page);
 				})();
@@ -217,7 +221,7 @@ function handleSuduguRoute() {
 }
 
 function isSudugu(): boolean {
-	return location.host.endsWith('sudugu.org');
+	return location.host.endsWith('sudugu.org') || location.host.endsWith('shudugu.org');
 }
 
 function getChapterPage(): Page {
@@ -239,11 +243,11 @@ function getChapterPage(): Page {
 		}
 	}
 	setAccessKeys(navigationBar);
-	const breadcrumbBar = document.querySelector('div.container > div.submenu h1')!!;
-	const title = con.querySelector('p')?.textContent;
+	const breadcrumbBar = document.querySelector('div.container > div.submenu h1')!;
+	// const title = con.querySelector('p')?.textContent;
 	const page = {
 		breadcrumbBar,
-		title,
+		// title,
 		mainSection,
 		navigationBar
 	};

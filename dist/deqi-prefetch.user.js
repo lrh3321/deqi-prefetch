@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2026-05-180
+// @version      2026-09-170
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
@@ -11,11 +11,15 @@
 // @supportURL   https://github.com/lrh3321/deqi-prefetch/issues
 // @downloadURL  https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
 // @updateURL    https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
+// @match        http*://*.shudugu.org/*
+// @match        http*://*.deqixs.org/*
+// @match        http*://*.kudushu.org/*
 // @match        http*://www.sudugu.org/*
 // @match        http*://www.sudugu.org/i/pifu.aspx
 // @match        http*://www.deqixs.com/pifu/
 // @match        http*://www.deqixs.com/xiaoshuo/*/*.html
 // @match        http*://www.deqixs.com/xiaoshuo/*/
+// @match        http*://www.boluomao1.com/*
 // @match        http*://www.biqu33.cc/*
 // @match        http*://www.ddxiaoshuo.cc/*
 // @match        http*://cuoceng.com/*
@@ -30,6 +34,7 @@
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
 // @grant        GM_log
+// @grant        GM_openInTab
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
@@ -37,7 +42,7 @@
 // ==/UserScript==
 
 (function() {
-  'use strict';
+	"use strict";
 	var s = new Set();
 	var _css = async (t) => {
 		if (s.has(t)) return;
@@ -47,13 +52,15 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}body:has(.article-root){--primary-color:black;--primary-bg-color:#f5f2f0;background-color:color-mix(in srgb, var(--primary-bg-color) 80%, var(--primary-color) 20%)}.article-root{height:100vh;width:min(100svw, var(--container-width,\"1200px\"));color:var(--primary-color);grid-template-rows:auto 1fr auto;justify-self:center;display:grid}.article-root header{opacity:.6;background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;line-height:2rem}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a :hover{opacity:.6;text-decoration:underline}.article-root .article-title{justify-content:center;font-size:1.5rem;display:flex}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial}.article-root section p{text-indent:2em;margin-top:unset;margin-bottom:.5em;line-height:120%}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root footer{opacity:.6;margin-bottom:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .75);border-radius:.75rem;justify-self:center}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;padding-inline:1rem}.article-root hr{width:90%}body[hidden]{display:none!important}");
-	var _GM_addElement = typeof GM_addElement != "undefined" ? GM_addElement : void 0;
-	var _GM_getValue = typeof GM_getValue != "undefined" ? GM_getValue : void 0;
-	var _GM_log = typeof GM_log != "undefined" ? GM_log : void 0;
-	var _GM_registerMenuCommand = typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0;
-	var _GM_setValue = typeof GM_setValue != "undefined" ? GM_setValue : void 0;
-	var _GM_xmlhttpRequest = typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0;
+	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}#captcha-form>div.ui-image>img#ui-captcha-image{visibility:visible!important;display:inline!important}body:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;--separator-color:color-mix(in srgb, var(--secondary-color) 25%, transparent);min-height:100svh;color:var(--primary-color);background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);margin:0}.article-root{width:min(100svw, var(--container-width,1200px));color:var(--primary-color);margin-inline:auto;padding-bottom:1.5rem}.article-root>header{opacity:.75;border-bottom:1px solid var(--separator-color);background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;padding-inline:1rem;line-height:2rem}.article-root>header:empty{display:none}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb{flex-wrap:wrap;gap:.4rem 1rem;margin-inline:auto;padding-inline:1rem;list-style:none}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a:hover{opacity:.6;text-decoration:underline}.article-root>main{min-height:0}.article-root article{background:var(--card-bg-color);border:1px solid var(--separator-color);border-radius:.9rem;margin-block:1rem;margin-inline:auto;padding:clamp(1rem,3.5vw,2rem) clamp(1rem,4vw,2.5rem) 2.5rem;box-shadow:0 1px 2px #0000000a,0 10px 30px #0000000f}.article-root .article-title{border-bottom:1px dashed var(--separator-color);white-space:nowrap;text-overflow:ellipsis;min-width:0;max-width:100%;margin-bottom:1rem;padding-bottom:.75rem;font-size:clamp(1.3rem,4.5vw,1.7rem);font-weight:700;line-height:1.4;display:block;overflow:hidden}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial;border-radius:.5rem}.article-root section p{text-indent:2em;letter-spacing:.015em;color:var(--primary-color);overflow-wrap:anywhere;word-break:break-word;margin:0 0 .9em;font-size:1.0625rem;line-height:1.9}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root pre{tab-size:4;text-indent:0;color:var(--primary-color);background:color-mix(in srgb, var(--primary-bg-color) 45%, var(--card-bg-color) 55%);border:1px solid var(--separator-color);border-radius:.6rem;margin-block:.5rem;padding:1rem 1.25rem;font-family:ui-monospace,SF Mono,Cascadia Code,JetBrains Mono,Menlo,Consolas,Courier New,monospace;font-size:.875rem;line-height:1.75;overflow-x:auto}.article-root pre code{text-indent:0;white-space:inherit;display:block}.article-root pre.line-numbers .line-numbers-rows{border-right-color:var(--separator-color)}.article-root>footer{opacity:.9;padding-block:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .8);border:1px solid var(--separator-color);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:999px;flex-wrap:wrap;justify-content:center;justify-self:center;gap:.4rem;width:fit-content;margin-inline:auto;padding:.35rem;display:flex}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;border-radius:999px;padding:.35rem 1rem;text-decoration:none;transition:background-color .15s,color .15s}.article-root .article-nav a:hover{background-color:var(--accent-color);color:#fff}.article-root hr{background:linear-gradient(90deg, transparent, var(--secondary-color) 20%, var(--secondary-color) 80%, transparent);opacity:.4;border:0;width:100%;height:1px;margin-block:0}body[hidden]{display:none!important}@media (prefers-color-scheme:dark){body:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}}");
+	_css(":root{--fab-accent:#a4774b;--fab-bg:#f3efe8}#deqi-fab{z-index:2147483000;flex-direction:column-reverse;align-items:flex-end;gap:.6rem;display:flex;position:fixed;bottom:1.25rem;right:1.25rem}#deqi-fab .fab-menu{opacity:0;pointer-events:none;flex-direction:column;align-items:flex-end;gap:.5rem;transition:opacity .18s,transform .18s;display:flex;transform:translateY(.5rem)}#deqi-fab.open .fab-menu{opacity:1;pointer-events:auto;transform:translateY(0)}#deqi-fab .fab-menu button{border:1px solid color-mix(in srgb, var(--fab-accent) 25%, transparent);background:color-mix(in srgb, var(--fab-bg) 88%, white);color:#2b2b2b;cursor:pointer;white-space:nowrap;border-radius:999px;align-items:center;gap:.4rem;padding:.45rem .9rem;font-size:.9rem;transition:background-color .15s,transform .1s;display:inline-flex;box-shadow:0 3px 10px #0000002e}#deqi-fab .fab-menu button:hover{background:var(--fab-accent);color:#fff}#deqi-fab .fab-menu button:active{transform:scale(.95)}#deqi-fab .fab-menu button .fab-icon{font-size:1rem;line-height:1}#deqi-fab .fab-toggle{cursor:pointer;color:#fff;background:linear-gradient(135deg, #b08968, var(--fab-accent));border:none;border-radius:50%;place-items:center;width:3.15rem;height:3.15rem;font-size:1.6rem;transition:transform .2s;display:grid;box-shadow:0 5px 16px #00000047}#deqi-fab .fab-toggle:hover{transform:scale(1.06)}#deqi-fab .fab-toggle:active{transform:scale(.94)}#deqi-settings-dialog{background:0 0;border:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0}#deqi-settings-dialog::backdrop{-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);background:#00000073}#deqi-settings-dialog .settings-panel{background:var(--card-bg-color,#fffdf8);width:min(90vw,40rem);max-height:88dvh;color:var(--primary-color,#2b2b2b);border:1px solid var(--separator-color,#9b918440);border-radius:.9rem;margin:5dvh auto auto;font-size:.95rem;overflow:auto;box-shadow:0 20px 60px #0000004d}#deqi-settings-dialog .settings-head{border-bottom:1px solid var(--separator-color,#9b918440);background:inherit;z-index:1;justify-content:space-between;align-items:center;padding:.9rem 1.2rem;font-size:1.05rem;font-weight:700;display:flex;position:sticky;top:0}#deqi-settings-dialog .settings-close{color:inherit;cursor:pointer;background:0 0;border:0;border-radius:.4rem;padding:.2rem .4rem;font-size:1.4rem;line-height:1}#deqi-settings-dialog .settings-close:hover{background:#00000014}#deqi-settings-dialog .settings-body{flex-direction:column;gap:.9rem;padding:1.1rem 1.2rem 1.4rem;display:flex}#deqi-settings-dialog .settings-row{align-items:center;gap:.6rem;display:flex}#deqi-settings-dialog .settings-row label{flex:none;min-width:4.5rem}#deqi-settings-dialog .settings-row input[type=text],#deqi-settings-dialog .settings-row input[type=number]{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-hint{opacity:.65;font-size:.82rem}");
+	var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
+	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+	var _GM_log = (() => typeof GM_log != "undefined" ? GM_log : void 0)();
+	var _GM_openInTab = (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
+	var _GM_registerMenuCommand = (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
+	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+	var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
 	var VM_log = _GM_log;
 	function getCodeThemeURL(theme) {
 		if (new Set([
@@ -129,6 +136,8 @@
 		root.append(header, document.createElement("hr"), main, document.createElement("hr"), footer);
 		newBody.append(root);
 		document.body.replaceWith(newBody);
+		Array.from(document.head.querySelectorAll("script")).forEach((it) => it.remove());
+		setupConfigButton();
 		return {
 			root,
 			header,
@@ -145,6 +154,39 @@
 			const computedStyle = getComputedStyle(comment);
 			document.body.style.setProperty("--secondary-color", computedStyle.color);
 		}
+	}
+	function paragraphsFromElement(el) {
+		const paragraphs = [];
+		let paragraph = el.ownerDocument.createElement("p");
+		const appendParagraph = () => {
+			if (paragraph.textContent?.trim() || paragraph.children.length > 0) {
+				if (paragraph.querySelector("p")) Array.from(paragraph.children).forEach((it) => {
+					if (it instanceof HTMLParagraphElement) paragraphs.push(it);
+					else if (it.textContent?.trim() || it instanceof HTMLImageElement) {
+						const p = el.ownerDocument.createElement("p");
+						paragraphs.push(p);
+					}
+				});
+				else paragraphs.push(paragraph);
+			}
+			paragraph = el.ownerDocument.createElement("p");
+		};
+		for (const node of Array.from(el.childNodes)) if (node.nodeType === Node.ELEMENT_NODE && node.matches("br")) appendParagraph();
+		else if (node.nodeType === Node.TEXT_NODE && node.textContent) paragraph.append(node.textContent.trim());
+		else if (!(node instanceof HTMLAnchorElement || node instanceof HTMLScriptElement || node instanceof HTMLUListElement)) {
+			if (node instanceof HTMLParagraphElement) {
+				if (node.querySelector("br")) {
+					for (const subNode of Array.from(node.childNodes)) if (subNode.nodeType === Node.ELEMENT_NODE && subNode.matches("br")) appendParagraph();
+					else if (subNode.nodeType === Node.TEXT_NODE && subNode.textContent) paragraph.append(subNode.textContent.trim());
+					node.innerHTML = "";
+				}
+			}
+			paragraph.append(node.cloneNode(true));
+		}
+		appendParagraph();
+		const demo = paragraphs.filter((p) => p.querySelector("p"));
+		if (demo.length > 0) _GM_log("nest", demo);
+		return paragraphs;
 	}
 	function buildNovelHeader(page) {
 		const { breadcrumbBar, title } = page;
@@ -238,8 +280,6 @@
 			case "markup":
 				blockCommentStart = "<!--";
 				blockCommentEnd = "-->";
-				break;
-			default: break;
 		}
 		const codeSegments = [];
 		paragraphs.forEach((p) => {
@@ -423,7 +463,7 @@
 	}
 	var disguiseDebug = _GM_getValue("disguiseDebug", false);
 	var novelFontSize = _GM_getValue("novel-font-size", "16px");
-	var novelFontFamily = _GM_getValue("novel-font-family", `system-ui, -apple-system, '微软雅黑', 'PingFang SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`);
+	var novelFontFamily = _GM_getValue("novel-font-family", `system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Lantinghei SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`);
 	var disguiseMode = _GM_getValue("disguise-mode", "none");
 	var codeLang = _GM_getValue("code-lang", "javascript");
 	var defaultCodeSnippet = `var x = 1;
@@ -469,7 +509,7 @@ switch (x) {
 	var codeTheme = _GM_getValue("code-theme", "prism");
 	var codeParagraphItalic = _GM_getValue("code-italic", true);
 	var codeShowLineNumbers = _GM_getValue("line-numbers", false);
-	var refreshInterval = _GM_getValue("refreshInterval", 15 * 6e4);
+	var refreshInterval = _GM_getValue("refreshInterval", -1);
 	var avalibleCodeThemes = [
 		{
 			Name: "Default",
@@ -923,54 +963,8 @@ function foo(bar) {
 		return disguiseFieldset;
 	}
 	var containerWidth = _GM_getValue("container-width", "1200px");
-	function createContainerStyleFieldset() {
-		const containerStyleFieldset = document.createElement("fieldset");
-		const legend = document.createElement("legend");
-		legend.innerText = "正文式样";
-		containerStyleFieldset.appendChild(legend);
-		const div = document.createElement("div");
-		const widthInput = document.createElement("input");
-		widthInput.value = containerWidth;
-		widthInput.size = 10;
-		widthInput.onchange = () => {
-			containerWidth = widthInput.value;
-			document.body.style.setProperty("--container-width", containerWidth);
-			_GM_setValue("container-width", widthInput.value);
-		};
-		const widthLabel = document.createElement("label");
-		widthLabel.innerText = "宽度：";
-		widthLabel.title = "单位可以是 rem, px, %, svw, vw";
-		widthLabel.appendChild(widthInput);
-		div.appendChild(widthLabel);
-		const fontSizeInput = document.createElement("input");
-		fontSizeInput.value = novelFontSize;
-		fontSizeInput.size = 10;
-		fontSizeInput.onchange = () => {
-			novelFontSize = fontSizeInput.value;
-			document.body.style.setProperty("--novel-font-size", novelFontSize);
-			_GM_setValue("novel-font-size", fontSizeInput.value);
-		};
-		const fontSizeLabel = document.createElement("label");
-		fontSizeLabel.innerText = "字体大小：";
-		fontSizeLabel.appendChild(fontSizeInput);
-		div.appendChild(fontSizeLabel);
-		const fontFamilyInput = document.createElement("input");
-		fontFamilyInput.value = novelFontFamily;
-		fontFamilyInput.onchange = () => {
-			novelFontFamily = fontFamilyInput.value;
-			document.body.style.setProperty("--novel-font-family", novelFontFamily);
-			_GM_setValue("novel-font-family", fontFamilyInput.value);
-		};
-		const fontFamilyLabel = document.createElement("label");
-		fontFamilyLabel.innerText = "字体：";
-		fontFamilyLabel.appendChild(fontFamilyInput);
-		div.appendChild(fontFamilyLabel);
-		containerStyleFieldset.appendChild(div);
-		return containerStyleFieldset;
-	}
 	function createSettingForm() {
 		const form = document.createElement("form");
-		form.appendChild(createContainerStyleFieldset());
 		const intervalInput = document.createElement("input");
 		intervalInput.type = "number";
 		intervalInput.min = "0";
@@ -992,9 +986,7 @@ function foo(bar) {
 				case "none":
 					disguiseCodeFieldset.style.display = "none";
 					break;
-				case "code":
-					disguiseCodeFieldset.style.display = "block";
-					break;
+				case "code": disguiseCodeFieldset.style.display = "block";
 			}
 		};
 		updateFieldSetsState(disguiseMode);
@@ -1057,7 +1049,129 @@ function foo(bar) {
 		document.body.style.setProperty("--novel-font-size", novelFontSize);
 		document.body.style.setProperty("--novel-font-family", novelFontFamily);
 	}
-	function handleBookPage$1() {
+	var FAB_ID = "deqi-fab";
+	var DIALOG_ID = "deqi-settings-dialog";
+	function buildSettingsDialog() {
+		const dialog = document.createElement("dialog");
+		dialog.id = DIALOG_ID;
+		const panel = document.createElement("div");
+		panel.className = "settings-panel";
+		const head = document.createElement("div");
+		head.className = "settings-head";
+		const title = document.createElement("span");
+		title.textContent = "页面设置";
+		const close = document.createElement("button");
+		close.className = "settings-close";
+		close.type = "button";
+		close.setAttribute("aria-label", "关闭");
+		close.textContent = "✕";
+		close.addEventListener("click", () => dialog.close());
+		head.append(title, close);
+		const body = document.createElement("div");
+		body.className = "settings-body";
+		const mkRow = (labelText) => {
+			const row = document.createElement("div");
+			row.className = "settings-row";
+			const label = document.createElement("label");
+			label.textContent = labelText;
+			const input = document.createElement("input");
+			row.append(label, input);
+			return {
+				row,
+				input
+			};
+		};
+		const widthRow = mkRow("宽度");
+		widthRow.input.type = "text";
+		widthRow.input.value = containerWidth;
+		widthRow.input.addEventListener("change", () => {
+			const v = widthRow.input.value.trim() || "1200px";
+			document.body.style.setProperty("--container-width", v);
+			try {
+				_GM_setValue("container-width", v);
+			} catch {}
+		});
+		const fontSizeRow = mkRow("字体大小");
+		fontSizeRow.input.type = "text";
+		fontSizeRow.input.value = novelFontSize;
+		fontSizeRow.input.addEventListener("change", () => {
+			const v = fontSizeRow.input.value.trim() || "16px";
+			document.body.style.setProperty("--novel-font-size", v);
+			try {
+				_GM_setValue("novel-font-size", v);
+			} catch {}
+		});
+		const fontFamilyRow = mkRow("字体");
+		fontFamilyRow.input.type = "text";
+		fontFamilyRow.input.value = novelFontFamily;
+		fontFamilyRow.input.placeholder = "系统默认";
+		const DEFAULT_FAMILY = `system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Segoe UI', Roboto, sans-serif`;
+		fontFamilyRow.input.addEventListener("change", () => {
+			const v = fontFamilyRow.input.value.trim();
+			document.body.style.setProperty("--novel-font-family", v || DEFAULT_FAMILY);
+			try {
+				_GM_setValue("novel-font-family", v);
+			} catch {}
+		});
+		body.append(widthRow.row, fontSizeRow.row, fontFamilyRow.row);
+		const hint = document.createElement("div");
+		hint.className = "settings-hint";
+		hint.textContent = "宽度单位可为 rem、px、%、svw、vw；修改后即时生效。";
+		body.appendChild(hint);
+		panel.append(head, body);
+		dialog.appendChild(panel);
+		document.body.appendChild(dialog);
+		return dialog;
+	}
+	function showConfigDialog() {
+		const dialog = document.getElementById(DIALOG_ID);
+		if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+	}
+	function buildFab() {
+		const wrap = document.createElement("div");
+		wrap.id = FAB_ID;
+		const menu = document.createElement("div");
+		menu.className = "fab-menu";
+		const mkSub = (icon, label, onClick) => {
+			const b = document.createElement("button");
+			b.type = "button";
+			b.innerHTML = `<span class="fab-icon">${icon}</span><span>${label}</span>`;
+			b.addEventListener("click", onClick);
+			menu.appendChild(b);
+			return b;
+		};
+		mkSub("⬆", "滚动到顶部", () => window.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: "smooth"
+		}));
+		mkSub("⬇", "滚动到底部", () => window.scrollTo({
+			top: document.documentElement.scrollHeight,
+			left: 0,
+			behavior: "smooth"
+		}));
+		mkSub("⚙", "页面设置", showConfigDialog);
+		const toggle = document.createElement("button");
+		toggle.className = "fab-toggle";
+		toggle.type = "button";
+		toggle.setAttribute("aria-label", "展开操作");
+		toggle.textContent = "+";
+		toggle.addEventListener("click", () => wrap.classList.toggle("open"));
+		document.addEventListener("click", (e) => {
+			if (e.target instanceof Node) {
+				if (wrap.classList.contains("open") && !wrap.contains(e.target)) wrap.classList.remove("open");
+			}
+		});
+		menu.addEventListener("click", () => wrap.classList.remove("open"));
+		wrap.append(menu, toggle);
+		document.body.appendChild(wrap);
+	}
+	function setupConfigButton() {
+		if (document.getElementById(FAB_ID)) return;
+		buildSettingsDialog();
+		buildFab();
+	}
+	function handleBookPage$3() {
 		VM_log("handleBookPage");
 		let finished = false;
 		const itemtxt = document.querySelector(".itemtxt");
@@ -1092,7 +1206,7 @@ function foo(bar) {
 		const settingForm = createSettingForm();
 		document.querySelector("div.container").appendChild(settingForm);
 	}
-	async function fetchChaperFragmentPage(href) {
+	async function fetchChaperFragmentPage$1(href) {
 		return new Promise((resolve, reject) => {
 			_GM_xmlhttpRequest({
 				method: "GET",
@@ -1101,8 +1215,7 @@ function foo(bar) {
 				onload: (response) => {
 					const doc = ensureDoc(response.response);
 					const container = doc.querySelector("div.container");
-					const nestedCon = doc.querySelector("div.container .con");
-					const paragraphs = Array.from(nestedCon.querySelectorAll("p"));
+					const paragraphs = paragraphsFromElement(doc.querySelector("div.container .con"));
 					const prenexts = container.querySelectorAll("div.prenext a");
 					let next;
 					let nextChapter;
@@ -1141,27 +1254,29 @@ function foo(bar) {
 		VM_log("handleChaperPage");
 		const prenexts = document.querySelector("div.container").querySelectorAll("div.prenext a");
 		const con = document.querySelector("div.container .con");
+		const paragraphs = paragraphsFromElement(con);
+		con.replaceChildren(...paragraphs);
 		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
 			if (element.textContent == "下一页") {
 				(async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage(element.href);
+					let next = await fetchChaperFragmentPage$1(element.href);
 					con.append(...next.paragraphs);
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage(next.next);
+						next = await fetchChaperFragmentPage$1(next.next);
 						con.append(...next.paragraphs);
 					}
 					if (next.nextChapter) {
 						element.textContent = "下一章";
 						element.href = next.nextChapter;
 					}
-					rebuildChapterBody(getChapterPage());
+					rebuildChapterBody(getChapterPage$1());
 				})();
 				break;
 			} else if (element.textContent == "下一章") {
-				(async () => {
-					rebuildChapterBody(getChapterPage());
+				(() => {
+					rebuildChapterBody(getChapterPage$1());
 				})();
 				break;
 			}
@@ -1181,11 +1296,9 @@ function foo(bar) {
 				case "code":
 					setupCodeTheme();
 					setupExtendLanguageSupport();
-					break;
-				default: break;
 			}
 			handleChaperPage();
-		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$1();
+		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$3();
 	}
 	function handleSuduguRoute() {
 		VM_log("handleSuduguRoute");
@@ -1198,16 +1311,14 @@ function foo(bar) {
 				case "code":
 					setupCodeTheme();
 					setupExtendLanguageSupport();
-					break;
-				default: break;
 			}
 			handleChaperPage();
-		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$1();
+		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$3();
 	}
 	function isSudugu() {
-		return location.host.endsWith("sudugu.org");
+		return location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org");
 	}
-	function getChapterPage() {
+	function getChapterPage$1() {
 		const con = document.querySelector("div.container .con");
 		con.className = "";
 		const mainSection = disguiseParagraphs(con);
@@ -1221,7 +1332,6 @@ function foo(bar) {
 		setAccessKeys(navigationBar);
 		return {
 			breadcrumbBar: document.querySelector("div.container > div.submenu h1"),
-			title: con.querySelector("p")?.textContent,
 			mainSection,
 			navigationBar
 		};
@@ -1231,7 +1341,7 @@ function foo(bar) {
 	var chapterLinkSet = new Set();
 	function cleanupBody$1() {
 		Array.from(document.body.children).filter((it) => it.id != "main" && it.id != "mainboxs").forEach((it) => {
-			if (it.className == "article-root") return;
+			if (it.className == "article-root" || it.id === "deqi-fab" || it instanceof HTMLDialogElement) return;
 			it.remove();
 		});
 	}
@@ -1244,7 +1354,7 @@ function foo(bar) {
 		articleMain.appendChild(settingForm);
 		container.appendChild(articleMain);
 	}
-	function handleBookPage() {
+	function handleBookPage$2() {
 		const rowDiv = document.querySelector("#main > div.nine-item > div.container > div.row");
 		const moreItem = createAttrOneItem();
 		moreItem.id = "more-item";
@@ -1455,7 +1565,7 @@ function foo(bar) {
 			title: rDoc.getElementById("post-h2").innerText
 		};
 	}
-	function handleChapterPage$2() {
+	function handleChapterPage$4() {
 		if (disguiseDebug) {
 			disguiseParagraphs(document.getElementById("mainboxs"));
 			return;
@@ -1555,7 +1665,7 @@ function foo(bar) {
 				handleSettingPage$2();
 				if (segments.length == 2 && segments[0] == "book") {
 					bookID = segments[1];
-					handleBookPage();
+					handleBookPage$2();
 				}
 				break;
 			case 3:
@@ -1580,12 +1690,8 @@ function foo(bar) {
 					case "code":
 						setupCodeTheme();
 						setupExtendLanguageSupport();
-						break;
-					default: break;
 				}
-				handleChapterPage$2();
-				break;
-			default: break;
+				handleChapterPage$4();
 		}
 	}
 	function cleanupBody() {
@@ -1648,7 +1754,7 @@ function foo(bar) {
 			});
 		}
 	}
-	function handleChapterPage$1() {
+	function handleChapterPage$3() {
 		if (disguiseDebug) {
 			disguiseParagraphs(document.getElementById("article"));
 			return;
@@ -1677,15 +1783,11 @@ function foo(bar) {
 					case "code":
 						setupCodeTheme();
 						setupExtendLanguageSupport();
-						break;
-					default: break;
 				}
-				handleChapterPage$1();
-				break;
-			default: break;
+				handleChapterPage$3();
 		}
 	}
-	function handleChapterPage() {
+	function handleChapterPage$2() {
 		const showReading = document.getElementById("showReading");
 		const bookTitle = document.querySelector("#readcontent .book_title h1");
 		const nextPageBox = document.querySelector(".nextPageBox");
@@ -1725,46 +1827,188 @@ function foo(bar) {
 			case 3:
 				if (location.pathname.startsWith("/book/chapter/")) {
 					_GM_registerMenuCommand("脚本设置", function() {
-						open(location.pathname.replace("/book/chapter/", "/book/"));
+						_GM_openInTab(location.pathname.replace("/book/chapter/", "/book/"));
 					});
 					return;
 				}
 				_GM_registerMenuCommand("脚本设置", function() {
-					open(location.pathname.replace(/\/[\d\w\-]+\.html/, ".html"));
+					_GM_openInTab(location.pathname.replace(/\/[\d\w-]+\.html/, ".html"));
 				});
 				switch (disguiseMode) {
 					case "code":
 						setupCodeTheme();
 						setupExtendLanguageSupport();
-						break;
-					default: break;
 				}
-				handleChapterPage();
-				break;
-			default: break;
+				handleChapterPage$2();
 		}
+	}
+	function handleKudushuRoute() {
+		VM_log("handleKudushuRoute");
+		if (/\/book\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/index\.html/.test(location.pathname)) handleBookPage$1();
+		else if (/\/html\/[^/]+\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/[^/]+\.html/.test(location.pathname)) handleChapterPage$1();
+	}
+	function handleBookPage$1() {
+		VM_log("handleBookPage");
+	}
+	function handleChapterPage$1() {
+		VM_log("handleChapterPage");
+		const container = document.getElementById("novelcontent");
+		const ul = document.querySelector("ul");
+		if (ul) document.getElementById("novelbody")?.append(ul);
+		const prenexts = Array.from(container.querySelectorAll("#novelcontent ul li a")).filter((it) => it instanceof HTMLAnchorElement).map((it) => it.cloneNode(true));
+		container.querySelector("ul")?.remove();
+		document.getElementById("content_tip")?.remove();
+		const con = container;
+		const paragraphs = paragraphsFromElement(con);
+		con.replaceChildren(...paragraphs.filter((p) => p.textContent.length > 0 && !p.textContent.includes("本章未完")));
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == "下—页") {
+				(async () => {
+					let counter = 0;
+					let next = await fetchChaperFragmentPage(element.href);
+					con.append(...next.paragraphs);
+					while (next.next && counter < 20) {
+						counter++;
+						next = await fetchChaperFragmentPage(next.next);
+						con.append(...next.paragraphs);
+					}
+					if (next.nextChapter) {
+						Array.from(document.querySelectorAll("#novelbody ul li p a")).forEach((a) => {
+							console.log("UL", a.outerHTML);
+							if (a instanceof HTMLAnchorElement && a.textContent.includes("下")) {
+								a.textContent = "下一章";
+								a.href = next.nextChapter || a.href;
+							}
+						});
+						element.textContent = "下一章";
+						element.href = next.nextChapter;
+					}
+					rebuildChapterBody(getChapterPage());
+				})();
+				break;
+			} else if (element.textContent == "下—章") {
+				(() => {
+					rebuildChapterBody(getChapterPage());
+				})();
+				break;
+			}
+		}
+	}
+	async function fetchChaperFragmentPage(href) {
+		VM_log("fetchChaperFragmentPage", href);
+		return new Promise((resolve, reject) => {
+			_GM_xmlhttpRequest({
+				method: "GET",
+				url: href,
+				responseType: "document",
+				onload: (response) => {
+					const container = ensureDoc(response.response).getElementById("novelcontent");
+					const nestedCon = container;
+					const ul = container.querySelector("ul");
+					ul.remove();
+					const paragraphs = paragraphsFromElement(nestedCon);
+					const prenexts = ul.querySelectorAll("ul li a");
+					let next;
+					let nextChapter;
+					for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+						if (element.textContent == "下—页") {
+							next = element;
+							break;
+						} else if (element.textContent == "下—章") {
+							nextChapter = element;
+							nextChapter.textContent = "下一章";
+							break;
+						}
+					}
+					VM_log({
+						next: next?.href,
+						nextChapter: nextChapter?.href,
+						paragraphs
+					});
+					resolve({
+						next: next?.href,
+						nextChapter: nextChapter?.href,
+						paragraphs: paragraphs?.filter((p) => p.textContent.length > 0 && !p.textContent.includes("本章未完"))
+					});
+				},
+				onerror: (response) => {
+					VM_log(["handleSettingPage error", response]);
+					reject(response);
+				},
+				ontimeout: () => {
+					VM_log("handleSettingPage timeout");
+					reject("timeout");
+				}
+			});
+		});
+	}
+	function getChapterPage() {
+		const con = document.getElementById("novelcontent");
+		con.className = "";
+		con.id = "";
+		const mainSection = disguiseParagraphs(con);
+		let content_tip = document.getElementById("content_tip");
+		while (content_tip) {
+			content_tip.remove();
+			content_tip = document.getElementById("content_tip");
+		}
+		const title = document.getElementById("chaptertitle")?.textContent;
+		const prenexts = Array.from(document.querySelectorAll("#novelbody ul li p a")).map((a) => a.cloneNode(true));
+		const navigationBar = {};
+		for (const element of prenexts) if (element.textContent == "上一章" || element.textContent.includes("上")) {
+			element.textContent = "上—章";
+			navigationBar.prevAnchor = element;
+		} else if (element.textContent == "目录" || element.textContent == "章节目录" || element.textContent == "返 回 目 录" || element.textContent.includes("录")) {
+			element.textContent = "目录";
+			navigationBar.infoAnchor = element;
+		} else if (element.textContent == "下一章") navigationBar.nextAnchor = element;
+		else console.log(element.outerHTML);
+		setAccessKeys(navigationBar);
+		return {
+			mainSection,
+			title,
+			navigationBar
+		};
+	}
+	function handleBuoloumaoRoute() {
+		VM_log("handleBuoloumaoRoute");
+		if (/\/book\/[^/]+/.test(location.pathname)) handleBookPage();
+		else if (/\/read\/[^/]+\/[^/]+/.test(location.pathname)) handleChapterPage();
+	}
+	function handleBookPage() {
+		VM_log("handleBookPage");
+	}
+	function handleChapterPage() {
+		VM_log("handleChapterPage");
+		Array.from(document.querySelectorAll(".readPage a")).forEach((a) => {
+			if (a.textContent.includes("下一页")) {} else if (a.textContent.includes("下一章")) {}
+		});
+		document.querySelectorAll(".content");
 	}
 	document.defaultView.Prism = globalThis.Prism;
 	VM_log("init");
 	function handleRoute() {
-		if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org")) {
+		if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org") || location.host.endsWith("deqixs.org")) {
 			handleDeqiRoute();
 			_GM_registerMenuCommand("脚本设置", function() {
-				if (location.host.endsWith("deqixs.com")) open("/pifu/#script-setting");
-				else open("/i/pifu.aspx#script-setting");
+				if (location.host.endsWith("deqixs.com")) _GM_openInTab("/pifu/#script-setting");
+				else _GM_openInTab("/i/pifu.aspx#script-setting");
 			});
 		} else if (location.hostname == "www.ddxiaoshuo.cc") {
 			handleDDxiaoshuoRoute();
 			_GM_registerMenuCommand("脚本设置", function() {
-				open("/history.html#script-setting");
+				_GM_openInTab("/history.html#script-setting");
 			});
 		} else if (location.hostname == "www.cuoceng.com" || location.hostname == "cuoceng.com") handleCuoCengRoute();
+		else if (location.hostname.endsWith("kudushu.org")) handleKudushuRoute();
+		else if (location.hostname.endsWith("boluomao1.com")) handleBuoloumaoRoute();
 		else if (location.hostname == "www.biqu33.cc" || location.pathname.startsWith("/book/")) {
 			handleBiqu33Route();
 			_GM_registerMenuCommand("脚本设置", function() {
-				open("/#script-setting");
+				_GM_openInTab("/#script-setting");
 			});
 		}
+		_GM_registerMenuCommand("脚本设置", showConfigDialog);
 	}
 	setDefaultStyle();
 	handleRoute();
