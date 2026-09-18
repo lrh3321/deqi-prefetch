@@ -230,6 +230,7 @@ body:has(.article-root) {
 	margin-inline: auto;
 	color: var(--primary-color);
 	padding-bottom: 1.5rem;
+	text-align: start;
 }
 
 .article-root > header {

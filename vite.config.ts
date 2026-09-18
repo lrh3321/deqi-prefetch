@@ -23,7 +23,7 @@ export default defineConfig({
 				downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 				source: 'https://github.com/lrh3321/deqi-prefetch',
 				supportURL: 'https://github.com/lrh3321/deqi-prefetch/issues',
-				version: '2026-09-170',
+				version: '2026-09-180',
 				description:
 					'得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码',
 				author: 'LRH3321',
@@ -44,7 +44,8 @@ export default defineConfig({
 					'http*://www.deqixs.com/pifu/',
 					'http*://www.deqixs.com/xiaoshuo/*/*.html',
 					'http*://www.deqixs.com/xiaoshuo/*/',
-					'http*://www.boluomao1.com/*',
+					'http*://www.boluomao1.com/book/*',
+					'http*://www.boluomao1.com/read/*',
 					'http*://www.biqu33.cc/*',
 					'http*://www.ddxiaoshuo.cc/*',
 					'http*://cuoceng.com/*',

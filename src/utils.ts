@@ -1,5 +1,10 @@
 import { GM_log, GmLogType } from '$';
-import { bookPageAccessKey, nextChapterAccessKey, previousChapterAccessKey, setupConfigButton } from './config';
+import {
+	bookPageAccessKey,
+	nextChapterAccessKey,
+	previousChapterAccessKey,
+	setupConfigButton
+} from './config';
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole({ theme: 'dark' });
 // console.log(vConsole.version);
@@ -154,7 +159,7 @@ export function rebuildChapterBody(page: Page): CleanPage {
 	const scripts = Array.from(document.head.querySelectorAll('script'));
 	scripts.forEach((it) => it.remove());
 
-	setupConfigButton()
+	setupConfigButton();
 
 	return { root, header, main, footer };
 }
