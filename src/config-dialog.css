@@ -164,7 +164,46 @@
 	background: var(--primary-bg-color, #f3efe8);
 	color: inherit;
 }
+#deqi-settings-dialog .settings-row input[type='range'] {
+	flex: 1 1 auto;
+	min-width: 0;
+	accent-color: var(--fab-accent, #a4774b);
+}
+#deqi-settings-dialog .settings-val {
+	flex: 0 0 2.8rem;
+	text-align: right;
+	opacity: 0.7;
+	font-variant-numeric: tabular-nums;
+}
 #deqi-settings-dialog .settings-hint {
 	opacity: 0.65;
 	font-size: 0.82rem;
+}
+
+/* 快捷设置字体按钮 */
+#deqi-settings-dialog .settings-font-quick {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+}
+#deqi-settings-dialog .settings-font-quick button {
+	border: 1px solid var(--separator-color, rgb(155 145 132 / 0.4));
+	background: var(--primary-bg-color, #f3efe8);
+	color: inherit;
+	padding: 0.3rem 0.75rem;
+	border-radius: 0.45rem;
+	font-size: 0.85rem;
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+#deqi-settings-dialog .settings-font-quick button:hover {
+	border-color: var(--fab-accent, #a4774b);
+}
+#deqi-settings-dialog .settings-font-quick button.active {
+	background: var(--fab-accent, #a4774b);
+	border-color: var(--fab-accent, #a4774b);
+	color: #fff;
 }

@@ -9,6 +9,8 @@ export let novelFontFamily = GM_getValue(
 	'novel-font-family',
 	`system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Lantinghei SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`
 );
+export let novelLineHeight = GM_getValue('novel-line-height', '1.9');
+export let novelParaSpacing = GM_getValue('novel-para-spacing', '0.9em');
 // font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
 // 是否伪装成代码
@@ -395,61 +397,6 @@ function foo(bar) {
 
 export let containerWidth = GM_getValue('container-width', '1200px');
 
-// function createContainerStyleFieldset(): HTMLFieldSetElement {
-// 	const containerStyleFieldset = document.createElement('fieldset');
-
-// 	const legend = document.createElement('legend');
-// 	legend.innerText = '正文式样';
-// 	containerStyleFieldset.appendChild(legend);
-
-// 	const div = document.createElement('div');
-
-// 	const widthInput = document.createElement('input');
-// 	widthInput.value = containerWidth;
-// 	widthInput.size = 10;
-// 	widthInput.onchange = () => {
-// 		containerWidth = widthInput.value;
-// 		document.body.style.setProperty('--container-width', containerWidth);
-// 		GM_setValue('container-width', widthInput.value);
-// 	};
-
-// 	const widthLabel = document.createElement('label');
-// 	widthLabel.innerText = '宽度：';
-// 	widthLabel.title = '单位可以是 rem, px, %, svw, vw';
-// 	widthLabel.appendChild(widthInput);
-// 	div.appendChild(widthLabel);
-
-// 	const fontSizeInput = document.createElement('input');
-// 	fontSizeInput.value = novelFontSize;
-// 	fontSizeInput.size = 10;
-// 	fontSizeInput.onchange = () => {
-// 		novelFontSize = fontSizeInput.value;
-// 		document.body.style.setProperty('--novel-font-size', novelFontSize);
-// 		GM_setValue('novel-font-size', fontSizeInput.value);
-// 	};
-
-// 	const fontSizeLabel = document.createElement('label');
-// 	fontSizeLabel.innerText = '字体大小：';
-// 	fontSizeLabel.appendChild(fontSizeInput);
-// 	div.appendChild(fontSizeLabel);
-
-// 	const fontFamilyInput = document.createElement('input');
-// 	fontFamilyInput.value = novelFontFamily;
-// 	fontFamilyInput.onchange = () => {
-// 		novelFontFamily = fontFamilyInput.value;
-// 		document.body.style.setProperty('--novel-font-family', novelFontFamily);
-// 		GM_setValue('novel-font-family', fontFamilyInput.value);
-// 	};
-
-// 	const fontFamilyLabel = document.createElement('label');
-// 	fontFamilyLabel.innerText = '字体：';
-// 	fontFamilyLabel.appendChild(fontFamilyInput);
-// 	div.appendChild(fontFamilyLabel);
-
-// 	containerStyleFieldset.appendChild(div);
-// 	return containerStyleFieldset;
-// }
-
 export function createSettingForm(): HTMLElement {
 	const form = document.createElement('form');
 
@@ -597,6 +544,46 @@ function buildSettingsDialog() {
 		return { row, input };
 	};
 
+	// 滑动条控件：实时写入 CSS 变量，并持久化
+	const mkRangeRow = (
+		labelText: string,
+		min: string | number,
+		max: string | number,
+		step: string | number,
+		unit: string,
+		varName: string,
+		storeKey: string,
+		fallback: string
+	) => {
+		const row = document.createElement('div');
+		row.className = 'settings-row';
+
+		const label = document.createElement('label');
+		label.textContent = labelText;
+
+		const input = document.createElement('input');
+		input.type = 'range';
+		input.min = String(min);
+		input.max = String(max);
+		input.step = String(step);
+		input.value = String(GM_getValue(varName, fallback) || min);
+
+		const valText = document.createElement('span');
+		valText.className = 'settings-val';
+
+		const apply = () => {
+			document.body.style.setProperty(varName, unit ? `${input.value}${unit}` : input.value);
+			valText.textContent = `${input.value}${unit ?? ''}`;
+			try {
+				GM_setValue(storeKey, input.value);
+			} catch {}
+		};
+		input.addEventListener('input', apply);
+
+		row.append(label, input, valText);
+		return { row, input, apply };
+	};
+
 	// 容宽
 	const widthRow = mkRow('宽度');
 	widthRow.input.type = 'text';
@@ -628,14 +615,91 @@ function buildSettingsDialog() {
 	fontFamilyRow.input.placeholder = '系统默认';
 	const DEFAULT_FAMILY = `system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Segoe UI', Roboto, sans-serif`;
 	fontFamilyRow.input.addEventListener('change', () => {
-		const v = fontFamilyRow.input.value.trim();
-		document.body.style.setProperty('--novel-font-family', v || DEFAULT_FAMILY);
+		const family = fontFamilyRow.input.value.trim();
+		document.body.style.setProperty('--novel-font-family', family || DEFAULT_FAMILY);
 		try {
-			GM_setValue('novel-font-family', v);
+			GM_setValue('novel-font-family', family);
 		} catch {}
 	});
 
-	body.append(widthRow.row, fontSizeRow.row, fontFamilyRow.row);
+	// 快捷设置字体按钮（预设字体）
+	const fontQuickRow = document.createElement('div');
+	fontQuickRow.className = 'settings-font-quick';
+	const fontPresets = [
+		// 通用 / Windows
+		['系统默认', DEFAULT_FAMILY],
+		['宋体', `SimSun, '宋体', serif`],
+		['黑体', `SimHei, '黑体', sans-serif`],
+		['楷体', `KaiTi, '楷体', serif`],
+		['微软雅黑', `'Microsoft YaHei', '微软雅黑', sans-serif`],
+		// macOS / iOS
+		['苹方', `'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif`],
+		['宋体-简', `'Songti SC', 'STSong', 'SimSun', serif`],
+		['楷体-简', `'Kaiti SC', 'STKaiti', 'KaiTi', serif`],
+		['华文黑体', `'STHeiti', 'Heiti SC', 'PingFang SC', sans-serif`],
+		['华文宋体', `'STSong', 'Songti SC', 'SimSun', serif`],
+		// Android / 开源
+		['思源黑体', `'Noto Sans CJK SC', 'Source Han Sans SC', 'HarmonyOS Sans SC', sans-serif`],
+		['思源宋体', `'Noto Serif CJK SC', 'Source Han Serif SC', 'SimSun', serif`],
+		['鸿蒙', `'HarmonyOS Sans SC', 'HarmonyOS Sans', 'Noto Sans CJK SC', sans-serif`],
+		['霞鹜文楷', `'LXGW WenKai', 'Kaiti SC', 'KaiTi', serif`]
+	];
+	const syncFontQuick = () => {
+		const current = novelFontFamily;
+		fontQuickRow.querySelectorAll('button').forEach((b) => {
+			b.classList.toggle('active', b.dataset.family?.trim() === current);
+		});
+	};
+	fontPresets.forEach(([label, family]) => {
+		const b = document.createElement('button');
+		b.type = 'button';
+		b.textContent = label;
+		b.dataset.family = family;
+		b.addEventListener('click', () => {
+			document.body.style.setProperty('--novel-font-family', family);
+			fontFamilyRow.input.value = family;
+			try {
+				GM_setValue('novel-font-family', family);
+			} catch {}
+			syncFontQuick();
+		});
+		fontQuickRow.appendChild(b);
+	});
+	fontFamilyRow.input.addEventListener('change', syncFontQuick);
+
+	// 行间距
+	const lineHeightRow = mkRangeRow(
+		'行间距',
+		1,
+		3,
+		0.05,
+		'',
+		'--novel-line-height',
+		'novel-line-height',
+		'1.9'
+	);
+
+	// 段间距（单位是 em，相对正文字号）
+	const paraSpacingRow = mkRangeRow(
+		'段间距',
+		0,
+		3,
+		0.1,
+		'em',
+		'--novel-para-spacing',
+		'novel-para-spacing',
+		'0.9em'
+	);
+
+	body.append(
+		widthRow.row,
+		fontSizeRow.row,
+		fontFamilyRow.row,
+		fontQuickRow,
+		lineHeightRow.row,
+		paraSpacingRow.row
+	);
+	syncFontQuick();
 
 	const hint = document.createElement('div');
 	hint.className = 'settings-hint';

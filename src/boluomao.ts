@@ -150,10 +150,13 @@ function getChapterPage(): Page {
 		if (element instanceof HTMLAnchorElement) {
 			element.className = '';
 			if (element.textContent.includes('上一章')) {
+				element.innerHTML = '上一章';
 				navigationBar.prevAnchor = element;
 			} else if (element.textContent.includes('目录')) {
+				element.innerHTML = '目录';
 				navigationBar.infoAnchor = element;
 			} else if (element.textContent.includes('下一章')) {
+				element.innerHTML = '下一章';
 				navigationBar.nextAnchor = element;
 			}
 		}
