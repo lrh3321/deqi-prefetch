@@ -160,8 +160,27 @@ export function rebuildChapterBody(page: Page): CleanPage {
 	scripts.forEach((it) => it.remove());
 
 	setupConfigButton();
+	boilerplate();
 
 	return { root, header, main, footer };
+}
+
+function boilerplate() {
+	ensureMeta('viewport', 'width=device-width');
+	ensureMeta('text-scale', 'scale');
+}
+
+function ensureMeta(name: string, content: string) {
+	const docHeader = document.head;
+	const meta = docHeader.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+	if (meta) {
+		meta.content = content;
+	} else {
+		const meta = document.createElement('meta');
+		meta.name = name;
+		meta.content = content;
+		docHeader.appendChild(meta);
+	}
 }
 
 export function updateStyle(pre: HTMLPreElement) {

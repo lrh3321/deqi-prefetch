@@ -1,5 +1,11 @@
 import { GM_addElement, GM_getValue, GM_setValue } from '$';
-import { highlightElement, setupExtendLanguageSupport } from './code';
+import {
+	avalibleCodeLanguages,
+	avalibleCodeThemes,
+	fakeCodeSnippet,
+	highlightElement,
+	setupExtendLanguageSupport
+} from './code';
 import { EditableList, setupEditableList } from './editable-list';
 import { getCodeThemeURL, updateStyle } from './utils';
 
@@ -16,124 +22,18 @@ export let novelParaSpacing = GM_getValue('novel-para-spacing', '0.9em');
 // 是否伪装成代码
 export let disguiseMode = GM_getValue<DisguiseMode>('disguise-mode', 'none');
 export let codeLang = GM_getValue<string>('code-lang', 'javascript');
-export const defaultCodeSnippet = `var x = 1;
-switch (x) {
-  case 1:
-    console.log('x 等于1');
-  case 2:
-    console.log('x 等于2');
-  default:
-    console.log('x 等于其他值');
-}
-====
-switch (x) {
-  case 1:
-    console.log('x 等于1');
-    break;
-  case 2:
-    console.log('x 等于2');
-    break;
-  default:
-    console.log('x 等于其他值');
-}
-====
-switch (1 + 3) {
-  case 2 + 2:
-    f();
-    break;
-  default:
-    neverHappens();
-}
-====
-var x = 1;
-switch (x) {
-  case true:
-    console.log('x 发生类型转换');
-    break;
-  default:
-    console.log('x 没有发生类型转换');
-}
-`;
-export let fakeCodeSnippet = GM_getValue<string>('fake-codes', defaultCodeSnippet);
-if (fakeCodeSnippet.trim() == '') {
-	fakeCodeSnippet = defaultCodeSnippet;
-}
-
 export let codeTheme = GM_getValue('code-theme', 'prism');
 export let codeParagraphItalic = GM_getValue('code-italic', true);
 export let codeShowLineNumbers = GM_getValue('line-numbers', false);
 
 export let refreshInterval = GM_getValue('refreshInterval', -1);
 
-const avalibleCodeThemes = [
-	{ Name: 'Default', code: 'prism' },
-	{ Name: 'Dark', code: 'prism-dark' },
-	{ Name: 'Funky', code: 'prism-funky' },
-	{ Name: 'Okaidia', code: 'prism-okaidia' },
-	{ Name: 'Twilight', code: 'prism-twilight' },
-	{ Name: 'Coy', code: 'prism-coy' },
-	{ Name: 'Solarized Light', code: 'prism-solarizedlight' },
-	{ Name: 'Tomorrow Night', code: 'prism-tomorrow' },
-	// A wider selection of Prism themes
-	{ Name: 'CB', code: 'prism-cb' },
-	{ Name: 'GHColors', code: 'prism-ghcolors' },
-	{ Name: 'Pojoaque', code: 'prism-pojoaque' },
-	{ Name: 'Xonokai', code: 'prism-xonokai' },
-	{ Name: 'Ateliersulphurpool-light', code: 'prism-base16-ateliersulphurpool.light' },
-	{ Name: 'Hopscotch', code: 'prism-hopscotch' },
-	{ Name: 'Atom Dark', code: 'prism-atom-dark' },
-	{ Name: 'Duotone Dark', code: 'prism-duotone-dark' },
-	{ Name: 'Duotone Sea', code: 'prism-duotone-sea' },
-	{ Name: 'Duotone Space', code: 'prism-duotone-space' },
-	{ Name: 'Duotone Earth', code: 'prism-duotone-earth' },
-	{ Name: 'Duotone Forest', code: 'prism-duotone-forest' },
-	{ Name: 'Duotone Light', code: 'prism-duotone-light' },
-	{ Name: 'VS', code: 'prism-vs' },
-	{ Name: 'VS Code Dark+', code: 'prism-vsc-dark-plus' },
-	{ Name: 'Darcula', code: 'prism-darcula' },
-	{ Name: 'a11y Dark', code: 'prism-a11y-dark' },
-	{ Name: 'Dracula', code: 'prism-dracula' },
-	{ Name: "Synthwave '84", code: 'prism-synthwave84' },
-	{ Name: 'Shades of Purple', code: 'prism-shades-of-purple' },
-	{ Name: 'Material Dark', code: 'prism-material-dark' },
-	{ Name: 'Material Light', code: 'prism-material-light' },
-	{ Name: 'Material Oceanic', code: 'prism-oceanic' },
-	{ Name: 'Nord', code: 'prism-nord' },
-	{ Name: 'Coldark Cold', code: 'prism-coldark-cold' },
-	{ Name: 'Coldark Dark', code: 'prism-coldark-dark' },
-	{ Name: 'Coy without shadows', code: 'prism-coy-without-shadows' },
-	{ Name: 'Gruvbox Dark', code: 'prism-gruvbox-dark' },
-	{ Name: 'Gruvbox Light', code: 'prism-gruvbox-light' },
-	{ Name: 'Lucario', code: 'prism-lucario' },
-	{ Name: 'Night Owl', code: 'prism-night-owl' },
-	{ Name: 'Holi Theme', code: 'prism-holi-theme' },
-	{ Name: 'Z-Touch', code: 'prism-z-touch' },
-	{ Name: 'Solarized Dark Atom', code: 'prism-solarized-dark-atom' },
-	{ Name: 'One Dark', code: 'prism-one-dark' },
-	{ Name: 'One Light', code: 'prism-one-light' },
-	{ Name: 'Laserwave', code: 'prism-laserwave' }
-];
+export let themeMode = GM_getValue<ThemeMode>('theme-mode', 'auto');
 
-const avalibleCodeLanguages = [
-	{ Name: 'Markup — markup, html, xml, svg, mathml, ssml, atom, rss', code: 'markup' },
-	{ Name: 'CSS — css', code: 'css' },
-	{ Name: 'C-like — clike', code: 'clike' },
-	{ Name: 'JavaScript — javascript, js', code: 'javascript' },
-
-	{ Name: 'C —c', code: 'c' },
-	{ Name: 'C# —csharp, cs, dotnet', code: 'csharp' },
-	{ Name: 'C++ —cpp', code: 'cpp' },
-	{ Name: 'Go —go', code: 'go' },
-	{ Name: 'Java —java', code: 'java' },
-	{ Name: 'Kotlin —kotlin, kt, kts', code: 'kotlin' },
-	{ Name: 'PHP —php', code: 'php' },
-	{ Name: 'Python —python, py', code: 'python' },
-	{ Name: 'Rust —rust', code: 'rust' }
-];
-
-export const coreLanguages = new Set(['markup', 'css', 'clike', 'javascript']);
-
-export function changeCodeTheme(theme: string) {
+function changeCodeTheme(theme: string) {
+	if (__LITE__) {
+		return;
+	}
 	GM_setValue('code-theme', theme);
 	codeTheme = theme;
 	codeThemeElement?.remove();
@@ -147,6 +47,9 @@ export function changeCodeTheme(theme: string) {
 let codeThemeElement: HTMLStyleElement | null = null;
 
 export function setupCodeTheme() {
+	if (__LITE__) {
+		return;
+	}
 	codeThemeElement = GM_addElement(document.head, 'link', {
 		href: getCodeThemeURL(codeTheme),
 		rel: 'stylesheet',
@@ -420,6 +323,44 @@ export function createSettingForm(): HTMLElement {
 	form.appendChild(button);
 
 	form.appendChild(createAccessKeysFieldset());
+
+	if (!__LITE__) {
+		appendDisguiseCodeFieldset(form);
+	}
+
+	form.onsubmit = (e) => {
+		e.preventDefault();
+		const interval = parseInt(intervalInput.value) * 60000;
+		if (interval >= 0 && interval != refreshInterval) {
+			GM_setValue('refreshInterval', interval);
+			refreshInterval = interval;
+		}
+	};
+
+	// 延迟设置背景色，确保pre元素已经渲染完成
+	setTimeout(() => {
+		const pre = document.querySelector('pre');
+		if (pre) {
+			updateStyle(pre);
+		}
+	}, 1000);
+
+	const details = document.createElement('details');
+	details.id = 'script-setting';
+	if (location.hash === '#script-setting') {
+		details.open = true;
+		setTimeout(() => {
+			details.scrollIntoView(true);
+		}, 500);
+	}
+	const summary = document.createElement('summary');
+	summary.innerText = '脚本设置';
+	details.appendChild(summary);
+	details.appendChild(form);
+	return details;
+}
+
+function appendDisguiseCodeFieldset(form: Element) {
 	const disguiseCodeFieldset = createDisguiseCodeFieldset();
 	const updateFieldSetsState = (label: DisguiseMode) => {
 		switch (label) {
@@ -469,37 +410,6 @@ export function createSettingForm(): HTMLElement {
 	form.appendChild(radioDiv);
 
 	form.appendChild(disguiseCodeFieldset);
-
-	form.onsubmit = (e) => {
-		e.preventDefault();
-		const interval = parseInt(intervalInput.value) * 60000;
-		if (interval >= 0 && interval != refreshInterval) {
-			GM_setValue('refreshInterval', interval);
-			refreshInterval = interval;
-		}
-	};
-
-	// 延迟设置背景色，确保pre元素已经渲染完成
-	setTimeout(() => {
-		const pre = document.querySelector('pre');
-		if (pre) {
-			updateStyle(pre);
-		}
-	}, 1000);
-
-	const details = document.createElement('details');
-	details.id = 'script-setting';
-	if (location.hash === '#script-setting') {
-		details.open = true;
-		setTimeout(() => {
-			details.scrollIntoView(true);
-		}, 500);
-	}
-	const summary = document.createElement('summary');
-	summary.innerText = '脚本设置';
-	details.appendChild(summary);
-	details.appendChild(form);
-	return details;
 }
 
 export function setDefaultStyle() {
@@ -510,6 +420,25 @@ export function setDefaultStyle() {
 
 const FAB_ID = 'deqi-fab';
 const DIALOG_ID = 'deqi-settings-dialog';
+
+// 夜间模式：仅切换 body 上的 data-theme（auto/dark/light）。
+// 具体配色全部在 src/style.css 与 src/config-dialog.css 中定义，这里不含颜色数据。
+// mode: 'auto' = 跟随系统（移除 data-theme，交给 prefers-color-scheme）
+//       'dark' / 'light' = 强制夜间 / 日间
+const applyTheme = (mode?: ThemeMode) => {
+	if (!mode) {
+		mode = themeMode;
+	}
+	if (mode === 'dark' || mode === 'light') {
+		document.body.setAttribute('data-theme', mode);
+	} else {
+		document.body.removeAttribute('data-theme');
+	}
+	if (themeMode != mode) {
+		themeMode = mode!;
+		GM_setValue('theme-mode', mode);
+	}
+};
 
 // 页面设置 —— 修改干净阅读页的 CSS 变量，实时生效
 function buildSettingsDialog() {
@@ -583,6 +512,28 @@ function buildSettingsDialog() {
 		row.append(label, input, valText);
 		return { row, input, apply };
 	};
+
+	// 夜间模式（默认跟随浏览器 / 强制夜间 / 强制日间）
+	const themeRow = document.createElement('div');
+	themeRow.className = 'settings-row';
+	const themeLabel = document.createElement('label');
+	themeLabel.textContent = '夜间模式';
+	const themeSelect = document.createElement('select');
+	[
+		['auto', '跟随系统'],
+		['dark', '夜间'],
+		['light', '日间']
+	].forEach(([v, text]) => {
+		const o = document.createElement('option');
+		o.value = v;
+		o.textContent = text;
+		themeSelect.appendChild(o);
+	});
+	themeSelect.value = themeMode;
+	themeSelect.addEventListener('change', () => {
+		applyTheme(themeSelect.value as ThemeMode);
+	});
+	themeRow.append(themeLabel, themeSelect);
 
 	// 容宽
 	const widthRow = mkRow('宽度');
@@ -692,6 +643,7 @@ function buildSettingsDialog() {
 	);
 
 	body.append(
+		themeRow,
 		widthRow.row,
 		fontSizeRow.row,
 		fontFamilyRow.row,

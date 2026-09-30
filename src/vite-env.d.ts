@@ -187,3 +187,7 @@ declare namespace Prism {
 	const plugins: Record<string, any>;
 	const themes: Record<string, any>;
 }
+
+declare const __LITE__: boolean;
+
+type ThemeMode = 'dark' | 'light' | 'auto';

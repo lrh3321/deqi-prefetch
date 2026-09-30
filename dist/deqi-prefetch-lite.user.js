@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Deqi Prefech
+// @name         Deqi Prefech Lite
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
 // @version      2026-09-300
 // @author       LRH3321
@@ -25,9 +25,6 @@
 // @match        http*://www.ddxiaoshuo.cc/*
 // @match        http*://cuoceng.com/*
 // @match        http*://www.cuoceng.com/*
-// @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js
-// @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js
-// @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js
 // @tag          novels
 // @connect      self
 // @grant        GM_addElement
@@ -55,7 +52,6 @@
 	};
 	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}#captcha-form>div.ui-image>img#ui-captcha-image{visibility:visible!important;display:inline!important}body:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;--separator-color:color-mix(in srgb, var(--secondary-color) 25%, transparent);--novel-line-height:1.9;--novel-para-spacing:.9em;min-height:100svh;color:var(--primary-color);background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);margin:0}.article-root{width:min(100svw, var(--container-width,1200px));color:var(--primary-color);text-align:start;margin-inline:auto;padding-bottom:1.5rem}.article-root>header{opacity:.75;border-bottom:1px solid var(--separator-color);background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;padding-inline:1rem;line-height:2rem}.article-root>header:empty{display:none}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb{flex-wrap:wrap;gap:.4rem 1rem;margin-inline:auto;padding-inline:1rem;list-style:none}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a:hover{opacity:.6;text-decoration:underline}.article-root>main{min-height:0}.article-root article{background:var(--card-bg-color);border:1px solid var(--separator-color);border-radius:.9rem;margin-block:1rem;margin-inline:auto;padding:clamp(1rem,3.5vw,2rem) clamp(1rem,4vw,2.5rem) 2.5rem;box-shadow:0 1px 2px #0000000a,0 10px 30px #0000000f}.article-root .article-title{border-bottom:1px dashed var(--separator-color);white-space:nowrap;text-overflow:ellipsis;min-width:0;max-width:100%;margin-bottom:1rem;padding-bottom:.75rem;font-size:clamp(1.3rem,4.5vw,1.7rem);font-weight:700;line-height:1.4;display:block;overflow:hidden}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial;border-radius:.5rem}.article-root section p{text-indent:2em;margin:0 0 var(--novel-para-spacing,.9em);line-height:var(--novel-line-height,1.9);letter-spacing:.015em;color:var(--primary-color);overflow-wrap:anywhere;word-break:break-word;font-size:1.0625rem}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root pre{tab-size:4;text-indent:0;color:var(--primary-color);background:color-mix(in srgb, var(--primary-bg-color) 45%, var(--card-bg-color) 55%);border:1px solid var(--separator-color);border-radius:.6rem;margin-block:.5rem;padding:1rem 1.25rem;font-family:ui-monospace,SF Mono,Cascadia Code,JetBrains Mono,Menlo,Consolas,Courier New,monospace;font-size:.875rem;line-height:1.75;overflow-x:auto}.article-root pre code{text-indent:0;white-space:inherit;display:block}.article-root pre.line-numbers .line-numbers-rows{border-right-color:var(--separator-color)}.article-root>footer{opacity:.9;padding-block:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .8);border:1px solid var(--separator-color);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:999px;flex-wrap:wrap;justify-content:center;justify-self:center;gap:.4rem;width:fit-content;margin-inline:auto;padding:.35rem;display:flex}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;border-radius:999px;padding:.35rem 1rem;text-decoration:none;transition:background-color .15s,color .15s}.article-root .article-nav a:hover{background-color:var(--accent-color);color:#fff}.article-root hr{background:linear-gradient(90deg, transparent, var(--secondary-color) 20%, var(--secondary-color) 80%, transparent);opacity:.4;border:0;width:100%;height:1px;margin-block:0}body[hidden]{display:none!important}@media (prefers-color-scheme:dark){body:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}}body[data-theme=dark]:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}body[data-theme=light]:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}");
 	_css(":root{--fab-accent:#a4774b;--fab-bg:#f3efe8}body[data-theme=dark]{--fab-accent:#c08d5e;--fab-bg:#262420}#deqi-fab{z-index:2147483000;align-items:flex-end;gap:.6rem;display:flex;position:fixed;bottom:1.75rem;right:1.25rem}#deqi-fab .fab-menu{opacity:0;pointer-events:none;flex-direction:column;align-items:flex-end;gap:.5rem;transition:opacity .18s,transform .18s;display:flex;transform:translateY(.5rem)}#deqi-fab.open .fab-menu{opacity:1;pointer-events:auto;transform:translateY(0)}#deqi-fab .fab-menu button{border:1px solid color-mix(in srgb, var(--fab-accent) 25%, transparent);background:color-mix(in srgb, var(--fab-bg) 88%, white);color:var(--primary-color,#2b2b2b);cursor:pointer;white-space:nowrap;border-radius:999px;align-items:center;gap:.4rem;padding:.45rem .9rem;font-size:.9rem;transition:background-color .15s,transform .1s;display:inline-flex;box-shadow:0 3px 10px #0000002e}#deqi-fab .fab-menu button:hover{background:var(--fab-accent);color:#fff}#deqi-fab .fab-menu button:active{transform:scale(.95)}#deqi-fab .fab-menu button .fab-icon{font-size:1rem;line-height:1}#deqi-fab .fab-toggle{cursor:pointer;color:#fff;background:linear-gradient(135deg, #b08968, var(--fab-accent));border:none;border-radius:50%;place-items:center;width:3.15rem;height:3.15rem;font-size:1.6rem;transition:transform .2s;display:grid;box-shadow:0 5px 16px #00000047}#deqi-fab .fab-toggle:hover{transform:scale(1.06)}#deqi-fab .fab-toggle:active{transform:scale(.94)}#deqi-settings-dialog{background:0 0;border:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0}#deqi-settings-dialog::backdrop{-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);background:#00000073}#deqi-settings-dialog .settings-panel{background:var(--card-bg-color,#fffdf8);width:min(90vw,40rem);max-height:88dvh;color:var(--primary-color,#2b2b2b);border:1px solid var(--separator-color,#9b918440);border-radius:.9rem;margin:5dvh auto auto;font-size:.95rem;overflow:auto;box-shadow:0 20px 60px #0000004d}#deqi-settings-dialog .settings-head{border-bottom:1px solid var(--separator-color,#9b918440);background:inherit;z-index:1;justify-content:space-between;align-items:center;padding:.9rem 1.2rem;font-size:1.05rem;font-weight:700;display:flex;position:sticky;top:0}#deqi-settings-dialog .settings-close{color:inherit;cursor:pointer;background:0 0;border:0;border-radius:.4rem;padding:.2rem .4rem;font-size:1.4rem;line-height:1}#deqi-settings-dialog .settings-close:hover{background:color-mix(in srgb, var(--primary-color) 12%, transparent)}#deqi-settings-dialog .settings-body{flex-direction:column;gap:.9rem;padding:1.1rem 1.2rem 1.4rem;display:flex}#deqi-settings-dialog .settings-row{align-items:center;gap:.6rem;display:flex}#deqi-settings-dialog .settings-row label{flex:none;min-width:4.5rem}#deqi-settings-dialog .settings-row input[type=text],#deqi-settings-dialog .settings-row input[type=number]{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-row input[type=range]{min-width:0;accent-color:var(--fab-accent,#a4774b);flex:auto}#deqi-settings-dialog .settings-row select{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-val{text-align:right;opacity:.7;font-variant-numeric:tabular-nums;flex:0 0 2.8rem}#deqi-settings-dialog .settings-hint{opacity:.65;font-size:.82rem}#deqi-settings-dialog .settings-font-quick{flex-wrap:wrap;gap:.45rem;display:flex}#deqi-settings-dialog .settings-font-quick button{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);color:inherit;cursor:pointer;border-radius:.45rem;padding:.3rem .75rem;font-size:.85rem;transition:background-color .15s,color .15s,border-color .15s}#deqi-settings-dialog .settings-font-quick button:hover{border-color:var(--fab-accent,#a4774b)}#deqi-settings-dialog .settings-font-quick button.active{background:var(--fab-accent,#a4774b);border-color:var(--fab-accent,#a4774b);color:#fff}");
-	var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_log = (() => typeof GM_log != "undefined" ? GM_log : void 0)();
 	var _GM_openInTab = (() => typeof GM_openInTab != "undefined" ? GM_openInTab : void 0)();
@@ -63,19 +59,6 @@
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
 	var VM_log = _GM_log;
-	function getCodeThemeURL(theme) {
-		if (new Set([
-			"prism",
-			"prism-dark",
-			"prism-funky",
-			"prism-okaidia",
-			"prism-twilight",
-			"prism-coy",
-			"prism-solarizedlight",
-			"prism-tomorrow"
-		]).has(theme)) return `https://dev.prismjs.com/themes/${theme}.min.css`;
-		return `https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/${theme}.min.css`;
-	}
 	function releaseCopy() {
 		const $ = document.defaultView.$;
 		if ($) {
@@ -260,362 +243,9 @@
 		footer.appendChild(navBar);
 		return footer;
 	}
-	var extendLanguageElement = null;
-	function setupExtendLanguageSupport() {
-		if (!coreLanguages.has(codeLang)) {
-			console.log("loading language", codeLang);
-			const src = `https://dev.prismjs.com/components/prism-${codeLang}.js`;
-			if (extendLanguageElement?.src == src) return;
-			extendLanguageElement?.remove();
-			extendLanguageElement = _GM_addElement("script", { src });
-		}
-	}
-	function disguiseToCode(container) {
-		const fakeCodes = fakeCodeSnippet.split("====");
-		const getRandomCode = () => fakeCodes[Math.floor(Math.random() * fakeCodes.length)];
-		var lines = [];
-		const paragraphs = Array.from(container.querySelectorAll("p"));
-		let blockCommentStart = "/*";
-		let blockCommentEnd = "*/";
-		let shortCommnet = "";
-		switch (codeLang) {
-			case "clike":
-			case "javascript":
-			case "c":
-			case "csharp":
-			case "cpp":
-			case "go":
-			case "java":
-			case "kotlin":
-			case "rust":
-			case "php":
-				shortCommnet = "// ";
-				break;
-			case "python":
-				shortCommnet = "# ";
-				break;
-			case "markup":
-				blockCommentStart = "<!--";
-				blockCommentEnd = "-->";
-		}
-		const codeSegments = [];
-		paragraphs.forEach((p) => {
-			const textContent = p.textContent.trim();
-			let line = "";
-			while (line.trim() == "") {
-				if (lines.length == 0) lines.push(...getRandomCode().split(/[\r]?\n/));
-				line = lines.shift();
-				if (line.trim().length === 1) {
-					codeSegments.push(line);
-					line = "";
-				}
-			}
-			const trimed = line.replace(/^[\s\t]+/, "");
-			if (trimed !== line) {
-				const prefix = line.substring(0, line.length - trimed.length);
-				if (textContent.length + shortCommnet.length + prefix.length < inlineLengthMax && shortCommnet != "") codeSegments.push(`${prefix}${shortCommnet}${textContent}`);
-				else codeSegments.push(`${prefix}${blockCommentStart}\n${prefix}  ${textContent}\n${prefix}${blockCommentEnd}`);
-			} else if (textContent.length + shortCommnet.length < inlineLengthMax && shortCommnet != "") codeSegments.push(`${shortCommnet}${textContent}`);
-			else codeSegments.push(`${blockCommentStart}\n  ${textContent}\n${blockCommentEnd}`);
-			codeSegments.push(line);
-			p.remove();
-		});
-		codeSegments.push(...lines);
-		const pre = createPreformattedCode(codeSegments.join("\n"));
-		container.parentElement.replaceChild(pre, container);
-		highlightElement(pre, false, () => {
-			updateStyle(pre);
-		});
-		return pre;
-	}
 	function disguiseParagraphs(container) {
-		switch (disguiseMode) {
-			case "none":
-				container.style.fontSize = "var(--novel-font-size)";
-				container.style.fontFamily = "var(--novel-font-family)";
-				break;
-			default: return disguiseToCode(container);
-		}
 		return container;
 	}
-	function createPreformattedCode(snippet) {
-		const code = document.createElement("code");
-		code.className = `language-${codeLang} match-braces rainbow-braces`;
-		code.innerHTML = snippet;
-		const pre = document.createElement("pre");
-		pre.style.whiteSpace = "pre-wrap";
-		pre.style.textWrap = "pretty";
-		pre.style.overflowX = "auto";
-		pre.className = `language-${codeLang} match-braces rainbow-braces ${codeShowLineNumbers ? "line-numbers" : ""}`;
-		if (pre.firstChild) pre.replaceChild(code, pre.firstChild);
-		else pre.appendChild(code);
-		return pre;
-	}
-	function highlightElement(el, async, callback) {
-		if (el instanceof HTMLElement) el.style.fontSize = "var(--novel-font-size)";
-		const codes = Array.from(el.querySelectorAll("code"));
-		const highlightAll = () => {
-			codes.forEach((code) => {
-				Prism.highlightElement(code, async, callback);
-			});
-		};
-		if (coreLanguages.has(codeLang)) highlightAll();
-		else {
-			let count = 0;
-			const lazyHighlightElement = () => {
-				count++;
-				if (codeLang in Prism.languages) {
-					highlightAll();
-					return;
-				}
-				if (count > 10) return;
-				setTimeout(lazyHighlightElement, 200);
-			};
-			setTimeout(lazyHighlightElement, 200);
-		}
-	}
-	var avalibleCodeThemes = [
-		{
-			Name: "Default",
-			code: "prism"
-		},
-		{
-			Name: "Dark",
-			code: "prism-dark"
-		},
-		{
-			Name: "Funky",
-			code: "prism-funky"
-		},
-		{
-			Name: "Okaidia",
-			code: "prism-okaidia"
-		},
-		{
-			Name: "Twilight",
-			code: "prism-twilight"
-		},
-		{
-			Name: "Coy",
-			code: "prism-coy"
-		},
-		{
-			Name: "Solarized Light",
-			code: "prism-solarizedlight"
-		},
-		{
-			Name: "Tomorrow Night",
-			code: "prism-tomorrow"
-		},
-		{
-			Name: "CB",
-			code: "prism-cb"
-		},
-		{
-			Name: "GHColors",
-			code: "prism-ghcolors"
-		},
-		{
-			Name: "Pojoaque",
-			code: "prism-pojoaque"
-		},
-		{
-			Name: "Xonokai",
-			code: "prism-xonokai"
-		},
-		{
-			Name: "Ateliersulphurpool-light",
-			code: "prism-base16-ateliersulphurpool.light"
-		},
-		{
-			Name: "Hopscotch",
-			code: "prism-hopscotch"
-		},
-		{
-			Name: "Atom Dark",
-			code: "prism-atom-dark"
-		},
-		{
-			Name: "Duotone Dark",
-			code: "prism-duotone-dark"
-		},
-		{
-			Name: "Duotone Sea",
-			code: "prism-duotone-sea"
-		},
-		{
-			Name: "Duotone Space",
-			code: "prism-duotone-space"
-		},
-		{
-			Name: "Duotone Earth",
-			code: "prism-duotone-earth"
-		},
-		{
-			Name: "Duotone Forest",
-			code: "prism-duotone-forest"
-		},
-		{
-			Name: "Duotone Light",
-			code: "prism-duotone-light"
-		},
-		{
-			Name: "VS",
-			code: "prism-vs"
-		},
-		{
-			Name: "VS Code Dark+",
-			code: "prism-vsc-dark-plus"
-		},
-		{
-			Name: "Darcula",
-			code: "prism-darcula"
-		},
-		{
-			Name: "a11y Dark",
-			code: "prism-a11y-dark"
-		},
-		{
-			Name: "Dracula",
-			code: "prism-dracula"
-		},
-		{
-			Name: "Synthwave '84",
-			code: "prism-synthwave84"
-		},
-		{
-			Name: "Shades of Purple",
-			code: "prism-shades-of-purple"
-		},
-		{
-			Name: "Material Dark",
-			code: "prism-material-dark"
-		},
-		{
-			Name: "Material Light",
-			code: "prism-material-light"
-		},
-		{
-			Name: "Material Oceanic",
-			code: "prism-oceanic"
-		},
-		{
-			Name: "Nord",
-			code: "prism-nord"
-		},
-		{
-			Name: "Coldark Cold",
-			code: "prism-coldark-cold"
-		},
-		{
-			Name: "Coldark Dark",
-			code: "prism-coldark-dark"
-		},
-		{
-			Name: "Coy without shadows",
-			code: "prism-coy-without-shadows"
-		},
-		{
-			Name: "Gruvbox Dark",
-			code: "prism-gruvbox-dark"
-		},
-		{
-			Name: "Gruvbox Light",
-			code: "prism-gruvbox-light"
-		},
-		{
-			Name: "Lucario",
-			code: "prism-lucario"
-		},
-		{
-			Name: "Night Owl",
-			code: "prism-night-owl"
-		},
-		{
-			Name: "Holi Theme",
-			code: "prism-holi-theme"
-		},
-		{
-			Name: "Z-Touch",
-			code: "prism-z-touch"
-		},
-		{
-			Name: "Solarized Dark Atom",
-			code: "prism-solarized-dark-atom"
-		},
-		{
-			Name: "One Dark",
-			code: "prism-one-dark"
-		},
-		{
-			Name: "One Light",
-			code: "prism-one-light"
-		},
-		{
-			Name: "Laserwave",
-			code: "prism-laserwave"
-		}
-	];
-	var avalibleCodeLanguages = [
-		{
-			Name: "Markup — markup, html, xml, svg, mathml, ssml, atom, rss",
-			code: "markup"
-		},
-		{
-			Name: "CSS — css",
-			code: "css"
-		},
-		{
-			Name: "C-like — clike",
-			code: "clike"
-		},
-		{
-			Name: "JavaScript — javascript, js",
-			code: "javascript"
-		},
-		{
-			Name: "C —c",
-			code: "c"
-		},
-		{
-			Name: "C# —csharp, cs, dotnet",
-			code: "csharp"
-		},
-		{
-			Name: "C++ —cpp",
-			code: "cpp"
-		},
-		{
-			Name: "Go —go",
-			code: "go"
-		},
-		{
-			Name: "Java —java",
-			code: "java"
-		},
-		{
-			Name: "Kotlin —kotlin, kt, kts",
-			code: "kotlin"
-		},
-		{
-			Name: "PHP —php",
-			code: "php"
-		},
-		{
-			Name: "Python —python, py",
-			code: "python"
-		},
-		{
-			Name: "Rust —rust",
-			code: "rust"
-		}
-	];
-	var coreLanguages = new Set([
-		"markup",
-		"css",
-		"clike",
-		"javascript"
-	]);
 	var defaultCodeSnippet = `var x = 1;
 switch (x) {
   case 1:
@@ -656,148 +286,19 @@ switch (x) {
 `;
 	var fakeCodeSnippet = _GM_getValue("fake-codes", defaultCodeSnippet);
 	if (fakeCodeSnippet.trim() == "") fakeCodeSnippet = defaultCodeSnippet;
-	var EditableList = class extends HTMLElement {
-		itemList = null;
-		textInput = null;
-		codeSnippetsStore;
-		counter;
-		constructor() {
-			super();
-			this.addListItem = this.addListItem.bind(this);
-			this.handleRemoveItemListeners = this.handleRemoveItemListeners.bind(this);
-			this.removeListItem = this.removeListItem.bind(this);
-			this.counter = 0;
-			this.codeSnippetsStore = new Map();
-		}
-		lazyInit() {
-			this.innerHTML = `<h3>伪装代码段</h3>
-<div>
-    <label>输入代码片段：</label>
-    <textarea rows="20" class="add-new-list-item-input"></textarea>
-    <button class="editable-list-add-item icon">&oplus;</button>
-</div>
-<ul class="item-list"></ul>`;
-			this.itemList = this.querySelector("ul.item-list");
-			this.textInput = this.querySelector(".add-new-list-item-input");
-			this.textInput.onkeydown = this.onKeydown.bind(this);
-		}
-		connectedCallback() {
-			this.lazyInit();
-			this.querySelector(".editable-list-add-item")?.addEventListener("click", this.addListItem, false);
-		}
-		onKeydown(e) {
-			if (e.ctrlKey && e.key === "Enter") {
-				e.preventDefault();
-				this.addListItem();
-			}
-		}
-		addListItem() {
-			const textInput = this.textInput;
-			let snippet = textInput?.value.trim();
-			if (snippet) {
-				this.counter++;
-				const idx = this.counter.toString();
-				this.codeSnippetsStore.set(idx, snippet);
-				snippet = this.trimSnippet(snippet);
-				this.addCodeSnippet(idx, snippet);
-				textInput.value = "";
-				this.dispatchEvent(new CustomEvent("add-item"));
-			}
-		}
-		trimSnippet(s) {
-			return s.split(/[\r\n]+/).filter((l) => l.trim()).join("\n");
-		}
-		updateCodeSnippets(snippets) {
-			this.codeSnippetsStore.clear();
-			snippets.forEach((snippet) => {
-				this.counter++;
-				snippet = this.trimSnippet(snippet);
-				this.codeSnippetsStore.set(this.counter.toString(), snippet);
-			});
-			this.render();
-		}
-		get codeSnippets() {
-			return Array.from(this.codeSnippetsStore.values());
-		}
-		render() {
-			if (!this.itemList) this.lazyInit();
-			this.itemList.innerHTML = ``;
-			this.codeSnippetsStore.forEach((snippet, idx) => {
-				this.addCodeSnippet(idx, snippet);
-			});
-		}
-		addCodeSnippet(idx, snippet) {
-			const li = document.createElement("li");
-			li.dataset.snippetId = idx;
-			const figure = document.createElement("figure");
-			const figcaption = document.createElement("figcaption");
-			const button = document.createElement("button");
-			const pre = createPreformattedCode(snippet);
-			button.classList.add("editable-list-remove-item", "icon");
-			button.innerHTML = "&ominus;";
-			figcaption.appendChild(button);
-			figure.appendChild(figcaption);
-			figure.appendChild(pre);
-			li.appendChild(figure);
-			this.itemList?.appendChild(li);
-			this.handleRemoveItemListeners([button]);
-			highlightElement(pre, false);
-		}
-		handleRemoveItemListeners(arrayOfElements) {
-			arrayOfElements.forEach((element) => {
-				element.addEventListener("click", this.removeListItem, false);
-			});
-		}
-		removeListItem(e) {
-			const parent = e.target?.parentNode;
-			if (parent) {
-				parent?.parentElement?.parentElement?.remove();
-				this.codeSnippetsStore.delete(parent?.parentElement?.parentElement?.dataset.snippetId || "");
-				this.dispatchEvent(new CustomEvent("remove-item"));
-			}
-		}
-	};
-	function setupEditableList() {
-		customElements.define("editable-list", EditableList);
-	}
+	fakeCodeSnippet = "";
 	var disguiseDebug = _GM_getValue("disguiseDebug", false);
 	var novelFontSize = _GM_getValue("novel-font-size", "16px");
 	var novelFontFamily = _GM_getValue("novel-font-family", `system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Lantinghei SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`);
 	_GM_getValue("novel-line-height", "1.9");
 	_GM_getValue("novel-para-spacing", "0.9em");
-	var disguiseMode = _GM_getValue("disguise-mode", "none");
-	var codeLang = _GM_getValue("code-lang", "javascript");
-	var codeTheme = _GM_getValue("code-theme", "prism");
-	var codeParagraphItalic = _GM_getValue("code-italic", true);
-	var codeShowLineNumbers = _GM_getValue("line-numbers", false);
+	_GM_getValue("disguise-mode", "none");
+	_GM_getValue("code-lang", "javascript");
+	_GM_getValue("code-theme", "prism");
+	_GM_getValue("code-italic", true);
+	_GM_getValue("line-numbers", false);
 	var refreshInterval = _GM_getValue("refreshInterval", -1);
 	var themeMode = _GM_getValue("theme-mode", "auto");
-	function changeCodeTheme(theme) {
-		_GM_setValue("code-theme", theme);
-		codeTheme = theme;
-		codeThemeElement?.remove();
-		codeThemeElement = _GM_addElement(document.head, "link", {
-			href: getCodeThemeURL(theme),
-			rel: "stylesheet",
-			type: "text/css"
-		});
-	}
-	var codeThemeElement = null;
-	function setupCodeTheme() {
-		codeThemeElement = _GM_addElement(document.head, "link", {
-			href: getCodeThemeURL(codeTheme),
-			rel: "stylesheet",
-			type: "text/css"
-		});
-		if (!codeParagraphItalic) document.body.dataset.comment = "normal";
-		["match-braces", "line-numbers"].forEach((pluginName) => {
-			_GM_addElement(document.head, "link", {
-				href: `https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/${pluginName}/prism-${pluginName}.min.css`,
-				rel: "stylesheet",
-				type: "text/css"
-			});
-		});
-	}
 	var bookPageAccessKey = _GM_getValue("bookPageAccessKey", "h");
 	var previousChapterAccessKey = _GM_getValue("previousChapterAccessKey", "b");
 	var nextChapterAccessKey = _GM_getValue("nextChapterAccessKey", "n");
@@ -852,136 +353,7 @@ switch (x) {
 		};
 		return accessKeysFieldset;
 	}
-	var inlineLengthMax = _GM_getValue("inlineLengthMax", 40);
-	function createDisguiseCodeFieldset() {
-		setupExtendLanguageSupport();
-		const disguiseFieldset = document.createElement("fieldset");
-		const div = document.createElement("div");
-		disguiseFieldset.appendChild(div);
-		const codeThemeInput = document.createElement("select");
-		codeThemeInput.name = "theme";
-		avalibleCodeThemes.forEach((theme) => {
-			const option = document.createElement("option");
-			option.value = theme.code;
-			option.text = theme.Name;
-			codeThemeInput.appendChild(option);
-		});
-		codeThemeInput.value = codeTheme;
-		codeThemeInput.onchange = () => {
-			console.log("change");
-			const theme = codeThemeInput.value;
-			if (codeThemeInput.selectedIndex >= 0 && theme && theme != codeTheme) {
-				console.log(`Change code theme to ${theme}`);
-				changeCodeTheme(theme);
-			}
-		};
-		let editableList = null;
-		const codeThemeLabel = document.createElement("label");
-		codeThemeLabel.innerText = "代码主题：";
-		codeThemeLabel.appendChild(codeThemeInput);
-		div.appendChild(codeThemeLabel);
-		const codeDemo = `<code class="language-javascript match-braces rainbow-braces">/*
-	让我们说中文
- */
-function foo(bar) {
-	// 短的注释
-	var a = 42,
-		b = 'Prism';
-	return a + bar(b);
-}</code>`;
-		let preDemo = document.createElement("pre");
-		const renderDemo = () => {
-			let newPre = document.createElement("pre");
-			newPre.innerHTML = codeDemo;
-			newPre.className = `language-javascript match-braces ${codeShowLineNumbers ? "line-numbers" : ""}`;
-			if (codeShowLineNumbers) newPre.querySelector("code").classList.add("line-numbers");
-			highlightElement(newPre);
-			disguiseFieldset.replaceChild(newPre, preDemo);
-			preDemo = newPre;
-			console.log("update demo");
-		};
-		const codeLangInput = document.createElement("select");
-		codeLangInput.name = "lang";
-		avalibleCodeLanguages.forEach((theme) => {
-			const option = document.createElement("option");
-			option.value = theme.code;
-			option.text = theme.Name;
-			codeLangInput.appendChild(option);
-		});
-		codeLangInput.value = codeLang;
-		codeLangInput.onchange = () => {
-			if (codeLangInput.selectedIndex >= 0) {
-				codeLang = codeLangInput.value;
-				_GM_setValue("code-lang", codeLang);
-				setupExtendLanguageSupport();
-				editableList?.render();
-				renderDemo();
-			}
-		};
-		const codeLangLabel = document.createElement("label");
-		codeLangLabel.innerText = "代码语言：";
-		codeLangLabel.appendChild(codeLangInput);
-		div.appendChild(codeLangLabel);
-		const codeShowLineNumbersInput = document.createElement("input");
-		codeShowLineNumbersInput.type = "checkbox";
-		codeShowLineNumbersInput.name = "line-numbers";
-		codeShowLineNumbersInput.checked = codeShowLineNumbers;
-		codeShowLineNumbersInput.onchange = () => {
-			codeShowLineNumbers = codeShowLineNumbersInput.checked;
-			_GM_setValue("line-numbers", codeShowLineNumbers);
-			console.log(`Change code show line numbers to ${codeShowLineNumbers}`, editableList);
-			editableList?.render();
-			renderDemo();
-		};
-		const codeShowLineNumbersLabel = document.createElement("label");
-		codeShowLineNumbersLabel.appendChild(codeShowLineNumbersInput);
-		codeShowLineNumbersLabel.append(" 显示行号");
-		div.appendChild(codeShowLineNumbersLabel);
-		const codeItalicInput = document.createElement("input");
-		codeItalicInput.type = "checkbox";
-		codeItalicInput.name = "font-italic";
-		codeItalicInput.checked = codeParagraphItalic;
-		codeItalicInput.onchange = () => {
-			const checked = codeItalicInput.checked;
-			_GM_setValue("code-italic", checked);
-			if (checked) document.body.dataset.comment = void 0;
-			else document.body.dataset.comment = "normal";
-		};
-		const codeItalicLabel = document.createElement("label");
-		codeItalicLabel.appendChild(codeItalicInput);
-		codeItalicLabel.append(" 小说斜体");
-		div.appendChild(codeItalicLabel);
-		const codeInlineLengthInput = document.createElement("input");
-		codeInlineLengthInput.name = "comment-lenth-limit";
-		codeInlineLengthInput.type = "number";
-		codeInlineLengthInput.min = "15";
-		codeInlineLengthInput.max = "200";
-		codeInlineLengthInput.valueAsNumber = inlineLengthMax;
-		codeInlineLengthInput.onchange = () => {
-			_GM_setValue("inlineLengthMax", codeInlineLengthInput.value);
-		};
-		const codeInlineLengthLabel = document.createElement("label");
-		codeInlineLengthLabel.innerText = "单行注释长度限制：";
-		codeInlineLengthLabel.appendChild(codeInlineLengthInput);
-		div.appendChild(codeInlineLengthLabel);
-		const demoCodeTitle = document.createElement("h3");
-		demoCodeTitle.innerText = "主题效果：";
-		disguiseFieldset.appendChild(demoCodeTitle);
-		disguiseFieldset.appendChild(preDemo);
-		setupEditableList();
-		setTimeout(() => {
-			editableList = document.createElement("editable-list");
-			disguiseFieldset.appendChild(editableList);
-			editableList.updateCodeSnippets(fakeCodeSnippet.split("====\n"));
-			renderDemo();
-			const onItemChange = () => {
-				_GM_setValue("fake-codes", editableList?.codeSnippets.join("====\n"));
-			};
-			editableList.addEventListener("add-item", onItemChange);
-			editableList.addEventListener("remove-item", onItemChange);
-		}, 500);
-		return disguiseFieldset;
-	}
+	_GM_getValue("inlineLengthMax", 40);
 	var containerWidth = _GM_getValue("container-width", "1200px");
 	function createSettingForm() {
 		const form = document.createElement("form");
@@ -1000,7 +372,6 @@ function foo(bar) {
 		button.style.marginLeft = "0.75rem";
 		form.appendChild(button);
 		form.appendChild(createAccessKeysFieldset());
-		appendDisguiseCodeFieldset(form);
 		form.onsubmit = (e) => {
 			e.preventDefault();
 			const interval = parseInt(intervalInput.value) * 6e4;
@@ -1026,46 +397,6 @@ function foo(bar) {
 		details.appendChild(summary);
 		details.appendChild(form);
 		return details;
-	}
-	function appendDisguiseCodeFieldset(form) {
-		const disguiseCodeFieldset = createDisguiseCodeFieldset();
-		const updateFieldSetsState = (label) => {
-			switch (label) {
-				case "none":
-					disguiseCodeFieldset.style.display = "none";
-					break;
-				case "code": disguiseCodeFieldset.style.display = "block";
-			}
-		};
-		updateFieldSetsState(disguiseMode);
-		const radioDiv = document.createElement("div");
-		radioDiv.style.display = "flex";
-		radioDiv.innerHTML = `<p>伪装模式：</p>`;
-		[["none", "无"], ["code", "代码"]].forEach(([label, placeholder]) => {
-			const disguiseInput = document.createElement("input");
-			disguiseInput.name = "disguise-radio";
-			disguiseInput.type = "radio";
-			disguiseInput.value = label;
-			disguiseInput.checked = disguiseMode == label;
-			disguiseInput.style.marginLeft = "0.5rem";
-			disguiseInput.style.marginRight = "0.5rem";
-			disguiseInput.onchange = () => {
-				if (disguiseInput.checked) {
-					_GM_setValue("disguise-mode", label);
-					updateFieldSetsState(label);
-				}
-			};
-			const disguiseLabel = document.createElement("label");
-			disguiseLabel.style.display = "flex";
-			disguiseLabel.style.alignItems = "center";
-			disguiseLabel.appendChild(disguiseInput);
-			const disguiseP = document.createElement("p");
-			disguiseP.innerText = placeholder;
-			disguiseLabel.appendChild(disguiseP);
-			radioDiv.appendChild(disguiseLabel);
-		});
-		form.appendChild(radioDiv);
-		form.appendChild(disguiseCodeFieldset);
 	}
 	function setDefaultStyle() {
 		document.body.style.setProperty("--container-width", containerWidth);
@@ -1410,31 +741,17 @@ function foo(bar) {
 			handleSuduguRoute();
 			return;
 		}
-		if (location.pathname === "/pifu/") {
-			setupCodeTheme();
-			setupExtendLanguageSupport();
-			handleSettingPage$3();
-		} else if (location.pathname.endsWith(".html")) {
-			if (!isInIframe) switch (disguiseMode) {
-				case "code":
-					setupCodeTheme();
-					setupExtendLanguageSupport();
-			}
+		if (location.pathname === "/pifu/") handleSettingPage$3();
+		else if (location.pathname.endsWith(".html")) {
+			if (!isInIframe);
 			handleChaperPage();
 		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$3();
 	}
 	function handleSuduguRoute() {
 		VM_log("handleSuduguRoute");
-		if (location.pathname === "/i/pifu.aspx") {
-			setupCodeTheme();
-			setupExtendLanguageSupport();
-			handleSettingPage$3();
-		} else if (location.pathname.endsWith(".html")) {
-			if (!isInIframe) switch (disguiseMode) {
-				case "code":
-					setupCodeTheme();
-					setupExtendLanguageSupport();
-			}
+		if (location.pathname === "/i/pifu.aspx") handleSettingPage$3();
+		else if (location.pathname.endsWith(".html")) {
+			if (!isInIframe);
 			handleChaperPage();
 		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$3();
 	}
@@ -1690,7 +1007,7 @@ function foo(bar) {
 	}
 	function handleChapterPage$4() {
 		if (disguiseDebug) {
-			disguiseParagraphs(document.getElementById("mainboxs"));
+			document.getElementById("mainboxs");
 			return;
 		}
 		const articleMain = document.getElementById("article_main");
@@ -1783,8 +1100,6 @@ function foo(bar) {
 			case 1:
 			case 2:
 				cleanupBody$1();
-				setupCodeTheme();
-				setupExtendLanguageSupport();
 				handleSettingPage$2();
 				if (segments.length == 2 && segments[0] == "book") {
 					bookID = segments[1];
@@ -1808,11 +1123,6 @@ function foo(bar) {
 						document.body.appendChild(scriptCopy);
 					}
 					return;
-				}
-				switch (disguiseMode) {
-					case "code":
-						setupCodeTheme();
-						setupExtendLanguageSupport();
 				}
 				handleChapterPage$4();
 		}
@@ -1879,7 +1189,7 @@ function foo(bar) {
 	}
 	function handleChapterPage$3() {
 		if (disguiseDebug) {
-			disguiseParagraphs(document.getElementById("article"));
+			document.getElementById("article");
 			return;
 		}
 		document.body.setAttribute("hidden", "");
@@ -1896,17 +1206,10 @@ function foo(bar) {
 				break;
 			case 1:
 				cleanBookPage();
-				setupCodeTheme();
-				setupExtendLanguageSupport();
 				if (location.pathname == "/history.html") handleSettingPage$1();
 				break;
 			case 2:
 				if (/[\d\w]+_\d+$/.test(lastSegment)) return;
-				switch (disguiseMode) {
-					case "code":
-						setupCodeTheme();
-						setupExtendLanguageSupport();
-				}
 				handleChapterPage$3();
 		}
 	}
@@ -1943,8 +1246,6 @@ function foo(bar) {
 				document.body.style.flexDirection = "column";
 				break;
 			case 2:
-				setupCodeTheme();
-				setupExtendLanguageSupport();
 				handleSettingPage();
 				break;
 			case 3:
@@ -1957,11 +1258,6 @@ function foo(bar) {
 				_GM_registerMenuCommand("脚本设置", function() {
 					_GM_openInTab(location.pathname.replace(/\/[\d\w-]+\.html/, ".html"));
 				});
-				switch (disguiseMode) {
-					case "code":
-						setupCodeTheme();
-						setupExtendLanguageSupport();
-				}
 				handleChapterPage$2();
 		}
 	}
@@ -2221,7 +1517,6 @@ function foo(bar) {
 		for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i) ^ i % 127 + 1;
 		return new TextDecoder("utf-8").decode(bytes);
 	}
-	document.defaultView.Prism = globalThis.Prism;
 	VM_log("init");
 	function handleRoute() {
 		if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org") || location.host.endsWith("deqixs.org")) {

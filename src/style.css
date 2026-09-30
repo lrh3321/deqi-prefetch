@@ -441,3 +441,24 @@ body[hidden] {
 		background-color: color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);
 	}
 }
+
+/* 手动夜间 / 日间模式覆盖（设置弹窗选择；config.js 仅在 body 上写入 data-theme）。
+   属性选择器使优先级高于上面的 prefers-color-scheme 媒体查询，从而可强制覆盖系统设置：
+   data-theme='dark' 时强制夜间，data-theme='light' 时强制日间；
+   无 data-theme（即 auto）时仍走上面的媒体查询。 */
+body[data-theme='dark']:has(.article-root) {
+	--primary-color: #d7d3cb;
+	--primary-bg-color: #1c1b19;
+	--secondary-color: #8d8577;
+	--card-bg-color: #262420;
+	--accent-color: #c08d5e;
+	background-color: color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);
+}
+body[data-theme='light']:has(.article-root) {
+	--primary-color: #2b2b2b;
+	--primary-bg-color: #f3efe8;
+	--secondary-color: #9b9184;
+	--card-bg-color: #fffdf8;
+	--accent-color: #a4774b;
+	background-color: color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);
+}

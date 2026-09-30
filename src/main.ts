@@ -11,7 +11,9 @@ import { handleCuoCengRoute } from './cuoceng';
 import { handleKudushuRoute } from './kudushu';
 import { handleBuoloumaoRoute } from './boluomao';
 
-(document.defaultView as any).Prism = (globalThis as any).Prism;
+if (!__LITE__) {
+	(document.defaultView as any).Prism = (globalThis as any).Prism;
+}
 
 VM_log('init');
 
