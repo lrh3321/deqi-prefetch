@@ -4,7 +4,7 @@ import './config-dialog.css';
 import { GM_registerMenuCommand, GM_openInTab } from '$';
 import { setDefaultStyle, showConfigDialog } from './config';
 import { releaseCopy, VM_log } from './utils';
-import { handleDeqiRoute } from './deqixs';
+import { handleDeqiRoute, isSudugu } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
 import { handleCuoCengRoute } from './cuoceng';
@@ -26,12 +26,7 @@ VM_log('init');
  * 3. 其他情况则处理书籍主页
  */
 function handleRoute() {
-	if (
-		location.host.endsWith('deqixs.com') ||
-		location.host.endsWith('sudugu.org') ||
-		location.host.endsWith('shudugu.org') ||
-		location.host.endsWith('deqixs.org')
-	) {
+	if (location.host.endsWith('deqixs.com') || location.host.endsWith('deqixs.org') || isSudugu()) {
 		// 得奇小说处理逻辑
 		handleDeqiRoute();
 

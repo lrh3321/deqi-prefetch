@@ -207,6 +207,9 @@ body.read_style_1 .textinfo {
 	display: inline !important;
 	visibility: visible !important;
 }
+.urn-float {
+	display: none !important;
+}
 
 /* clean page */
 body:has(.article-root) {

@@ -72,6 +72,21 @@ function handleChapterPage() {
 	}
 
 	document.head.querySelectorAll('link[href][rel="stylesheet"]').forEach((ln) => ln.remove());
+
+	const ob = new MutationObserver((mutations: MutationRecord[]) => {
+		mutations.forEach((mutation) => {
+			if (mutation.type == 'childList') {
+				mutation.addedNodes.forEach((it) => {
+					if (it instanceof HTMLDivElement) {
+						if (it.classList.length === 0) {
+							it.remove();
+						}
+					}
+				});
+			}
+		});
+	});
+	ob.observe(document.body, { childList: true });
 }
 
 type FragmentPage = {

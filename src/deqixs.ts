@@ -220,8 +220,14 @@ function handleSuduguRoute() {
 	}
 }
 
-function isSudugu(): boolean {
-	return location.host.endsWith('sudugu.org') || location.host.endsWith('shudugu.org');
+export function isSudugu(): boolean {
+	const host = location.host;
+	return (
+		host.endsWith('sudugu.org') ||
+		host.endsWith('shudugu.org') ||
+		host.endsWith('sudugu.cc') ||
+		host.endsWith('suduguu.com')
+	);
 }
 
 function getChapterPage(): Page {

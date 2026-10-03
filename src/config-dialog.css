@@ -22,7 +22,7 @@ body[data-theme='dark'] {
 
 /* 子按钮组 */
 #deqi-fab .fab-menu {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	align-items: flex-end;
 	gap: 0.5rem;
@@ -34,6 +34,7 @@ body[data-theme='dark'] {
 		transform 0.18s ease;
 }
 #deqi-fab.open .fab-menu {
+	display: flex;
 	opacity: 1;
 	transform: translateY(0);
 	pointer-events: auto;

@@ -19,16 +19,18 @@ const monkeyOption: MonkeyOption = {
 		author: 'LRH3321',
 		license: 'MIT',
 		tag: ['novels'],
-		icon: 'https://www.shudugu.org/favicon.ico',
+		icon: 'https://www.suduguu.com/favicon.ico',
 		require: [
 			'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js',
 			'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js',
 			'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js'
 		],
 		match: [
-			'http*://*.shudugu.org/*',
 			'http*://*.deqixs.org/*',
 			'http*://*.kudushu.org/*',
+			'http*://*.shudugu.org/*',
+			'http*://*.sudugu.cc/*',
+			'http*://*.suduguu.com/*',
 			'http*://www.sudugu.org/*',
 			'http*://www.sudugu.org/i/pifu.aspx',
 			'http*://www.deqixs.com/pifu/',
