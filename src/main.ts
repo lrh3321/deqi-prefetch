@@ -4,12 +4,14 @@ import './config-dialog.css';
 import { GM_registerMenuCommand, GM_openInTab } from '$';
 import { setDefaultStyle, showConfigDialog } from './config';
 import { releaseCopy, VM_log } from './utils';
-import { handleDeqiRoute } from './deqixs';
+import { handleDeqiRoute, isSudugu } from './deqixs';
 import { handleBiqu33Route } from './biqu33';
 import { handleDDxiaoshuoRoute } from './ddxiaoshuo';
 import { handleCuoCengRoute } from './cuoceng';
 import { handleKudushuRoute } from './kudushu';
-import { handleBuoloumaoRoute } from './boluomao';
+import { handleBuoloumaoRoute, isBoluomaoLike } from './boluomao';
+import { handleDamiRoute } from './dmxs';
+import { handle81kswRoute, is81kswLike } from './81ksw';
 
 if (!__LITE__) {
 	(document.defaultView as any).Prism = (globalThis as any).Prism;
@@ -26,27 +28,22 @@ VM_log('init');
  * 3. 其他情况则处理书籍主页
  */
 function handleRoute() {
-	if (
-		location.host.endsWith('deqixs.com') ||
-		location.host.endsWith('sudugu.org') ||
-		location.host.endsWith('shudugu.org') ||
-		location.host.endsWith('deqixs.org')
-	) {
+	if (location.host.endsWith('deqixs.com') || location.host.endsWith('deqixs.org') || isSudugu()) {
 		// 得奇小说处理逻辑
 		handleDeqiRoute();
 
 		GM_registerMenuCommand('脚本设置', function () {
 			if (location.host.endsWith('deqixs.com')) {
-				GM_openInTab('/pifu/#script-setting');
+				GM_openInTab(`${location.protocol}//${location.host}/pifu/#script-setting`);
 			} else {
-				GM_openInTab('/i/pifu.aspx#script-setting');
+				GM_openInTab(`${location.protocol}//${location.host}/i/pifu.aspx#script-setting`);
 			}
 		});
 	} else if (location.hostname == 'www.ddxiaoshuo.cc') {
 		// 顶点小说处理逻辑
 		handleDDxiaoshuoRoute();
 		GM_registerMenuCommand('脚本设置', function () {
-			GM_openInTab('/history.html#script-setting');
+			GM_openInTab(`${location.protocol}//${location.host}/history.html#script-setting`);
 		});
 	} else if (location.hostname == 'www.cuoceng.com' || location.hostname == 'cuoceng.com') {
 		// 错层小说处理逻辑
@@ -54,14 +51,20 @@ function handleRoute() {
 	} else if (location.hostname.endsWith('kudushu.org')) {
 		// 苦读书处理逻辑
 		handleKudushuRoute();
-	} else if (location.hostname.endsWith('boluomao1.com')) {
+	} else if (location.hostname.endsWith('dmxs2.com')) {
+		// 大米小说处理逻辑
+		handleDamiRoute();
+	} else if (isBoluomaoLike()) {
 		// 菠萝猫处理逻辑
 		handleBuoloumaoRoute();
-	} else if (location.hostname == 'www.biqu33.cc' || location.pathname.startsWith('/book/')) {
+	} else if (is81kswLike()) {
+		// 八一中文网处理逻辑
+		handle81kswRoute();
+	} else if (location.hostname.endsWith('beqg.cc') || location.hostname.endsWith('biqu33.cc')) {
 		// biqu33处理逻辑
 		handleBiqu33Route();
 		GM_registerMenuCommand('脚本设置', function () {
-			GM_openInTab('/#script-setting');
+			GM_openInTab(`${location.protocol}//${location.host}/#script-setting`);
 		});
 	}
 

@@ -1,11 +1,8 @@
-import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs } from './code';
 import {
-	ensureDoc,
-	NavLinks,
+	fetchChaperFragmentPage,
 	paragraphsFromElement,
 	rebuildChapterBody,
-	setAccessKeys,
 	VM_log
 } from './utils';
 
@@ -56,11 +53,11 @@ function handleChapterPage() {
 			if (element.textContent == '下—页') {
 				void (async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage(element.href);
+					let next = await fetchChaperFragmentPage(element.href, parseFragmentPage);
 					con.append(...next.paragraphs);
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage(next.next);
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage);
 						con.append(...next.paragraphs);
 					}
 					if (next.nextChapter) {
@@ -89,70 +86,37 @@ function handleChapterPage() {
 	}
 }
 
-type FragmentPage = {
-	next?: string;
-	nextChapter?: string;
-	paragraphs: HTMLParagraphElement[];
-};
+function parseFragmentPage(doc: Document): FragmentPage {
+	const container = doc.getElementById('novelcontent')!;
+	const nestedCon = container;
 
-async function fetchChaperFragmentPage(href: string): Promise<FragmentPage> {
-	VM_log('fetchChaperFragmentPage', href);
-	const p = new Promise<FragmentPage>((resolve, reject) => {
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: href,
-			responseType: 'document',
-			onload: (response) => {
-				const doc = ensureDoc(response.response);
-				const container = doc.getElementById('novelcontent')!;
-				const nestedCon = container;
+	const ul = container.querySelector('ul')!;
+	ul.remove();
 
-				const ul = container.querySelector('ul')!;
-				ul.remove();
+	const paragraphs = paragraphsFromElement(nestedCon);
 
-				const paragraphs = paragraphsFromElement(nestedCon);
+	const prenexts = ul.querySelectorAll('ul li a');
+	let next: HTMLAnchorElement | undefined;
+	let nextChapter: HTMLAnchorElement | undefined;
 
-				const prenexts = ul.querySelectorAll('ul li a');
-				let next: HTMLAnchorElement | undefined;
-				let nextChapter: HTMLAnchorElement | undefined;
-
-				for (const element of prenexts) {
-					if (element instanceof HTMLAnchorElement) {
-						if (element.textContent == '下—页') {
-							next = element;
-							break;
-						} else if (element.textContent == '下—章') {
-							nextChapter = element;
-							nextChapter.textContent = '下一章';
-							break;
-						}
-					}
-				}
-
-				VM_log({
-					next: next?.href,
-					nextChapter: nextChapter?.href,
-					paragraphs: paragraphs
-				});
-				resolve({
-					next: next?.href,
-					nextChapter: nextChapter?.href,
-					paragraphs: paragraphs?.filter(
-						(p) => p.textContent.length > 0 && !p.textContent.includes('本章未完')
-					)
-				});
-			},
-			onerror: (response) => {
-				VM_log(['handleSettingPage error', response]);
-				reject(response);
-			},
-			ontimeout: () => {
-				VM_log('handleSettingPage timeout');
-				reject('timeout');
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == '下—页') {
+				next = element;
+				break;
+			} else if (element.textContent == '下—章') {
+				nextChapter = element;
+				nextChapter.textContent = '下一章';
+				break;
 			}
-		});
-	});
-	return p;
+		}
+	}
+
+	return {
+		next: next?.href,
+		nextChapter: nextChapter?.href,
+		paragraphs: paragraphs
+	};
 }
 
 function getChapterPage() {
@@ -190,7 +154,6 @@ function getChapterPage() {
 			console.log(element.outerHTML);
 		}
 	}
-	setAccessKeys(navigationBar);
 	const page = {
 		mainSection,
 		title,

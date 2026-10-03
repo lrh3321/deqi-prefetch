@@ -304,46 +304,47 @@ export function createSettingForm(): HTMLElement {
 	const form = document.createElement('form');
 
 	// form.appendChild(createContainerStyleFieldset());
+	if (!__LITE__) {
+		const intervalInput = document.createElement('input');
+		intervalInput.type = 'number';
+		intervalInput.min = '0';
+		intervalInput.valueAsNumber = refreshInterval / 60000;
+		intervalInput.style.width = '4rem';
 
-	const intervalInput = document.createElement('input');
-	intervalInput.type = 'number';
-	intervalInput.min = '0';
-	intervalInput.valueAsNumber = refreshInterval / 60000;
-	intervalInput.style.width = '4rem';
+		const intervalLabel = document.createElement('label');
+		intervalLabel.innerText = '刷新间隔（分钟）：';
+		intervalLabel.appendChild(intervalInput);
+		form.appendChild(intervalLabel);
 
-	const intervalLabel = document.createElement('label');
-	intervalLabel.innerText = '刷新间隔（分钟）：';
-	intervalLabel.appendChild(intervalInput);
-	form.appendChild(intervalLabel);
+		const button = document.createElement('button');
+		button.type = 'submit';
+		button.innerText = '保存刷新设置';
+		button.style.marginLeft = '0.75rem';
+		form.appendChild(button);
 
-	const button = document.createElement('button');
-	button.type = 'submit';
-	button.innerText = '保存刷新设置';
-	button.style.marginLeft = '0.75rem';
-	form.appendChild(button);
+		form.onsubmit = (e) => {
+			e.preventDefault();
+			const interval = parseInt(intervalInput.value) * 60000;
+			if (interval >= 0 && interval != refreshInterval) {
+				GM_setValue('refreshInterval', interval);
+				refreshInterval = interval;
+			}
+		};
+
+		// 延迟设置背景色，确保pre元素已经渲染完成
+		setTimeout(() => {
+			const pre = document.querySelector('pre');
+			if (pre) {
+				updateStyle(pre);
+			}
+		}, 1000);
+	}
 
 	form.appendChild(createAccessKeysFieldset());
 
 	if (!__LITE__) {
 		appendDisguiseCodeFieldset(form);
 	}
-
-	form.onsubmit = (e) => {
-		e.preventDefault();
-		const interval = parseInt(intervalInput.value) * 60000;
-		if (interval >= 0 && interval != refreshInterval) {
-			GM_setValue('refreshInterval', interval);
-			refreshInterval = interval;
-		}
-	};
-
-	// 延迟设置背景色，确保pre元素已经渲染完成
-	setTimeout(() => {
-		const pre = document.querySelector('pre');
-		if (pre) {
-			updateStyle(pre);
-		}
-	}, 1000);
 
 	const details = document.createElement('details');
 	details.id = 'script-setting';

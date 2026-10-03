@@ -1,214 +1,49 @@
-import { GM_xmlhttpRequest } from '$';
-import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
-import { createSettingForm, disguiseDebug, disguiseMode, setupCodeTheme } from './config';
-import { ensureDoc, NavLinks, Page, rebuildChapterBody, setAccessKeys } from './utils';
+import { disguiseParagraphs } from './code';
+import {
+	ensureDoc,
+	fetchChaperFragmentPage,
+	isInIframe,
+	paragraphsFromElement,
+	rebuildChapterBody,
+	VM_log
+} from './utils';
 
-let bookID: string = '';
-const chapterLinks = new Array<ChapterLink>();
-const chapterLinkSet = new Set<string>();
-function cleanupBody() {
-	const children = Array.from(document.body.children).filter(
-		(it) => it.id != 'main' && it.id != 'mainboxs'
-	);
-	children.forEach((it) => {
-		if (it.className == 'article-root' || it.id === 'deqi-fab' || it instanceof HTMLDialogElement) {
-			return;
-		}
-		it.remove();
-	});
-}
-function handleSettingPage() {
-	const settingForm = createSettingForm();
-	const articleMain = document.createElement('div');
-	articleMain.id = 'article_main';
-	articleMain.classList = 'container';
-	const container = document.getElementById('main')!;
-	articleMain.appendChild(settingForm);
-	container.appendChild(articleMain);
-}
-type ChapterLink = { href: string; title: string };
-function handleBookPage() {
-	const rowDiv = document.querySelector('#main > div.nine-item > div.container > div.row')!;
-
-	const moreItem = createAttrOneItem();
-	moreItem.id = 'more-item';
-	moreItem.appendChild(createMoreAnchor());
-	const resetItem = createAttrOneItem();
-	resetItem.id = 'reset-item';
-	resetItem.appendChild(createResetAnchor());
-	rowDiv.append(moreItem, resetItem);
-
-	const links = Array.from(rowDiv.querySelectorAll('a[href][title]')).map((it) => {
-		return { href: (it as HTMLAnchorElement).href, title: (it as HTMLAnchorElement).title };
-	});
-
-	const indexStr = localStorage.getItem(`book_index_${bookID}`);
-	if (indexStr) {
-		const oldLinks = JSON.parse(indexStr) as Array<ChapterLink>;
-		// TODO:
-		const linkSet = new Set(links.map((it) => it.href));
-		oldLinks.forEach((it) => {
-			if (!linkSet.has(it.href)) {
-				links.push(it);
-				rowDiv.insertBefore(createChapterLink(it.href, it.title), moreItem);
-			}
-		});
-		links.sort((a, b) => {
-			return b.href.localeCompare(a.href);
-		});
+export function handleBiqu33Route() {
+	if (document.documentElement.lang == 'zh-TW') {
+		document.documentElement.lang = 'zh-CN';
 	}
-	chapterLinks.push(...links);
-	chapterLinkSet.clear();
-	chapterLinks.forEach((it) => {
-		chapterLinkSet.add(it.href);
-	});
-	localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
-}
-
-function fetchPreviousChapter(href: string, limit: number) {
-	if (limit <= 0) {
-		return;
-	}
-
-	GM_xmlhttpRequest({
-		method: 'GET',
-		url: href,
-		responseType: 'document',
-		onload: (response) => {
-			const link = getPrevLink(response.response);
-			if (!chapterLinkSet.has(href)) {
-				chapterLinkSet.add(href);
-				chapterLinks.push({ title: link.title, href: href });
-				chapterLinks.sort((a, b) => {
-					return b.href.localeCompare(a.href);
-				});
-				localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
-
-				const moreItem = document.getElementById('more-item')!;
-				const element = createChapterLink(href, link.title);
-				moreItem.parentElement?.insertBefore(element, moreItem);
+	const segments = location.pathname.split('/').filter(Boolean);
+	const lastSegment = segments[segments.length - 1];
+	switch (segments.length) {
+		case 0:
+		case 1:
+		case 2:
+			if (segments.length == 2 && (segments[0] == 'book' || segments[0] == 'xs')) {
+				// bookID = segments[1];
+				handleBookPage();
 			}
-			fetchPreviousChapter(link.href, limit - 1);
-		}
-	});
-}
-
-function createAttrOneItem(): HTMLDivElement {
-	const div = document.createElement('div');
-	div.className = 'col-md-4 col-sm-12 att-one-item';
-	return div;
-}
-
-function getLastestHref(): string {
-	const moreItem = document.getElementById('more-item')!;
-	const lastAnchor = moreItem.previousElementSibling?.querySelector('a')?.href;
-	return lastAnchor!;
-}
-function createMoreAnchor(): HTMLAnchorElement {
-	const a = document.createElement('a');
-	a.role = 'button';
-	a.onclick = () => {
-		const latest = getLastestHref();
-		console.log('more', latest);
-		fetchPreviousChapter(latest, 10);
-	};
-	a.title = '更多';
-	a.innerHTML = '更多';
-	return a;
-}
-function createResetAnchor(): HTMLAnchorElement {
-	const a = document.createElement('a');
-	a.role = 'button';
-	a.onclick = () => {
-		console.log('reset');
-		localStorage.removeItem(`book_index_${bookID}`);
-	};
-	a.title = '重置';
-	a.innerHTML = '重置';
-	return a;
-}
-function createChapterLink(href: string, title: string): HTMLDivElement {
-	const div = createAttrOneItem();
-	const a = document.createElement('a');
-	a.href = new URL(href).pathname;
-	a.title = title;
-	a.innerText = title;
-	div.append(a);
-	return div;
-}
-
-function getPage(): Page {
-	const mainboxs = document.getElementById('mainboxs')!;
-
-	const mainSection = disguiseParagraphs(mainboxs);
-	const prenexts = document.querySelectorAll('div.prenext a');
-	const navigationBar: NavLinks = {};
-	for (const element of prenexts) {
-		if (element instanceof HTMLAnchorElement) {
-			if (element.textContent == '上一章') {
-				navigationBar.prevAnchor = element;
-			} else if (element.textContent == '章节目录') {
-				navigationBar.infoAnchor = element;
-			} else if (element.textContent == '下一章') {
-				navigationBar.nextAnchor = element;
+			break;
+		case 3:
+			if (/[\d\w]+_\d+$/.test(lastSegment)) {
+				// 不是章节首页
+				return;
 			}
-		}
-	}
-	setAccessKeys(navigationBar);
-	const title = document.getElementById('post-h2')?.innerHTML;
-	const page = {
-		breadcrumbBar: document.querySelector('div.page-links')!,
-		title,
-		mainSection,
-		navigationBar
-	};
-
-	return page;
-}
-
-function appendRemainPages(
-	netxDivs: Array<string | HTMLScriptElement | undefined>,
-	hasCanvas: boolean
-) {
-	const articleMain = document.getElementById('article_main');
-	const mainboxs = document.getElementById('mainboxs')!;
-	const scripts: string[] = [];
-	netxDivs.forEach((div) => {
-		if (typeof div === 'undefined') {
-			return;
-		}
-		if (typeof div === 'string') {
-			const next = document.createElement('div');
-			next.innerHTML = div!;
-			mainboxs.appendChild(next);
-		} else {
-			scripts.push(div.innerHTML);
-		}
-	});
-
-	const page = getPage();
-	if (articleMain) {
-		if (hasCanvas) {
-			const cleanPage = rebuildChapterBody(page);
-			mainboxs.id = '';
-
-			const section = cleanPage.main.querySelector('section')!;
-			const canvasList = Array.from(cleanPage.main.querySelectorAll('canvas'));
-			if (canvasList.length > 0) {
-				// 章节第一页就包含图片
-				section.classList.add('img-container');
-				const result = mergeCanvases(canvasList);
-				section.firstElementChild?.replaceWith(canvasToImage(result));
-			}
-			handleCanvasScript(scripts);
-		} else {
-			rebuildChapterBody(page);
-		}
-		cleanupBody();
+			handleChapterPage();
+			break;
+		default:
+			break;
 	}
 }
 
-function mergeCanvases(canvases: HTMLCanvasElement[]): HTMLCanvasElement {
+function handleBookPage() {}
+
+function mergeCanvases(canvases: HTMLCanvasElement[]): HTMLCanvasElement | undefined {
+	VM_log('canvases', canvases.length);
+	canvases = canvases.filter((c) => c.width > 0 && c.height > 0);
+	VM_log('canvases trimed', canvases.length);
+	if (canvases.length == 0) {
+		return undefined;
+	}
 	const result = document.createElement('canvas');
 	let totalWidth = 0,
 		totalHeight = 0;
@@ -229,26 +64,6 @@ function mergeCanvases(canvases: HTMLCanvasElement[]): HTMLCanvasElement {
 	return result;
 }
 
-function handleCanvasScript(scripts: string[]) {
-	// #mainboxs
-	if (scripts.length > 0) {
-		console.log('handleCanvasScript', scripts);
-
-		const script = document.createElement('script');
-		script.textContent = scripts.shift()!;
-		forCleanCanvas(() => {
-			setTimeout(() => {
-				script.remove();
-				handleCanvasScript(scripts);
-			}, 1000);
-		});
-		document.body.appendChild(script);
-	}
-}
-
-function getMainBox(doc: Document | string): Element {
-	return ensureDoc(doc).getElementById('mainboxs')!;
-}
 function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined {
 	const document = ensureDoc(doc);
 	let scriptCopy: HTMLScriptElement | undefined = undefined;
@@ -261,7 +76,7 @@ function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined 
 			// 有手机浏览器限制
 			console.log('有手机浏览器限制');
 			scriptCopy = document.createElement('script');
-			scriptCopy.innerHTML = script.innerHTML;
+			scriptCopy.innerHTML = script.innerHTML.split(';').join(';\r\n');
 			return;
 		}
 	});
@@ -279,170 +94,191 @@ function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined 
 	return scriptCopy;
 }
 
-function getPrevLink(doc: Document | string): ChapterLink {
-	const rDoc = ensureDoc(doc);
-	return {
-		href: (rDoc.querySelector('.prenext > a[rel="prev"]') as HTMLAnchorElement).href,
-		title: rDoc.getElementById('post-h2')!.innerText
-	};
-}
-function handleChapterPage() {
-	if (disguiseDebug) {
-		disguiseParagraphs(document.getElementById('mainboxs')!);
-		return;
-	}
-
-	const articleMain = document.getElementById('article_main');
-	const nextLinks = Array.from(
-		document.querySelectorAll('#page-links a.post-page-numbers')
-	) as HTMLAnchorElement[];
-
-	const netxDivs = new Array<string | HTMLScriptElement | undefined>(nextLinks.length);
-	let remainLinks = nextLinks.length;
-	let hasCanvas = false;
-	for (let index = 0; index < nextLinks.length; index++) {
-		const anchor = nextLinks[index];
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: anchor.href,
-			responseType: 'document',
-			onload: (response) => {
-				try {
-					const doc = response.response;
-					const div: Element = getMainBox(doc);
-					if (div.getElementsByTagName('p').length == 0) {
-						hasCanvas = true;
-						netxDivs[index] = getCanvasScript(doc);
-					} else {
-						netxDivs[index] = div.innerHTML;
-					}
-					if (!hasCanvas) {
-						anchor.remove();
-					}
-					remainLinks--;
-				} catch (error) {
-					const div = document.createElement('div');
-					div.innerText = `error: ${error} with resolve ${anchor.href}`;
-					articleMain?.append(div);
-					if (error instanceof Error) {
-						const div = document.createElement('div');
-						div.innerText = `name: ${error.name}, stack: ${error.stack}`;
-						articleMain?.append(div);
-					}
-				}
-				if (remainLinks == 0) {
-					appendRemainPages(netxDivs, hasCanvas);
-				}
-			}
-		});
-	}
-}
-
 function canvasToImage(canvas: HTMLCanvasElement): HTMLImageElement {
 	const image = new Image();
 	image.src = canvas.toDataURL();
+	image.style.visibility = 'visible';
 	return image;
 }
 
-function forCleanCanvas(callback?: () => void) {
-	const thisWin = document.defaultView as docThis;
-	thisWin.cenabled = () => {
-		return true;
-	};
-	thisWin.isMobile = true;
+const scriptCopyArray: HTMLScriptElement[] = [];
+const styleSet = new Set<string>();
+function handleChapterPage() {
+	VM_log('handleChapterPage');
 
-	const mainboxs = document.createElement('div');
-	mainboxs.id = 'mainboxs';
-	document.body.appendChild(mainboxs);
-	console.log('forCleanCanvas');
+	const con = document.getElementById('txtbody')!;
+	const page = parseFragmentPageURL(document);
 
-	const ob = new MutationObserver((mutations: MutationRecord[]) => {
-		mutations.forEach((mutation) => {
-			if (mutation.type == 'childList') {
-				mutation.removedNodes.forEach((node) => {
-					if (node.nodeType == Node.ELEMENT_NODE) {
-						if ((node as Element).tagName == 'DIV') {
-							console.log('done');
-							ob.disconnect();
+	let multiPage = false;
+	if (isInIframe) {
+		return;
+	}
 
-							setTimeout(() => {
-								const article = document.querySelector('.article-root article');
-								const table = mainboxs.querySelector('table');
-								if (article && table) {
-									const section = document.createElement('section');
-									section.className = 'img-container';
-									mainboxs.remove();
-
-									const canvasList = Array.from(table.querySelectorAll('canvas'));
-									const result = mergeCanvases(canvasList);
-									section.appendChild(canvasToImage(result));
-									article.appendChild(section);
-								}
-								callback && callback();
-							}, 100);
-						}
-					}
-				});
+	if (page.next) {
+		const href = page.next;
+		multiPage = true;
+		void (async () => {
+			let counter = 0;
+			let next = await fetchChaperFragmentPage(href, parseFragmentPage);
+			con.append(...next.paragraphs);
+			while (next.next && counter < 20) {
+				counter++;
+				next = await fetchChaperFragmentPage(next.next, parseFragmentPage);
+				VM_log(`result: ${href} ${next.paragraphs.length}`);
+				con.append(...next.paragraphs);
 			}
-		});
-	});
-	ob.observe(mainboxs, { childList: true, subtree: true });
+
+			rebuild();
+		})();
+	} else if (page.nextChapter) {
+		(() => {
+			rebuild();
+		})();
+		multiPage = true;
+	}
+
+	if (!multiPage) {
+		rebuild();
+	}
 }
 
-export function handleBiqu33Route() {
-	if (document.documentElement.lang == 'zh-TW') {
-		document.documentElement.lang = 'zh-CN';
-	}
-	const segments = location.pathname.split('/').filter(Boolean);
-	const lastSegment = segments[segments.length - 1];
-	switch (segments.length) {
-		case 0:
-		case 1:
-		case 2:
-			cleanupBody();
-			setupCodeTheme();
-			setupExtendLanguageSupport();
-			handleSettingPage();
-			if (segments.length == 2 && segments[0] == 'book') {
-				bookID = segments[1];
-				handleBookPage();
+function appendImage() {
+	const con = document.getElementById('txtbody')!;
+	const merged = mergeCanvases(
+		Array.from(con.querySelectorAll('table canvas')).filter((c) => {
+			if (c instanceof HTMLCanvasElement) {
+				return c.width > 0 && c.height > 0;
 			}
-			break;
-		case 3:
-			if (/[\d\w]+_\d+$/.test(lastSegment)) {
-				// 不是章节首页
-				const rows = Array.from(document.querySelectorAll('#article_main .row'));
-				rows.forEach((row) => {
-					(row as HTMLElement).style.display = 'flex';
-				});
+			return false;
+		}) as HTMLCanvasElement[]
+	);
+	if (merged) {
+		con.append(canvasToImage(merged));
+	}
+	con.querySelectorAll('table').forEach((t) => t.remove());
+}
 
-				const thisWin = document.defaultView as docThis;
-				let scriptCopy = getCanvasScript(document);
-
-				cleanupBody();
-				if (scriptCopy && !thisWin.isMobile) {
-					const page = getPage();
-					page.mainSection.innerHTML = '';
-					rebuildChapterBody(page);
-					forCleanCanvas();
-					thisWin.isMobile = true;
-					document.body.appendChild(scriptCopy);
+function rebuild() {
+	const con = document.getElementById('txtbody')!;
+	const loading = con.querySelector('[id^="loading_peu_p_"]');
+	if (loading) {
+		VM_log('loading');
+		const ob = new MutationObserver((mutations: MutationRecord[]) => {
+			mutations.forEach((mutation) => {
+				if (mutation.type == 'childList') {
+					if (mutation.removedNodes.length > 0) {
+						if (!con.querySelector('[id^="loading_peu_p_"]')) {
+							ob.disconnect();
+							setTimeout(rebuild, 20);
+						}
+					}
 				}
+			});
+		});
+		ob.observe(loading.parentElement!, { childList: true });
+		return;
+	}
+	if (scriptCopyArray.length > 0) {
+		appendImage();
+
+		const thisWin = document.defaultView as docThis;
+		thisWin.isMobile = true;
+		const s = scriptCopyArray.shift()!;
+		document.body.appendChild(s);
+		VM_log(s.innerHTML);
+
+		VM_log('wait loading');
+		setTimeout(rebuild, 100);
+		s.remove();
+		return;
+	}
+	appendImage();
+
+	const page = getChapterPage();
+	rebuildChapterBody(page);
+}
+
+function parseFragmentPageURL(doc: Document): PageURL {
+	let next: HTMLAnchorElement | undefined;
+	let nextChapter = doc.getElementById('u_next') as HTMLAnchorElement | null;
+
+	const span = doc.querySelector('#pageseg > span');
+	if (span) {
+		const nextElementSibling = span.nextElementSibling;
+		if (nextElementSibling && nextElementSibling instanceof HTMLAnchorElement) {
+			next = nextElementSibling;
+		}
+	}
+
+	return {
+		next: next?.href,
+		nextChapter: nextChapter?.href
+	};
+}
+
+function parseFragmentPage(doc: Document): FragmentPage {
+	const nestedCon = doc.getElementById('txtbody')!;
+	VM_log('content', nestedCon.outerHTML);
+
+	const paragraphs = paragraphsFromElement(nestedCon);
+	// 判断是否为 canvas 页
+	if (!nestedCon.firstElementChild) {
+		VM_log('image page');
+		let scriptCopy = getCanvasScript(doc);
+		if (scriptCopy) {
+			scriptCopyArray.push(scriptCopy);
+		}
+	} else {
+		VM_log('text page');
+		doc.body.querySelectorAll('style').forEach((s) => {
+			if (styleSet.has(s.innerHTML)) {
 				return;
 			}
-			switch (disguiseMode) {
-				case 'code':
-					setupCodeTheme();
-					setupExtendLanguageSupport();
-					break;
-				default:
-					break;
-			}
-			handleChapterPage();
-			break;
-		default:
-			break;
+			document.head.append(s);
+			styleSet.add(s.innerHTML);
+		});
 	}
+
+	return {
+		...parseFragmentPageURL(doc),
+		paragraphs: paragraphs
+	};
+}
+
+function getChapterPage(): Page {
+	const con = document.getElementById('txtbody')!;
+	con.className = '';
+
+	const mainSection = disguiseParagraphs(con);
+
+	const prenexts = Array.from<HTMLAnchorElement>(document.querySelectorAll('.rdpg > a'));
+	const navigationBar: NavLinks = {};
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			element.className = '';
+			const textContent = element.textContent;
+			if (textContent.includes('上一章')) {
+				element.innerHTML = '上一章';
+				navigationBar.prevAnchor = element;
+			} else if (textContent.includes('目') && textContent.includes('录')) {
+				element.innerHTML = '目录';
+				navigationBar.infoAnchor = element;
+			} else if (textContent.includes('下一章')) {
+				element.innerHTML = '下一章';
+				navigationBar.nextAnchor = element;
+			}
+		}
+	}
+	const breadcrumbBar = document.querySelector('.crumb')!;
+	const title = document.querySelector('h1.rd-ttl')?.textContent;
+	const page = {
+		breadcrumbBar,
+		title,
+		mainSection,
+		navigationBar
+	};
+
+	return page;
 }
 
 type docThis = (WindowProxy & typeof globalThis) & { isMobile?: boolean; cenabled(): boolean };

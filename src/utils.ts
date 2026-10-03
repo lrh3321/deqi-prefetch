@@ -1,4 +1,4 @@
-import { GM_log, GmLogType } from '$';
+import { GM_log, GM_xmlhttpRequest, GmLogType } from '$';
 import {
 	bookPageAccessKey,
 	nextChapterAccessKey,
@@ -71,6 +71,7 @@ export function releaseCopy() {
 	document.body.oncopy = null;
 	document.body.oncut = null;
 
+	// oxlint-disable-next-line typescript/unbound-method
 	const native_replaceState = history.replaceState;
 	history.replaceState = function (data: any, unused: string, url?: string | URL | null) {
 		if (url) {
@@ -102,13 +103,7 @@ export function ensureDoc(doc: Document | string): Document {
 	return doc;
 }
 
-export type NavLinks = {
-	prevAnchor?: HTMLAnchorElement;
-	infoAnchor?: HTMLAnchorElement;
-	nextAnchor?: HTMLAnchorElement;
-};
-
-export function setAccessKeys(nav: NavLinks) {
+function setAccessKeys(nav: NavLinks) {
 	const { prevAnchor, infoAnchor, nextAnchor } = nav;
 
 	if (prevAnchor) {
@@ -124,21 +119,6 @@ export function setAccessKeys(nav: NavLinks) {
 		nextAnchor.ariaKeyShortcuts = `Alt+${nextChapterAccessKey}`;
 	}
 }
-
-export type Page = {
-	breadcrumbBar?: Element;
-	searchForm?: Element;
-	title?: string;
-	mainSection: Element;
-	navigationBar: NavLinks;
-};
-
-export type CleanPage = {
-	root: HTMLDivElement;
-	header: HTMLElement;
-	main: HTMLElement;
-	footer: HTMLElement;
-};
 
 export function rebuildChapterBody(page: Page): CleanPage {
 	const newBody = document.createElement('body');
@@ -258,6 +238,37 @@ export function paragraphsFromElement(el: Element): HTMLParagraphElement[] {
 	return paragraphs;
 }
 
+type ParseFragmentCallback = (doc: Document) => FragmentPage;
+
+export async function fetchChaperFragmentPage(
+	href: string,
+	callback: ParseFragmentCallback
+): Promise<FragmentPage> {
+	VM_log(`fetchChaperFragmentPage: ${href}`);
+	const p = new Promise<FragmentPage>((resolve, reject) => {
+		GM_xmlhttpRequest({
+			method: 'GET',
+			url: href,
+			responseType: 'document',
+			onload: (response) => {
+				const doc = ensureDoc(response.response);
+				const f = callback(doc);
+				VM_log(f);
+				resolve(f);
+			},
+			onerror: (response) => {
+				VM_log(['fetchChaperFragmentPage error', response]);
+				reject(response);
+			},
+			ontimeout: () => {
+				VM_log('fetchChaperFragmentPage timeout');
+				reject('timeout');
+			}
+		});
+	});
+	return p;
+}
+
 function buildNovelHeader(page: Page): HTMLElement {
 	const { breadcrumbBar, title } = page;
 	const header = document.createElement('header');
@@ -304,6 +315,12 @@ function buildNovelMain(page: Page): HTMLElement {
 
 	section.appendChild(mainSection);
 	article.appendChild(section);
+	if (mainSection.querySelector('img')) {
+		const imgSection = document.createElement('section');
+		imgSection.classList.add('img-container');
+		mainSection.querySelectorAll('img').forEach((img) => imgSection.appendChild(img));
+		article.appendChild(imgSection);
+	}
 	main.appendChild(article);
 	return main;
 }
@@ -322,5 +339,45 @@ function buildNovelFooter(nav: NavLinks): HTMLElement {
 	}
 	navBar.insertAdjacentHTML('beforeend', '<a href="/">小说列表</a>');
 	footer.appendChild(navBar);
+	setAccessKeys(nav);
 	return footer;
+}
+
+export function freezePage() {
+	const noop = () => {};
+
+	// 1. 清空所有定时器 ID（暴力法：从 1 到最大 ID 清一遍）
+	const maxId = setTimeout(noop, 0);
+	for (let i = 0; i <= maxId; i++) {
+		clearTimeout(i);
+		clearInterval(i);
+	}
+
+	const window = document.defaultView!;
+
+	// 2. 移除 document/window 上常见监听
+	['click', 'mousedown', 'mouseup', 'keydown', 'keyup', 'submit', 'scroll', 'touchstart'].forEach(
+		(type) => {
+			document.removeEventListener(type, noop, true);
+			window.removeEventListener(type, noop, true);
+		}
+	);
+
+	// 3. 禁用动态脚本入口
+	window.eval = noop;
+	(window as any).setTimeout = noop;
+	(window as any).setInterval = noop;
+	(window as any).requestAnimationFrame = noop;
+
+	// 4. 禁用动态 script 插入
+	// oxlint-disable-next-line typescript/unbound-method
+	const origAppend = Node.prototype.appendChild;
+	Node.prototype.appendChild = function <T extends Node>(node: T): T {
+		if (node instanceof Element && node.tagName === 'SCRIPT') return node;
+		return origAppend.call(this, node) as T;
+	};
+
+	// 5. 冻结表单、链接
+	document.querySelectorAll('a').forEach((a) => (a.onclick = (e) => e.preventDefault()));
+	document.querySelectorAll('form').forEach((f) => (f.onsubmit = (e) => e.preventDefault()));
 }

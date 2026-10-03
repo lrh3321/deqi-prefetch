@@ -191,3 +191,30 @@ declare namespace Prism {
 declare const __LITE__: boolean;
 
 type ThemeMode = 'dark' | 'light' | 'auto';
+
+type PageURL = { next?: string; nextChapter?: string };
+
+type FragmentPage = PageURL & {
+	paragraphs: HTMLParagraphElement[];
+};
+
+type Page = {
+	breadcrumbBar?: Element;
+	searchForm?: Element;
+	title?: string;
+	mainSection: Element;
+	navigationBar: NavLinks;
+};
+
+type CleanPage = {
+	root: HTMLDivElement;
+	header: HTMLElement;
+	main: HTMLElement;
+	footer: HTMLElement;
+};
+
+type NavLinks = {
+	prevAnchor?: HTMLAnchorElement;
+	infoAnchor?: HTMLAnchorElement;
+	nextAnchor?: HTMLAnchorElement;
+};

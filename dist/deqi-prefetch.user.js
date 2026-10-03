@@ -1,30 +1,36 @@
 // ==UserScript==
 // @name         Deqi Prefech
 // @namespace    https://greasyfork.org/zh-CN/users/14997-lrh3321
-// @version      2026-09-300
+// @version      2026-10-040
 // @author       LRH3321
 // @description  得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码
 // @license      MIT
-// @icon         https://www.shudugu.org/favicon.ico
+// @icon         https://www.suduguu.com/favicon.ico
 // @homepageURL  https://greasyfork.org/zh-CN/scripts/537588-deqi-prefech
 // @source       https://github.com/lrh3321/deqi-prefetch
 // @supportURL   https://github.com/lrh3321/deqi-prefetch/issues
 // @downloadURL  https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
 // @updateURL    https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js
-// @match        http*://*.shudugu.org/*
-// @match        http*://*.deqixs.org/*
-// @match        http*://*.kudushu.org/*
-// @match        http*://www.sudugu.org/*
-// @match        http*://www.sudugu.org/i/pifu.aspx
-// @match        http*://www.deqixs.com/pifu/
-// @match        http*://www.deqixs.com/xiaoshuo/*/*.html
-// @match        http*://www.deqixs.com/xiaoshuo/*/
-// @match        http*://www.boluomao1.com/book/*
-// @match        http*://www.boluomao1.com/read/*
-// @match        http*://www.biqu33.cc/*
-// @match        http*://www.ddxiaoshuo.cc/*
-// @match        http*://cuoceng.com/*
-// @match        http*://www.cuoceng.com/*
+// @match        *://*.deqixs.org/*
+// @match        *://*.shudugu.org/*
+// @match        *://*.sudugu.cc/*
+// @match        *://*.suduguu.com/*
+// @match        *://*.sudugu.org/*
+// @match        *://*.sudugu.org/i/pifu.aspx
+// @match        *://*.deqixs.com/pifu/
+// @match        *://*.deqixs.com/xiaoshuo/*/*.html
+// @match        *://*.deqixs.com/xiaoshuo/*/
+// @match        *://*.kudushu.org/*
+// @match        *://*.boluomao1.com/book/*
+// @match        *://*.boluomao1.com/read/*
+// @match        *://*.yxshufang.com/book/*
+// @match        *://*.biqu33.cc/*
+// @match        *://*.beqg.cc/*
+// @match        *://*.ddxiaoshuo.cc/*
+// @match        *://*.cuoceng.com/*
+// @match        *://*.dmxs2.com/book/*
+// @match        *://*.81ksw.com/index/*
+// @match        *://*.81ksw.com/read/*
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/match-braces/prism-match-braces.min.js
 // @require      https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js
@@ -53,8 +59,8 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style],body>[style*=display],body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}#captcha-form>div.ui-image>img#ui-captcha-image{visibility:visible!important;display:inline!important}body:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;--separator-color:color-mix(in srgb, var(--secondary-color) 25%, transparent);--novel-line-height:1.9;--novel-para-spacing:.9em;min-height:100svh;color:var(--primary-color);background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);margin:0}.article-root{width:min(100svw, var(--container-width,1200px));color:var(--primary-color);text-align:start;margin-inline:auto;padding-bottom:1.5rem}.article-root>header{opacity:.75;border-bottom:1px solid var(--separator-color);background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;padding-inline:1rem;line-height:2rem}.article-root>header:empty{display:none}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb{flex-wrap:wrap;gap:.4rem 1rem;margin-inline:auto;padding-inline:1rem;list-style:none}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a:hover{opacity:.6;text-decoration:underline}.article-root>main{min-height:0}.article-root article{background:var(--card-bg-color);border:1px solid var(--separator-color);border-radius:.9rem;margin-block:1rem;margin-inline:auto;padding:clamp(1rem,3.5vw,2rem) clamp(1rem,4vw,2.5rem) 2.5rem;box-shadow:0 1px 2px #0000000a,0 10px 30px #0000000f}.article-root .article-title{border-bottom:1px dashed var(--separator-color);white-space:nowrap;text-overflow:ellipsis;min-width:0;max-width:100%;margin-bottom:1rem;padding-bottom:.75rem;font-size:clamp(1.3rem,4.5vw,1.7rem);font-weight:700;line-height:1.4;display:block;overflow:hidden}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial;border-radius:.5rem}.article-root section p{text-indent:2em;margin:0 0 var(--novel-para-spacing,.9em);line-height:var(--novel-line-height,1.9);letter-spacing:.015em;color:var(--primary-color);overflow-wrap:anywhere;word-break:break-word;font-size:1.0625rem}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root pre{tab-size:4;text-indent:0;color:var(--primary-color);background:color-mix(in srgb, var(--primary-bg-color) 45%, var(--card-bg-color) 55%);border:1px solid var(--separator-color);border-radius:.6rem;margin-block:.5rem;padding:1rem 1.25rem;font-family:ui-monospace,SF Mono,Cascadia Code,JetBrains Mono,Menlo,Consolas,Courier New,monospace;font-size:.875rem;line-height:1.75;overflow-x:auto}.article-root pre code{text-indent:0;white-space:inherit;display:block}.article-root pre.line-numbers .line-numbers-rows{border-right-color:var(--separator-color)}.article-root>footer{opacity:.9;padding-block:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .8);border:1px solid var(--separator-color);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:999px;flex-wrap:wrap;justify-content:center;justify-self:center;gap:.4rem;width:fit-content;margin-inline:auto;padding:.35rem;display:flex}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;border-radius:999px;padding:.35rem 1rem;text-decoration:none;transition:background-color .15s,color .15s}.article-root .article-nav a:hover{background-color:var(--accent-color);color:#fff}.article-root hr{background:linear-gradient(90deg, transparent, var(--secondary-color) 20%, var(--secondary-color) 80%, transparent);opacity:.4;border:0;width:100%;height:1px;margin-block:0}body[hidden]{display:none!important}@media (prefers-color-scheme:dark){body:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}}body[data-theme=dark]:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}body[data-theme=light]:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}");
-	_css(":root{--fab-accent:#a4774b;--fab-bg:#f3efe8}body[data-theme=dark]{--fab-accent:#c08d5e;--fab-bg:#262420}#deqi-fab{z-index:2147483000;align-items:flex-end;gap:.6rem;display:flex;position:fixed;bottom:1.75rem;right:1.25rem}#deqi-fab .fab-menu{opacity:0;pointer-events:none;flex-direction:column;align-items:flex-end;gap:.5rem;transition:opacity .18s,transform .18s;display:flex;transform:translateY(.5rem)}#deqi-fab.open .fab-menu{opacity:1;pointer-events:auto;transform:translateY(0)}#deqi-fab .fab-menu button{border:1px solid color-mix(in srgb, var(--fab-accent) 25%, transparent);background:color-mix(in srgb, var(--fab-bg) 88%, white);color:var(--primary-color,#2b2b2b);cursor:pointer;white-space:nowrap;border-radius:999px;align-items:center;gap:.4rem;padding:.45rem .9rem;font-size:.9rem;transition:background-color .15s,transform .1s;display:inline-flex;box-shadow:0 3px 10px #0000002e}#deqi-fab .fab-menu button:hover{background:var(--fab-accent);color:#fff}#deqi-fab .fab-menu button:active{transform:scale(.95)}#deqi-fab .fab-menu button .fab-icon{font-size:1rem;line-height:1}#deqi-fab .fab-toggle{cursor:pointer;color:#fff;background:linear-gradient(135deg, #b08968, var(--fab-accent));border:none;border-radius:50%;place-items:center;width:3.15rem;height:3.15rem;font-size:1.6rem;transition:transform .2s;display:grid;box-shadow:0 5px 16px #00000047}#deqi-fab .fab-toggle:hover{transform:scale(1.06)}#deqi-fab .fab-toggle:active{transform:scale(.94)}#deqi-settings-dialog{background:0 0;border:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0}#deqi-settings-dialog::backdrop{-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);background:#00000073}#deqi-settings-dialog .settings-panel{background:var(--card-bg-color,#fffdf8);width:min(90vw,40rem);max-height:88dvh;color:var(--primary-color,#2b2b2b);border:1px solid var(--separator-color,#9b918440);border-radius:.9rem;margin:5dvh auto auto;font-size:.95rem;overflow:auto;box-shadow:0 20px 60px #0000004d}#deqi-settings-dialog .settings-head{border-bottom:1px solid var(--separator-color,#9b918440);background:inherit;z-index:1;justify-content:space-between;align-items:center;padding:.9rem 1.2rem;font-size:1.05rem;font-weight:700;display:flex;position:sticky;top:0}#deqi-settings-dialog .settings-close{color:inherit;cursor:pointer;background:0 0;border:0;border-radius:.4rem;padding:.2rem .4rem;font-size:1.4rem;line-height:1}#deqi-settings-dialog .settings-close:hover{background:color-mix(in srgb, var(--primary-color) 12%, transparent)}#deqi-settings-dialog .settings-body{flex-direction:column;gap:.9rem;padding:1.1rem 1.2rem 1.4rem;display:flex}#deqi-settings-dialog .settings-row{align-items:center;gap:.6rem;display:flex}#deqi-settings-dialog .settings-row label{flex:none;min-width:4.5rem}#deqi-settings-dialog .settings-row input[type=text],#deqi-settings-dialog .settings-row input[type=number]{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-row input[type=range]{min-width:0;accent-color:var(--fab-accent,#a4774b);flex:auto}#deqi-settings-dialog .settings-row select{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-val{text-align:right;opacity:.7;font-variant-numeric:tabular-nums;flex:0 0 2.8rem}#deqi-settings-dialog .settings-hint{opacity:.65;font-size:.82rem}#deqi-settings-dialog .settings-font-quick{flex-wrap:wrap;gap:.45rem;display:flex}#deqi-settings-dialog .settings-font-quick button{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);color:inherit;cursor:pointer;border-radius:.45rem;padding:.3rem .75rem;font-size:.85rem;transition:background-color .15s,color .15s,border-color .15s}#deqi-settings-dialog .settings-font-quick button:hover{border-color:var(--fab-accent,#a4774b)}#deqi-settings-dialog .settings-font-quick button.active{background:var(--fab-accent,#a4774b);border-color:var(--fab-accent,#a4774b);color:#fff}");
+	_css("[data-comment=normal] span.token.comment{font-style:normal}img[alt],.menu,.header p,h2 a,div.footer,div.container>ul.list{display:none!important}h2.op a{display:block}body>div.container,body>div.header,#article_main,#ss-reader-main{width:min(calc(100svw - 1em), var(--container-width,\"1200px\"))}span.token.comment{font-family:var(--novel-font-family)!important}body{--primary-color:black;--primary-bg-color:#f5f2f0;--secondary-color:gray;background:var(--primary-bg-color)}img{visibility:hidden}details#script-setting>summary,form{color:var(--primary-color)}details#script-setting>summary{font-size:x-large;font-weight:700}form fieldset{margin-inline:2px;border:2px groove gray;border-image:initial;min-inline-size:min-content;margin-top:1rem;margin-bottom:1rem;padding-block:.35em .625em;padding-inline:.75em;display:block}form fieldset>div{flex-wrap:wrap;gap:.5rem;display:flex}fieldset label{white-space:nowrap;gap:.4rem;width:fit-content;display:flex}@media (orientation:portrait){fieldset label{white-space:nowrap;flex-wrap:wrap;gap:.4rem;width:100%;display:flex}}label input{border:1px solid var(--lightningcss-light,#767676)var(--lightningcss-dark,#858585);max-width:75svw;padding-left:.5rem}editable-list li{align-items:baseline;width:fit-content;height:fit-content;display:flex}editable-list figure{margin:0}editable-list figcaption{-webkit-backdrop-filter:contrast(120%);backdrop-filter:contrast(120%);text-align:end}editable-list .icon{cursor:pointer;border:none;font-size:1.8rem}editable-list textarea{border-radius:.75rem;width:95%;padding-block:.25rem;padding-inline:.75rem}editable-list ul{flex-wrap:wrap;justify-content:flex-start;column-gap:1rem;max-width:80svw;display:flex}#header,#main .container-fluid,#article_main .row,body>[id][style]:not(#gmenu),body>[style*=display]:not(#gmenu),body>[style*=position\\:fixed]{display:none!important}#article_main{background:0 0}#article_main #page-links a,#article_main #page-links span{text-align:center;background:#1a73e8;width:28px;height:28px;margin-right:10px;padding:1px 10px;line-height:25px;display:inline-block;color:#fff!important;text-decoration:none!important}#article_main #page-links span{background:#ccc}#main a[role=button]{color:#555}#main a[role=button]:hover{color:#fa2080;text-decoration:none}#ss-reader-main,.info-title{border-width:0;background-color:#0000!important}#ss-reader-main .info-commend,#ss-reader-main .reader-hr,#ss-reader-main .readSet,#ss-reader-main .info-chapters-title,#ss-reader-main h1,body.read_style_1 .header,body.read_style_1 #showDetail,#readcontent .textbox.cf,body.read_style_1 .textinfo{display:none!important}@media screen and (width<=1200px){#list.dir{width:calc(100svw - 30px);margin:0}#list.dir ul li{float:left;width:33%}.container .itemtxt{float:unset;padding-right:unset;width:unset}}#captcha-form>div.ui-image>img#ui-captcha-image{visibility:visible!important;display:inline!important}.urn-float{display:none!important}body:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;--separator-color:color-mix(in srgb, var(--secondary-color) 25%, transparent);--novel-line-height:1.9;--novel-para-spacing:.9em;min-height:100svh;color:var(--primary-color);background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);margin:0}.article-root{width:min(100svw, var(--container-width,1200px));color:var(--primary-color);text-align:start;margin-inline:auto;padding-bottom:1.5rem}.article-root>header{opacity:.75;border-bottom:1px solid var(--separator-color);background-color:color-mix(in srgb, var(--primary-bg-color) 90%, var(--primary-color) 10%);margin-top:.5rem;padding-inline:1rem;line-height:2rem}.article-root>header:empty{display:none}.article-root .breadcrumb,.article-root .breadcrumb a{color:var(--secondary-color);background-color:#0000;flex-wrap:wrap;align-items:center;gap:1rem;margin:0;display:flex}.article-root .breadcrumb{flex-wrap:wrap;gap:.4rem 1rem;margin-inline:auto;padding-inline:1rem;list-style:none}.article-root .breadcrumb li{text-wrap:nowrap;text-overflow:ellipsis;list-style-type:none;overflow-x:hidden}.article-root .breadcrumb li[aria-hidden]{opacity:.5}.article-root .breadcrumb a:hover{opacity:.6;text-decoration:underline}.article-root>main{min-height:0}.article-root article{background:var(--card-bg-color);border:1px solid var(--separator-color);border-radius:.9rem;margin-block:1rem;margin-inline:auto;padding:clamp(1rem,3.5vw,2rem) clamp(1rem,4vw,2.5rem) 2.5rem;box-shadow:0 1px 2px #0000000a,0 10px 30px #0000000f}.article-root .article-title{border-bottom:1px dashed var(--separator-color);white-space:nowrap;text-overflow:ellipsis;min-width:0;max-width:100%;margin-bottom:1rem;padding-bottom:.75rem;font-size:clamp(1.3rem,4.5vw,1.7rem);font-weight:700;line-height:1.4;display:block;overflow:hidden}.article-root .article-title code{background-color:#0000}.article-root section.img-container{flex-direction:column;display:flex}.article-root section.img-container img{visibility:initial;border-radius:.5rem;width:100%}.article-root section p{text-indent:2em;margin:0 0 var(--novel-para-spacing,.9em);line-height:var(--novel-line-height,1.9);letter-spacing:.015em;color:var(--primary-color);overflow-wrap:anywhere;word-break:break-word;font-size:1.0625rem}@media (orientation:landscape){.article-root section.img-container{align-items:center}.article-root section.img-container img{max-width:35rem}}.article-root pre{tab-size:4;text-indent:0;color:var(--primary-color);background:color-mix(in srgb, var(--primary-bg-color) 45%, var(--card-bg-color) 55%);border:1px solid var(--separator-color);border-radius:.6rem;margin-block:.5rem;padding:1rem 1.25rem;font-family:ui-monospace,SF Mono,Cascadia Code,JetBrains Mono,Menlo,Consolas,Courier New,monospace;font-size:.875rem;line-height:1.75;overflow-x:auto}.article-root pre code{text-indent:0;white-space:inherit;display:block}.article-root pre.line-numbers .line-numbers-rows{border-right-color:var(--separator-color)}.article-root>footer{opacity:.9;padding-block:.5rem;line-height:2rem}.article-root .article-nav{background-color:lch(from var(--primary-bg-color) l c h / .8);border:1px solid var(--separator-color);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:999px;flex-wrap:wrap;justify-content:center;justify-self:center;gap:.4rem;width:fit-content;margin-inline:auto;padding:.35rem;display:flex}.article-root .article-nav a{color:var(--secondary-color);background-color:#0000;border-radius:999px;padding:.35rem 1rem;text-decoration:none;transition:background-color .15s,color .15s}.article-root .article-nav a:hover{background-color:var(--accent-color);color:#fff}.article-root hr{background:linear-gradient(90deg, transparent, var(--secondary-color) 20%, var(--secondary-color) 80%, transparent);opacity:.4;border:0;width:100%;height:1px;margin-block:0}body[hidden]{display:none!important}@media (prefers-color-scheme:dark){body:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}}body[data-theme=dark]:has(.article-root){--primary-color:#d7d3cb;--primary-bg-color:#1c1b19;--secondary-color:#8d8577;--card-bg-color:#262420;--accent-color:#c08d5e;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}body[data-theme=light]:has(.article-root){--primary-color:#2b2b2b;--primary-bg-color:#f3efe8;--secondary-color:#9b9184;--card-bg-color:#fffdf8;--accent-color:#a4774b;background-color:color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%)}");
+	_css(":root{--fab-accent:#a4774b;--fab-bg:#f3efe8}body[data-theme=dark]{--fab-accent:#c08d5e;--fab-bg:#262420}#deqi-fab{z-index:2147483000;align-items:flex-end;gap:.6rem;display:flex;position:fixed;bottom:1.75rem;right:1.25rem}#deqi-fab .fab-menu{opacity:0;pointer-events:none;flex-direction:column;align-items:flex-end;gap:.5rem;transition:opacity .18s,transform .18s;display:none;transform:translateY(.5rem)}#deqi-fab.open .fab-menu{opacity:1;pointer-events:auto;display:flex;transform:translateY(0)}#deqi-fab .fab-menu button{border:1px solid color-mix(in srgb, var(--fab-accent) 25%, transparent);background:color-mix(in srgb, var(--fab-bg) 88%, white);color:var(--primary-color,#2b2b2b);cursor:pointer;white-space:nowrap;border-radius:999px;align-items:center;gap:.4rem;padding:.45rem .9rem;font-size:.9rem;transition:background-color .15s,transform .1s;display:inline-flex;box-shadow:0 3px 10px #0000002e}#deqi-fab .fab-menu button:hover{background:var(--fab-accent);color:#fff}#deqi-fab .fab-menu button:active{transform:scale(.95)}#deqi-fab .fab-menu button .fab-icon{font-size:1rem;line-height:1}#deqi-fab .fab-toggle{cursor:pointer;color:#fff;background:linear-gradient(135deg, #b08968, var(--fab-accent));border:none;border-radius:50%;place-items:center;width:3.15rem;height:3.15rem;font-size:1.6rem;transition:transform .2s;display:grid;box-shadow:0 5px 16px #00000047}#deqi-fab .fab-toggle:hover{transform:scale(1.06)}#deqi-fab .fab-toggle:active{transform:scale(.94)}#deqi-settings-dialog{background:0 0;border:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0}#deqi-settings-dialog::backdrop{-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);background:#00000073}#deqi-settings-dialog .settings-panel{background:var(--card-bg-color,#fffdf8);width:min(90vw,40rem);max-height:88dvh;color:var(--primary-color,#2b2b2b);border:1px solid var(--separator-color,#9b918440);border-radius:.9rem;margin:5dvh auto auto;font-size:.95rem;overflow:auto;box-shadow:0 20px 60px #0000004d}#deqi-settings-dialog .settings-head{border-bottom:1px solid var(--separator-color,#9b918440);background:inherit;z-index:1;justify-content:space-between;align-items:center;padding:.9rem 1.2rem;font-size:1.05rem;font-weight:700;display:flex;position:sticky;top:0}#deqi-settings-dialog .settings-close{color:inherit;cursor:pointer;background:0 0;border:0;border-radius:.4rem;padding:.2rem .4rem;font-size:1.4rem;line-height:1}#deqi-settings-dialog .settings-close:hover{background:color-mix(in srgb, var(--primary-color) 12%, transparent)}#deqi-settings-dialog .settings-body{flex-direction:column;gap:.9rem;padding:1.1rem 1.2rem 1.4rem;display:flex}#deqi-settings-dialog .settings-row{align-items:center;gap:.6rem;display:flex}#deqi-settings-dialog .settings-row label{flex:none;min-width:4.5rem}#deqi-settings-dialog .settings-row input[type=text],#deqi-settings-dialog .settings-row input[type=number]{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-row input[type=range]{min-width:0;accent-color:var(--fab-accent,#a4774b);flex:auto}#deqi-settings-dialog .settings-row select{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);min-width:0;color:inherit;border-radius:.45rem;flex:auto;padding:.4rem .6rem}#deqi-settings-dialog .settings-val{text-align:right;opacity:.7;font-variant-numeric:tabular-nums;flex:0 0 2.8rem}#deqi-settings-dialog .settings-hint{opacity:.65;font-size:.82rem}#deqi-settings-dialog .settings-font-quick{flex-wrap:wrap;gap:.45rem;display:flex}#deqi-settings-dialog .settings-font-quick button{border:1px solid var(--separator-color,#9b918466);background:var(--primary-bg-color,#f3efe8);color:inherit;cursor:pointer;border-radius:.45rem;padding:.3rem .75rem;font-size:.85rem;transition:background-color .15s,color .15s,border-color .15s}#deqi-settings-dialog .settings-font-quick button:hover{border-color:var(--fab-accent,#a4774b)}#deqi-settings-dialog .settings-font-quick button.active{background:var(--fab-accent,#a4774b);border-color:var(--fab-accent,#a4774b);color:#fff}");
 	var _GM_addElement = (() => typeof GM_addElement != "undefined" ? GM_addElement : void 0)();
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_log = (() => typeof GM_log != "undefined" ? GM_log : void 0)();
@@ -205,6 +211,29 @@
 		if (demo.length > 0) _GM_log("nest", demo);
 		return paragraphs;
 	}
+	async function fetchChaperFragmentPage(href, callback) {
+		VM_log(`fetchChaperFragmentPage: ${href}`);
+		return new Promise((resolve, reject) => {
+			_GM_xmlhttpRequest({
+				method: "GET",
+				url: href,
+				responseType: "document",
+				onload: (response) => {
+					const f = callback(ensureDoc(response.response));
+					VM_log(f);
+					resolve(f);
+				},
+				onerror: (response) => {
+					VM_log(["fetchChaperFragmentPage error", response]);
+					reject(response);
+				},
+				ontimeout: () => {
+					VM_log("fetchChaperFragmentPage timeout");
+					reject("timeout");
+				}
+			});
+		});
+	}
 	function buildNovelHeader(page) {
 		const { breadcrumbBar, title } = page;
 		const header = document.createElement("header");
@@ -246,6 +275,12 @@
 		const section = document.createElement("section");
 		section.appendChild(mainSection);
 		article.appendChild(section);
+		if (mainSection.querySelector("img")) {
+			const imgSection = document.createElement("section");
+			imgSection.classList.add("img-container");
+			mainSection.querySelectorAll("img").forEach((img) => imgSection.appendChild(img));
+			article.appendChild(imgSection);
+		}
 		main.appendChild(article);
 		return main;
 	}
@@ -258,6 +293,7 @@
 		if (nav.nextAnchor) navBar.appendChild(nav.nextAnchor);
 		navBar.insertAdjacentHTML("beforeend", "<a href=\"/\">小说列表</a>");
 		footer.appendChild(navBar);
+		setAccessKeys(nav);
 		return footer;
 	}
 	var extendLanguageElement = null;
@@ -760,7 +796,7 @@ switch (x) {
 	function setupEditableList() {
 		customElements.define("editable-list", EditableList);
 	}
-	var disguiseDebug = _GM_getValue("disguiseDebug", false);
+	_GM_getValue("disguiseDebug", false);
 	var novelFontSize = _GM_getValue("novel-font-size", "16px");
 	var novelFontFamily = _GM_getValue("novel-font-family", `system-ui, -apple-system, '微软雅黑', 'PingFang SC', 'Lantinghei SC', BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`);
 	_GM_getValue("novel-line-height", "1.9");
@@ -985,34 +1021,36 @@ function foo(bar) {
 	var containerWidth = _GM_getValue("container-width", "1200px");
 	function createSettingForm() {
 		const form = document.createElement("form");
-		const intervalInput = document.createElement("input");
-		intervalInput.type = "number";
-		intervalInput.min = "0";
-		intervalInput.valueAsNumber = refreshInterval / 6e4;
-		intervalInput.style.width = "4rem";
-		const intervalLabel = document.createElement("label");
-		intervalLabel.innerText = "刷新间隔（分钟）：";
-		intervalLabel.appendChild(intervalInput);
-		form.appendChild(intervalLabel);
-		const button = document.createElement("button");
-		button.type = "submit";
-		button.innerText = "保存刷新设置";
-		button.style.marginLeft = "0.75rem";
-		form.appendChild(button);
+		{
+			const intervalInput = document.createElement("input");
+			intervalInput.type = "number";
+			intervalInput.min = "0";
+			intervalInput.valueAsNumber = refreshInterval / 6e4;
+			intervalInput.style.width = "4rem";
+			const intervalLabel = document.createElement("label");
+			intervalLabel.innerText = "刷新间隔（分钟）：";
+			intervalLabel.appendChild(intervalInput);
+			form.appendChild(intervalLabel);
+			const button = document.createElement("button");
+			button.type = "submit";
+			button.innerText = "保存刷新设置";
+			button.style.marginLeft = "0.75rem";
+			form.appendChild(button);
+			form.onsubmit = (e) => {
+				e.preventDefault();
+				const interval = parseInt(intervalInput.value) * 6e4;
+				if (interval >= 0 && interval != refreshInterval) {
+					_GM_setValue("refreshInterval", interval);
+					refreshInterval = interval;
+				}
+			};
+			setTimeout(() => {
+				const pre = document.querySelector("pre");
+				if (pre) updateStyle(pre);
+			}, 1e3);
+		}
 		form.appendChild(createAccessKeysFieldset());
 		appendDisguiseCodeFieldset(form);
-		form.onsubmit = (e) => {
-			e.preventDefault();
-			const interval = parseInt(intervalInput.value) * 6e4;
-			if (interval >= 0 && interval != refreshInterval) {
-				_GM_setValue("refreshInterval", interval);
-				refreshInterval = interval;
-			}
-		};
-		setTimeout(() => {
-			const pre = document.querySelector("pre");
-			if (pre) updateStyle(pre);
-		}, 1e3);
 		const details = document.createElement("details");
 		details.id = "script-setting";
 		if (location.hash === "#script-setting") {
@@ -1294,7 +1332,7 @@ function foo(bar) {
 		buildSettingsDialog();
 		buildFab();
 	}
-	function handleBookPage$3() {
+	function handleBookPage$4() {
 		VM_log("handleBookPage");
 		let finished = false;
 		const itemtxt = document.querySelector(".itemtxt");
@@ -1324,54 +1362,31 @@ function foo(bar) {
 			}
 		}
 	}
-	function handleSettingPage$3() {
+	function handleSettingPage$2() {
 		VM_log("handleSettingPage");
 		const settingForm = createSettingForm();
 		document.querySelector("div.container").appendChild(settingForm);
 	}
-	async function fetchChaperFragmentPage$2(href) {
-		return new Promise((resolve, reject) => {
-			_GM_xmlhttpRequest({
-				method: "GET",
-				url: href,
-				responseType: "document",
-				onload: (response) => {
-					const doc = ensureDoc(response.response);
-					const container = doc.querySelector("div.container");
-					const paragraphs = paragraphsFromElement(doc.querySelector("div.container .con"));
-					const prenexts = container.querySelectorAll("div.prenext a");
-					let next;
-					let nextChapter;
-					for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
-						if (element.textContent == "下一页") {
-							next = element;
-							break;
-						} else if (element.textContent == "下一章") {
-							nextChapter = element;
-							break;
-						}
-					}
-					VM_log({
-						next: next?.href,
-						nextChapter: nextChapter?.href,
-						paragraphs
-					});
-					resolve({
-						next: next?.href,
-						nextChapter: nextChapter?.href,
-						paragraphs
-					});
-				},
-				onerror: (response) => {
-					VM_log(["handleSettingPage error", response]);
-					reject(response);
-				},
-				ontimeout: () => {
-					VM_log("handleSettingPage timeout");
-					reject("timeout");
-				}
-			});
-		});
+	function parseFragmentPage$6(doc) {
+		const container = doc.querySelector("div.container");
+		const paragraphs = paragraphsFromElement(doc.querySelector("div.container .con"));
+		const prenexts = container.querySelectorAll("div.prenext a");
+		let next;
+		let nextChapter;
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == "下一页") {
+				next = element;
+				break;
+			} else if (element.textContent == "下一章") {
+				nextChapter = element;
+				break;
+			}
+		}
+		return {
+			next: next?.href,
+			nextChapter: nextChapter?.href,
+			paragraphs
+		};
 	}
 	function handleChaperPage() {
 		VM_log("handleChaperPage");
@@ -1383,23 +1398,26 @@ function foo(bar) {
 			if (element.textContent == "下一页") {
 				(async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage$2(element.href);
-					con.append(...next.paragraphs);
+					let next = await fetchChaperFragmentPage(element.href, parseFragmentPage$6);
+					if (next.paragraphs.length === 0) con.append(...await fetchParagraphes(element.href));
+					else con.append(...next.paragraphs);
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage$2(next.next);
-						con.append(...next.paragraphs);
+						const href = next.next;
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage$6);
+						if (next.paragraphs.length === 0) con.append(...await fetchParagraphes(href));
+						else con.append(...next.paragraphs);
 					}
 					if (next.nextChapter) {
 						element.textContent = "下一章";
 						element.href = next.nextChapter;
 					}
-					rebuildChapterBody(getChapterPage$2());
+					rebuildChapterBody(getChapterPage$6());
 				})();
 				break;
 			} else if (element.textContent == "下一章") {
 				(() => {
-					rebuildChapterBody(getChapterPage$2());
+					rebuildChapterBody(getChapterPage$6());
 				})();
 				break;
 			}
@@ -1413,7 +1431,7 @@ function foo(bar) {
 		if (location.pathname === "/pifu/") {
 			setupCodeTheme();
 			setupExtendLanguageSupport();
-			handleSettingPage$3();
+			handleSettingPage$2();
 		} else if (location.pathname.endsWith(".html")) {
 			if (!isInIframe) switch (disguiseMode) {
 				case "code":
@@ -1421,14 +1439,14 @@ function foo(bar) {
 					setupExtendLanguageSupport();
 			}
 			handleChaperPage();
-		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$3();
+		} else if (location.pathname.startsWith("/xiaoshuo/")) handleBookPage$4();
 	}
 	function handleSuduguRoute() {
 		VM_log("handleSuduguRoute");
 		if (location.pathname === "/i/pifu.aspx") {
 			setupCodeTheme();
 			setupExtendLanguageSupport();
-			handleSettingPage$3();
+			handleSettingPage$2();
 		} else if (location.pathname.endsWith(".html")) {
 			if (!isInIframe) switch (disguiseMode) {
 				case "code":
@@ -1436,14 +1454,19 @@ function foo(bar) {
 					setupExtendLanguageSupport();
 			}
 			handleChaperPage();
-		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$3();
+		} else if (location.pathname.match(/\/\d+\/(p-\d+\.html)?/)) handleBookPage$4();
 	}
 	function isSudugu() {
-		return location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org");
+		const hostname = location.hostname;
+		return hostname.endsWith("shudugu.org") || hostname.endsWith("sudugu.org") || hostname.endsWith("sudugu.cc") || hostname.endsWith("suduguu.com") || hostname.includes("sudugu");
 	}
-	function getChapterPage$2() {
+	function getChapterPage$6() {
 		const con = document.querySelector("div.container .con");
 		con.className = "";
+		con.querySelectorAll("p").forEach((p) => {
+			const s = p.textContent;
+			if (s.includes("官方纸飞机") || s.includes("完整章节")) p.remove();
+		});
 		const mainSection = disguiseParagraphs(con);
 		const prenexts = document.querySelectorAll("div.prenext a");
 		const navigationBar = {};
@@ -1452,181 +1475,59 @@ function foo(bar) {
 			else if (element.textContent == "目录" || element.textContent == "章节目录") navigationBar.infoAnchor = element;
 			else if (element.textContent == "下一章") navigationBar.nextAnchor = element;
 		}
-		setAccessKeys(navigationBar);
+		const breadcrumbBar = document.querySelector("div.container > div.submenu h1");
 		return {
-			breadcrumbBar: document.querySelector("div.container > div.submenu h1"),
+			breadcrumbBar,
+			title: breadcrumbBar?.querySelector("a:last-child")?.nextSibling?.textContent?.replace(/(^ > |（\d+ \/ \d+）$)/g, ""),
 			mainSection,
 			navigationBar
 		};
 	}
-	var bookID = "";
-	var chapterLinks = new Array();
-	var chapterLinkSet = new Set();
-	function cleanupBody$1() {
-		Array.from(document.body.children).filter((it) => it.id != "main" && it.id != "mainboxs").forEach((it) => {
-			if (it.className == "article-root" || it.id === "deqi-fab" || it instanceof HTMLDialogElement) return;
-			it.remove();
-		});
-	}
-	function handleSettingPage$2() {
-		const settingForm = createSettingForm();
-		const articleMain = document.createElement("div");
-		articleMain.id = "article_main";
-		articleMain.classList = "container";
-		const container = document.getElementById("main");
-		articleMain.appendChild(settingForm);
-		container.appendChild(articleMain);
-	}
-	function handleBookPage$2() {
-		const rowDiv = document.querySelector("#main > div.nine-item > div.container > div.row");
-		const moreItem = createAttrOneItem();
-		moreItem.id = "more-item";
-		moreItem.appendChild(createMoreAnchor());
-		const resetItem = createAttrOneItem();
-		resetItem.id = "reset-item";
-		resetItem.appendChild(createResetAnchor());
-		rowDiv.append(moreItem, resetItem);
-		const links = Array.from(rowDiv.querySelectorAll("a[href][title]")).map((it) => {
-			return {
-				href: it.href,
-				title: it.title
-			};
-		});
-		const indexStr = localStorage.getItem(`book_index_${bookID}`);
-		if (indexStr) {
-			const oldLinks = JSON.parse(indexStr);
-			const linkSet = new Set(links.map((it) => it.href));
-			oldLinks.forEach((it) => {
-				if (!linkSet.has(it.href)) {
-					links.push(it);
-					rowDiv.insertBefore(createChapterLink(it.href, it.title), moreItem);
-				}
-			});
-			links.sort((a, b) => {
-				return b.href.localeCompare(a.href);
-			});
-		}
-		chapterLinks.push(...links);
-		chapterLinkSet.clear();
-		chapterLinks.forEach((it) => {
-			chapterLinkSet.add(it.href);
-		});
-		localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
-	}
-	function fetchPreviousChapter(href, limit) {
-		if (limit <= 0) return;
-		_GM_xmlhttpRequest({
+	async function fetchParagraphes(href) {
+		const segments = new URL(href, location.href).pathname.split(/[/\-.]/).filter((s) => s.length > 0 && s !== "html");
+		const req = {
 			method: "GET",
-			url: href,
-			responseType: "document",
-			onload: (response) => {
-				const link = getPrevLink(response.response);
-				if (!chapterLinkSet.has(href)) {
-					chapterLinkSet.add(href);
-					chapterLinks.push({
-						title: link.title,
-						href
-					});
-					chapterLinks.sort((a, b) => {
-						return b.href.localeCompare(a.href);
-					});
-					localStorage.setItem(`book_index_${bookID}`, JSON.stringify(chapterLinks));
-					const moreItem = document.getElementById("more-item");
-					const element = createChapterLink(href, link.title);
-					moreItem.parentElement?.insertBefore(element, moreItem);
+			url: new URL(`/i/a.aspx?id=${segments[1]}&p=${segments[2]}&bid=${segments[0]}`, location.href).toString()
+		};
+		return new Promise((resolve, reject) => {
+			_GM_xmlhttpRequest({
+				...req,
+				onload: (response) => {
+					const parser = new DOMParser();
+					const s = response.responseText.replace("document.write(\"", "").replace("\");", "");
+					resolve(paragraphsFromElement(parser.parseFromString(s, "text/html").body));
+				},
+				onerror: (response) => {
+					VM_log(["fetchChaperFragmentPage error", response]);
+					reject(response);
+				},
+				ontimeout: () => {
+					VM_log("fetchChaperFragmentPage timeout");
+					reject("timeout");
 				}
-				fetchPreviousChapter(link.href, limit - 1);
-			}
+			});
 		});
 	}
-	function createAttrOneItem() {
-		const div = document.createElement("div");
-		div.className = "col-md-4 col-sm-12 att-one-item";
-		return div;
-	}
-	function getLastestHref() {
-		return document.getElementById("more-item").previousElementSibling?.querySelector("a")?.href;
-	}
-	function createMoreAnchor() {
-		const a = document.createElement("a");
-		a.role = "button";
-		a.onclick = () => {
-			const latest = getLastestHref();
-			console.log("more", latest);
-			fetchPreviousChapter(latest, 10);
-		};
-		a.title = "更多";
-		a.innerHTML = "更多";
-		return a;
-	}
-	function createResetAnchor() {
-		const a = document.createElement("a");
-		a.role = "button";
-		a.onclick = () => {
-			console.log("reset");
-			localStorage.removeItem(`book_index_${bookID}`);
-		};
-		a.title = "重置";
-		a.innerHTML = "重置";
-		return a;
-	}
-	function createChapterLink(href, title) {
-		const div = createAttrOneItem();
-		const a = document.createElement("a");
-		a.href = new URL(href).pathname;
-		a.title = title;
-		a.innerText = title;
-		div.append(a);
-		return div;
-	}
-	function getPage() {
-		const mainSection = disguiseParagraphs(document.getElementById("mainboxs"));
-		const prenexts = document.querySelectorAll("div.prenext a");
-		const navigationBar = {};
-		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
-			if (element.textContent == "上一章") navigationBar.prevAnchor = element;
-			else if (element.textContent == "章节目录") navigationBar.infoAnchor = element;
-			else if (element.textContent == "下一章") navigationBar.nextAnchor = element;
-		}
-		setAccessKeys(navigationBar);
-		const title = document.getElementById("post-h2")?.innerHTML;
-		return {
-			breadcrumbBar: document.querySelector("div.page-links"),
-			title,
-			mainSection,
-			navigationBar
-		};
-	}
-	function appendRemainPages(netxDivs, hasCanvas) {
-		const articleMain = document.getElementById("article_main");
-		const mainboxs = document.getElementById("mainboxs");
-		const scripts = [];
-		netxDivs.forEach((div) => {
-			if (typeof div === "undefined") return;
-			if (typeof div === "string") {
-				const next = document.createElement("div");
-				next.innerHTML = div;
-				mainboxs.appendChild(next);
-			} else scripts.push(div.innerHTML);
-		});
-		const page = getPage();
-		if (articleMain) {
-			if (hasCanvas) {
-				const cleanPage = rebuildChapterBody(page);
-				mainboxs.id = "";
-				const section = cleanPage.main.querySelector("section");
-				const canvasList = Array.from(cleanPage.main.querySelectorAll("canvas"));
-				if (canvasList.length > 0) {
-					section.classList.add("img-container");
-					const result = mergeCanvases(canvasList);
-					section.firstElementChild?.replaceWith(canvasToImage(result));
-				}
-				handleCanvasScript(scripts);
-			} else rebuildChapterBody(page);
-			cleanupBody$1();
+	function handleBiqu33Route() {
+		if (document.documentElement.lang == "zh-TW") document.documentElement.lang = "zh-CN";
+		const segments = location.pathname.split("/").filter(Boolean);
+		const lastSegment = segments[segments.length - 1];
+		switch (segments.length) {
+			case 0:
+			case 1:
+			case 2:
+				if (segments.length == 2 && (segments[0] == "book" || segments[0] == "xs"));
+				break;
+			case 3:
+				if (/[\d\w]+_\d+$/.test(lastSegment)) return;
+				handleChapterPage$6();
 		}
 	}
 	function mergeCanvases(canvases) {
+		VM_log("canvases", canvases.length);
+		canvases = canvases.filter((c) => c.width > 0 && c.height > 0);
+		VM_log("canvases trimed", canvases.length);
+		if (canvases.length == 0) return;
 		const result = document.createElement("canvas");
 		let totalWidth = 0, totalHeight = 0;
 		canvases.forEach((canvas) => {
@@ -1642,23 +1543,6 @@ function foo(bar) {
 		});
 		return result;
 	}
-	function handleCanvasScript(scripts) {
-		if (scripts.length > 0) {
-			console.log("handleCanvasScript", scripts);
-			const script = document.createElement("script");
-			script.textContent = scripts.shift();
-			forCleanCanvas(() => {
-				setTimeout(() => {
-					script.remove();
-					handleCanvasScript(scripts);
-				}, 1e3);
-			});
-			document.body.appendChild(script);
-		}
-	}
-	function getMainBox(doc) {
-		return ensureDoc(doc).getElementById("mainboxs");
-	}
 	function getCanvasScript(doc) {
 		const document = ensureDoc(doc);
 		let scriptCopy = void 0;
@@ -1668,7 +1552,7 @@ function foo(bar) {
 			if (script.innerHTML.includes(`if(!isMobile)`) && !script.innerHTML.includes(`qrcode`)) {
 				console.log("有手机浏览器限制");
 				scriptCopy = document.createElement("script");
-				scriptCopy.innerHTML = script.innerHTML;
+				scriptCopy.innerHTML = script.innerHTML.split(";").join(";\r\n");
 				return;
 			}
 		});
@@ -1681,141 +1565,147 @@ function foo(bar) {
 		});
 		return scriptCopy;
 	}
-	function getPrevLink(doc) {
-		const rDoc = ensureDoc(doc);
-		return {
-			href: rDoc.querySelector(".prenext > a[rel=\"prev\"]").href,
-			title: rDoc.getElementById("post-h2").innerText
-		};
-	}
-	function handleChapterPage$4() {
-		if (disguiseDebug) {
-			disguiseParagraphs(document.getElementById("mainboxs"));
-			return;
-		}
-		const articleMain = document.getElementById("article_main");
-		const nextLinks = Array.from(document.querySelectorAll("#page-links a.post-page-numbers"));
-		const netxDivs = new Array(nextLinks.length);
-		let remainLinks = nextLinks.length;
-		let hasCanvas = false;
-		for (let index = 0; index < nextLinks.length; index++) {
-			const anchor = nextLinks[index];
-			_GM_xmlhttpRequest({
-				method: "GET",
-				url: anchor.href,
-				responseType: "document",
-				onload: (response) => {
-					try {
-						const doc = response.response;
-						const div = getMainBox(doc);
-						if (div.getElementsByTagName("p").length == 0) {
-							hasCanvas = true;
-							netxDivs[index] = getCanvasScript(doc);
-						} else netxDivs[index] = div.innerHTML;
-						if (!hasCanvas) anchor.remove();
-						remainLinks--;
-					} catch (error) {
-						const div = document.createElement("div");
-						div.innerText = `error: ${error} with resolve ${anchor.href}`;
-						articleMain?.append(div);
-						if (error instanceof Error) {
-							const div = document.createElement("div");
-							div.innerText = `name: ${error.name}, stack: ${error.stack}`;
-							articleMain?.append(div);
-						}
-					}
-					if (remainLinks == 0) appendRemainPages(netxDivs, hasCanvas);
-				}
-			});
-		}
-	}
 	function canvasToImage(canvas) {
 		const image = new Image();
 		image.src = canvas.toDataURL();
+		image.style.visibility = "visible";
 		return image;
 	}
-	function forCleanCanvas(callback) {
-		const thisWin = document.defaultView;
-		thisWin.cenabled = () => {
-			return true;
-		};
-		thisWin.isMobile = true;
-		const mainboxs = document.createElement("div");
-		mainboxs.id = "mainboxs";
-		document.body.appendChild(mainboxs);
-		console.log("forCleanCanvas");
-		const ob = new MutationObserver((mutations) => {
-			mutations.forEach((mutation) => {
-				if (mutation.type == "childList") mutation.removedNodes.forEach((node) => {
-					if (node.nodeType == Node.ELEMENT_NODE) {
-						if (node.tagName == "DIV") {
-							console.log("done");
-							ob.disconnect();
-							setTimeout(() => {
-								const article = document.querySelector(".article-root article");
-								const table = mainboxs.querySelector("table");
-								if (article && table) {
-									const section = document.createElement("section");
-									section.className = "img-container";
-									mainboxs.remove();
-									const result = mergeCanvases(Array.from(table.querySelectorAll("canvas")));
-									section.appendChild(canvasToImage(result));
-									article.appendChild(section);
-								}
-								callback && callback();
-							}, 100);
+	var scriptCopyArray = [];
+	var styleSet = new Set();
+	function handleChapterPage$6() {
+		VM_log("handleChapterPage");
+		const con = document.getElementById("txtbody");
+		const page = parseFragmentPageURL(document);
+		let multiPage = false;
+		if (isInIframe) return;
+		if (page.next) {
+			const href = page.next;
+			multiPage = true;
+			(async () => {
+				let counter = 0;
+				let next = await fetchChaperFragmentPage(href, parseFragmentPage$5);
+				con.append(...next.paragraphs);
+				while (next.next && counter < 20) {
+					counter++;
+					next = await fetchChaperFragmentPage(next.next, parseFragmentPage$5);
+					VM_log(`result: ${href} ${next.paragraphs.length}`);
+					con.append(...next.paragraphs);
+				}
+				rebuild();
+			})();
+		} else if (page.nextChapter) {
+			(() => {
+				rebuild();
+			})();
+			multiPage = true;
+		}
+		if (!multiPage) rebuild();
+	}
+	function appendImage() {
+		const con = document.getElementById("txtbody");
+		const merged = mergeCanvases(Array.from(con.querySelectorAll("table canvas")).filter((c) => {
+			if (c instanceof HTMLCanvasElement) return c.width > 0 && c.height > 0;
+			return false;
+		}));
+		if (merged) con.append(canvasToImage(merged));
+		con.querySelectorAll("table").forEach((t) => t.remove());
+	}
+	function rebuild() {
+		const con = document.getElementById("txtbody");
+		const loading = con.querySelector("[id^=\"loading_peu_p_\"]");
+		if (loading) {
+			VM_log("loading");
+			const ob = new MutationObserver((mutations) => {
+				mutations.forEach((mutation) => {
+					if (mutation.type == "childList") {
+						if (mutation.removedNodes.length > 0) {
+							if (!con.querySelector("[id^=\"loading_peu_p_\"]")) {
+								ob.disconnect();
+								setTimeout(rebuild, 20);
+							}
 						}
 					}
 				});
 			});
-		});
-		ob.observe(mainboxs, {
-			childList: true,
-			subtree: true
-		});
-	}
-	function handleBiqu33Route() {
-		if (document.documentElement.lang == "zh-TW") document.documentElement.lang = "zh-CN";
-		const segments = location.pathname.split("/").filter(Boolean);
-		const lastSegment = segments[segments.length - 1];
-		switch (segments.length) {
-			case 0:
-			case 1:
-			case 2:
-				cleanupBody$1();
-				setupCodeTheme();
-				setupExtendLanguageSupport();
-				handleSettingPage$2();
-				if (segments.length == 2 && segments[0] == "book") {
-					bookID = segments[1];
-					handleBookPage$2();
-				}
-				break;
-			case 3:
-				if (/[\d\w]+_\d+$/.test(lastSegment)) {
-					Array.from(document.querySelectorAll("#article_main .row")).forEach((row) => {
-						row.style.display = "flex";
-					});
-					const thisWin = document.defaultView;
-					let scriptCopy = getCanvasScript(document);
-					cleanupBody$1();
-					if (scriptCopy && !thisWin.isMobile) {
-						const page = getPage();
-						page.mainSection.innerHTML = "";
-						rebuildChapterBody(page);
-						forCleanCanvas();
-						thisWin.isMobile = true;
-						document.body.appendChild(scriptCopy);
-					}
-					return;
-				}
-				switch (disguiseMode) {
-					case "code":
-						setupCodeTheme();
-						setupExtendLanguageSupport();
-				}
-				handleChapterPage$4();
+			ob.observe(loading.parentElement, { childList: true });
+			return;
 		}
+		if (scriptCopyArray.length > 0) {
+			appendImage();
+			const thisWin = document.defaultView;
+			thisWin.isMobile = true;
+			const s = scriptCopyArray.shift();
+			document.body.appendChild(s);
+			VM_log(s.innerHTML);
+			VM_log("wait loading");
+			setTimeout(rebuild, 100);
+			s.remove();
+			return;
+		}
+		appendImage();
+		rebuildChapterBody(getChapterPage$5());
+	}
+	function parseFragmentPageURL(doc) {
+		let next;
+		let nextChapter = doc.getElementById("u_next");
+		const span = doc.querySelector("#pageseg > span");
+		if (span) {
+			const nextElementSibling = span.nextElementSibling;
+			if (nextElementSibling && nextElementSibling instanceof HTMLAnchorElement) next = nextElementSibling;
+		}
+		return {
+			next: next?.href,
+			nextChapter: nextChapter?.href
+		};
+	}
+	function parseFragmentPage$5(doc) {
+		const nestedCon = doc.getElementById("txtbody");
+		VM_log("content", nestedCon.outerHTML);
+		const paragraphs = paragraphsFromElement(nestedCon);
+		if (!nestedCon.firstElementChild) {
+			VM_log("image page");
+			let scriptCopy = getCanvasScript(doc);
+			if (scriptCopy) scriptCopyArray.push(scriptCopy);
+		} else {
+			VM_log("text page");
+			doc.body.querySelectorAll("style").forEach((s) => {
+				if (styleSet.has(s.innerHTML)) return;
+				document.head.append(s);
+				styleSet.add(s.innerHTML);
+			});
+		}
+		return {
+			...parseFragmentPageURL(doc),
+			paragraphs
+		};
+	}
+	function getChapterPage$5() {
+		const con = document.getElementById("txtbody");
+		con.className = "";
+		const mainSection = disguiseParagraphs(con);
+		const prenexts = Array.from(document.querySelectorAll(".rdpg > a"));
+		const navigationBar = {};
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			element.className = "";
+			const textContent = element.textContent;
+			if (textContent.includes("上一章")) {
+				element.innerHTML = "上一章";
+				navigationBar.prevAnchor = element;
+			} else if (textContent.includes("目") && textContent.includes("录")) {
+				element.innerHTML = "目录";
+				navigationBar.infoAnchor = element;
+			} else if (textContent.includes("下一章")) {
+				element.innerHTML = "下一章";
+				navigationBar.nextAnchor = element;
+			}
+		}
+		return {
+			breadcrumbBar: document.querySelector(".crumb"),
+			title: document.querySelector("h1.rd-ttl")?.textContent,
+			mainSection,
+			navigationBar
+		};
 	}
 	function cleanupBody() {
 		Array.from(document.body.children).filter((it) => it.id != "ss-reader-main").forEach((it) => {
@@ -1837,54 +1727,6 @@ function foo(bar) {
 		const settingForm = createSettingForm();
 		articleMain.appendChild(settingForm);
 	}
-	function formatArticle() {
-		const navigationBar = {
-			prevAnchor: document.getElementById("prev_url"),
-			infoAnchor: document.getElementById("info_url"),
-			nextAnchor: document.getElementById("next_url")
-		};
-		setAccessKeys(navigationBar);
-		rebuildChapterBody({
-			breadcrumbBar: document.querySelector(".info-title"),
-			title: document.title.split("-").shift(),
-			mainSection: disguiseParagraphs(document.getElementById("article")),
-			navigationBar
-		});
-	}
-	function continueFetchPages(curDoc) {
-		const nextURL = curDoc.getElementById("next_url");
-		if (nextURL.textContent.trim() == "下一章") {
-			document.getElementById("next_url").replaceWith(nextURL);
-			formatArticle();
-		} else {
-			if (nextURL.href.startsWith("javascript:")) {
-				console.error("Cannot fetch next page");
-				return;
-			}
-			_GM_xmlhttpRequest({
-				method: "GET",
-				url: nextURL.href,
-				responseType: "document",
-				onload: (response) => {
-					const doc = ensureDoc(response.response);
-					const article = document.getElementById("article");
-					const nextArticle = doc.getElementById("article");
-					Array.from(nextArticle.children).forEach((child) => {
-						article.appendChild(child);
-					});
-					continueFetchPages(doc);
-				}
-			});
-		}
-	}
-	function handleChapterPage$3() {
-		if (disguiseDebug) {
-			disguiseParagraphs(document.getElementById("article"));
-			return;
-		}
-		document.body.setAttribute("hidden", "");
-		continueFetchPages(document);
-	}
 	function handleDDxiaoshuoRoute() {
 		document.body.style.display = "flex";
 		document.body.style.justifyContent = "center";
@@ -1896,21 +1738,105 @@ function foo(bar) {
 				break;
 			case 1:
 				cleanBookPage();
-				setupCodeTheme();
-				setupExtendLanguageSupport();
 				if (location.pathname == "/history.html") handleSettingPage$1();
 				break;
 			case 2:
 				if (/[\d\w]+_\d+$/.test(lastSegment)) return;
-				switch (disguiseMode) {
-					case "code":
-						setupCodeTheme();
-						setupExtendLanguageSupport();
-				}
-				handleChapterPage$3();
+				handleChapterPage$5();
 		}
 	}
-	function handleChapterPage$2() {
+	function handleChapterPage$5() {
+		VM_log("handleChapterPage");
+		const con = document.getElementById("article");
+		let multiPage = false;
+		if (isInIframe) return;
+		const a = document.getElementById("next_url");
+		if (a) {
+			VM_log(a.textContent);
+			if (a.textContent.includes("下一页")) {
+				multiPage = true;
+				(async () => {
+					let counter = 0;
+					let next = await fetchChaperFragmentPage(a.href, parseFragmentPage$4);
+					con.append(...next.paragraphs);
+					while (next.next && counter < 20) {
+						counter++;
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage$4);
+						VM_log(`result: ${a.href} ${next.paragraphs.length}`);
+						con.append(...next.paragraphs);
+					}
+					if (next.nextChapter) {
+						a.textContent = "下一章";
+						a.href = next.nextChapter;
+					}
+					rebuildChapterBody(getChapterPage$4());
+				})();
+			} else if (a.textContent.includes("下一章")) {
+				(() => {
+					rebuildChapterBody(getChapterPage$4());
+				})();
+				multiPage = true;
+			}
+		}
+		if (!multiPage) rebuildChapterBody(getChapterPage$4());
+		document.head.querySelectorAll("link[href][rel=\"stylesheet\"]").forEach((ln) => ln.remove());
+	}
+	function parseFragmentPage$4(doc) {
+		const nestedCon = doc.getElementById("article");
+		VM_log("content", nestedCon.outerHTML);
+		const paragraphs = paragraphsFromElement(nestedCon);
+		let next;
+		let nextChapter;
+		const element = doc.getElementById("next_url");
+		if (element) {
+			if (element instanceof HTMLAnchorElement) {
+				if (element.textContent.includes("下一页")) next = element;
+				else if (element.textContent.includes("下一章")) nextChapter = element;
+			}
+		}
+		return {
+			next: next?.href,
+			nextChapter: nextChapter?.href,
+			paragraphs
+		};
+	}
+	function getChapterPage$4() {
+		let con = document.getElementById("article");
+		con.className = "";
+		if (con.tagName == "ARTICLE") {
+			const d = document.createElement("div");
+			d.innerHTML = con.innerHTML;
+			con.replaceWith(d);
+			con = d;
+		}
+		const mainSection = disguiseParagraphs(con);
+		const prenexts = [
+			document.getElementById("prev_url"),
+			document.getElementById("info_url"),
+			document.getElementById("next_url")
+		];
+		const navigationBar = {};
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			element.className = "";
+			if (element.textContent.includes("上一章")) {
+				element.innerHTML = "上一章";
+				navigationBar.prevAnchor = element;
+			} else if (element.textContent.includes("目录")) {
+				element.innerHTML = "目录";
+				navigationBar.infoAnchor = element;
+			} else if (element.textContent.includes("下一章")) {
+				element.innerHTML = "下一章";
+				navigationBar.nextAnchor = element;
+			}
+		}
+		return {
+			breadcrumbBar: document.querySelector(".info-title"),
+			title: document.title.split("-").shift(),
+			mainSection,
+			navigationBar
+		};
+	}
+	function handleChapterPage$4() {
 		const showReading = document.getElementById("showReading");
 		const bookTitle = document.querySelector("#readcontent .book_title h1");
 		const nextPageBox = document.querySelector(".nextPageBox");
@@ -1919,7 +1845,6 @@ function foo(bar) {
 			infoAnchor: nextPageBox.querySelector(".dir"),
 			nextAnchor: nextPageBox.querySelector(".next")
 		};
-		setAccessKeys(navigationBar);
 		const title = bookTitle.textContent;
 		rebuildChapterBody({
 			breadcrumbBar: document.querySelector(".bookNav"),
@@ -1962,18 +1887,18 @@ function foo(bar) {
 						setupCodeTheme();
 						setupExtendLanguageSupport();
 				}
-				handleChapterPage$2();
+				handleChapterPage$4();
 		}
 	}
 	function handleKudushuRoute() {
 		VM_log("handleKudushuRoute");
-		if (/\/book\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/index\.html/.test(location.pathname)) handleBookPage$1();
-		else if (/\/html\/[^/]+\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/[^/]+\.html/.test(location.pathname)) handleChapterPage$1();
+		if (/\/book\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/index\.html/.test(location.pathname)) handleBookPage$3();
+		else if (/\/html\/[^/]+\/[^/]+/.test(location.pathname) || /\/html\/[^/]+\/[^/]+\/[^/]+\.html/.test(location.pathname)) handleChapterPage$3();
 	}
-	function handleBookPage$1() {
+	function handleBookPage$3() {
 		VM_log("handleBookPage");
 	}
-	function handleChapterPage$1() {
+	function handleChapterPage$3() {
 		VM_log("handleChapterPage");
 		const container = document.getElementById("novelcontent");
 		const ul = document.querySelector("ul");
@@ -1988,11 +1913,11 @@ function foo(bar) {
 			if (element.textContent == "下—页") {
 				(async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage$1(element.href);
+					let next = await fetchChaperFragmentPage(element.href, parseFragmentPage$3);
 					con.append(...next.paragraphs);
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage$1(next.next);
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage$3);
 						con.append(...next.paragraphs);
 					}
 					if (next.nextChapter) {
@@ -2006,66 +1931,43 @@ function foo(bar) {
 						element.textContent = "下一章";
 						element.href = next.nextChapter;
 					}
-					rebuildChapterBody(getChapterPage$1());
+					rebuildChapterBody(getChapterPage$3());
 				})();
 				break;
 			} else if (element.textContent == "下—章") {
 				(() => {
-					rebuildChapterBody(getChapterPage$1());
+					rebuildChapterBody(getChapterPage$3());
 				})();
 				break;
 			}
 		}
 	}
-	async function fetchChaperFragmentPage$1(href) {
-		VM_log("fetchChaperFragmentPage", href);
-		return new Promise((resolve, reject) => {
-			_GM_xmlhttpRequest({
-				method: "GET",
-				url: href,
-				responseType: "document",
-				onload: (response) => {
-					const container = ensureDoc(response.response).getElementById("novelcontent");
-					const nestedCon = container;
-					const ul = container.querySelector("ul");
-					ul.remove();
-					const paragraphs = paragraphsFromElement(nestedCon);
-					const prenexts = ul.querySelectorAll("ul li a");
-					let next;
-					let nextChapter;
-					for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
-						if (element.textContent == "下—页") {
-							next = element;
-							break;
-						} else if (element.textContent == "下—章") {
-							nextChapter = element;
-							nextChapter.textContent = "下一章";
-							break;
-						}
-					}
-					VM_log({
-						next: next?.href,
-						nextChapter: nextChapter?.href,
-						paragraphs
-					});
-					resolve({
-						next: next?.href,
-						nextChapter: nextChapter?.href,
-						paragraphs: paragraphs?.filter((p) => p.textContent.length > 0 && !p.textContent.includes("本章未完"))
-					});
-				},
-				onerror: (response) => {
-					VM_log(["handleSettingPage error", response]);
-					reject(response);
-				},
-				ontimeout: () => {
-					VM_log("handleSettingPage timeout");
-					reject("timeout");
-				}
-			});
-		});
+	function parseFragmentPage$3(doc) {
+		const container = doc.getElementById("novelcontent");
+		const nestedCon = container;
+		const ul = container.querySelector("ul");
+		ul.remove();
+		const paragraphs = paragraphsFromElement(nestedCon);
+		const prenexts = ul.querySelectorAll("ul li a");
+		let next;
+		let nextChapter;
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == "下—页") {
+				next = element;
+				break;
+			} else if (element.textContent == "下—章") {
+				nextChapter = element;
+				nextChapter.textContent = "下一章";
+				break;
+			}
+		}
+		return {
+			next: next?.href,
+			nextChapter: nextChapter?.href,
+			paragraphs
+		};
 	}
-	function getChapterPage$1() {
+	function getChapterPage$3() {
 		const con = document.getElementById("novelcontent");
 		con.className = "";
 		con.id = "";
@@ -2086,7 +1988,6 @@ function foo(bar) {
 			navigationBar.infoAnchor = element;
 		} else if (element.textContent == "下一章") navigationBar.nextAnchor = element;
 		else console.log(element.outerHTML);
-		setAccessKeys(navigationBar);
 		return {
 			mainSection,
 			title,
@@ -2095,13 +1996,19 @@ function foo(bar) {
 	}
 	function handleBuoloumaoRoute() {
 		VM_log("handleBuoloumaoRoute");
-		if (/\/book\/[^/]+/.test(location.pathname)) handleBookPage();
-		else if (/\/read\/[^/]+\/[^/]+/.test(location.pathname)) handleChapterPage();
+		if (/\/book\/[^/]+/.test(location.pathname)) {
+			if (/-\d+\.html/.test(location.pathname)) handleChapterPage$2();
+			else handleBookPage$2();
+		} else if (/\/read\/[^/]+\/[^/]+/.test(location.pathname)) handleChapterPage$2();
 	}
-	function handleBookPage() {
+	function isBoluomaoLike() {
+		const hostname = location.hostname;
+		return hostname.endsWith("boluomao1.com") || hostname.endsWith("yxshufang.com");
+	}
+	function handleBookPage$2() {
 		VM_log("handleBookPage");
 	}
-	function handleChapterPage() {
+	function handleChapterPage$2() {
 		VM_log("handleChapterPage");
 		const con = document.querySelector(".content");
 		const anchors = Array.from(document.querySelectorAll(".readPage a"));
@@ -2113,11 +2020,11 @@ function foo(bar) {
 				multiPage = true;
 				(async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage(a.href);
+					let next = await fetchChaperFragmentPage(a.href, parseFragmentPage$2);
 					con.append(...next.paragraphs);
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage(next.next);
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage$2);
 						VM_log(`result: ${a.href} ${next.paragraphs.length}`);
 						con.append(...next.paragraphs);
 					}
@@ -2125,70 +2032,55 @@ function foo(bar) {
 						a.textContent = "下一章";
 						a.href = next.nextChapter;
 					}
-					rebuildChapterBody(getChapterPage());
+					rebuildChapterBody(getChapterPage$2());
 				})();
 			} else if (a.textContent.includes("下一章")) {
 				(() => {
-					rebuildChapterBody(getChapterPage());
+					rebuildChapterBody(getChapterPage$2());
 				})();
 				multiPage = true;
 			}
 		}
-		if (!multiPage) rebuildChapterBody(getChapterPage());
+		if (!multiPage) rebuildChapterBody(getChapterPage$2());
 		document.head.querySelectorAll("link[href][rel=\"stylesheet\"]").forEach((ln) => ln.remove());
-	}
-	async function fetchChaperFragmentPage(href) {
-		VM_log(`fetchChaperFragmentPage: ${href}`);
-		return new Promise((resolve, reject) => {
-			_GM_xmlhttpRequest({
-				method: "GET",
-				url: href,
-				responseType: "document",
-				onload: (response) => {
-					const doc = ensureDoc(response.response);
-					const nestedCon = doc.querySelector(".content");
-					VM_log("content", nestedCon.outerHTML);
-					nestedCon.querySelectorAll("p").forEach((p) => {
-						if (p.dataset.obf) {
-							if (!p.textContent.trim()) p.append(decode(p.dataset.obf));
-						}
-					});
-					const paragraphs = paragraphsFromElement(nestedCon);
-					const prenexts = Array.from(doc.querySelectorAll(".readPage a"));
-					let next;
-					let nextChapter;
-					for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
-						if (element.textContent.includes("下一页")) {
-							next = element;
-							break;
-						} else if (element.textContent.includes("下一章")) {
-							nextChapter = element;
-							break;
-						}
+		new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.type == "childList") mutation.addedNodes.forEach((it) => {
+					if (it instanceof HTMLDivElement) {
+						if (it.classList.length === 0) it.remove();
 					}
-					VM_log({
-						next: next?.href,
-						nextChapter: nextChapter?.href,
-						paragraphs
-					});
-					resolve({
-						next: next?.href,
-						nextChapter: nextChapter?.href,
-						paragraphs
-					});
-				},
-				onerror: (response) => {
-					VM_log(["handleSettingPage error", response]);
-					reject(response);
-				},
-				ontimeout: () => {
-					VM_log("handleSettingPage timeout");
-					reject("timeout");
-				}
+				});
 			});
-		});
+		}).observe(document.body, { childList: true });
 	}
-	function getChapterPage() {
+	function parseFragmentPage$2(doc) {
+		const nestedCon = doc.querySelector(".content");
+		VM_log("content", nestedCon.outerHTML);
+		nestedCon.querySelectorAll("p").forEach((p) => {
+			if (p.dataset.obf) {
+				if (!p.textContent.trim()) p.append(decode(p.dataset.obf));
+			}
+		});
+		const paragraphs = paragraphsFromElement(nestedCon);
+		const prenexts = Array.from(doc.querySelectorAll(".readPage a"));
+		let next;
+		let nextChapter;
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			if (element.textContent.includes("下一页")) {
+				next = element;
+				break;
+			} else if (element.textContent.includes("下一章")) {
+				nextChapter = element;
+				break;
+			}
+		}
+		return {
+			next: next?.href,
+			nextChapter: nextChapter?.href,
+			paragraphs
+		};
+	}
+	function getChapterPage$2() {
 		const con = document.querySelector(".content");
 		con.className = "";
 		const mainSection = disguiseParagraphs(con);
@@ -2207,7 +2099,6 @@ function foo(bar) {
 				navigationBar.nextAnchor = element;
 			}
 		}
-		setAccessKeys(navigationBar);
 		return {
 			breadcrumbBar: document.querySelector(".position"),
 			title: document.querySelector("h1.title")?.textContent,
@@ -2221,27 +2112,287 @@ function foo(bar) {
 		for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i) ^ i % 127 + 1;
 		return new TextDecoder("utf-8").decode(bytes);
 	}
+	function handleDamiRoute() {
+		VM_log("handleDamiRoute");
+		if (/^\/book\/[^/]+\.html$/.test(location.pathname)) handleBookPage$1();
+		else if (/^\/book\/[^/]+\/[^/]+\.html$/.test(location.pathname)) handleChapterPage$1();
+	}
+	function handleBookPage$1() {
+		VM_log("handleBookPage");
+	}
+	function handleChapterPage$1() {
+		VM_log("handleChapterPage");
+		const con = document.getElementById("htmlContent");
+		let multiPage = false;
+		const linkNext = document.getElementById("linkNext");
+		if (linkNext) {
+			if (linkNext instanceof HTMLAnchorElement) {
+				if (linkNext.textContent.includes("最后一章了")) rebuildChapterBody(getChapterPage$1());
+				else {
+					(() => {
+						rebuildChapterBody(getChapterPage$1());
+					})();
+					multiPage = true;
+				}
+			} else if (linkNext instanceof HTMLSpanElement) {
+				const varName = varnameFromDocument(document);
+				VM_log(`varName = ${varName}`);
+				linkNext.classList.remove("btn", "btn-default");
+				if (varName) {
+					let nextHref = document.defaultView[varName];
+					if (nextHref) {
+						multiPage = true;
+						(async () => {
+							let counter = 0;
+							let next = await fetchChaperFragmentPage(nextHref, parseFragmentPage$1);
+							con.append(...next.paragraphs);
+							while (next.next && counter < 20) {
+								counter++;
+								next = await fetchChaperFragmentPage(next.next, parseFragmentPage$1);
+								VM_log(`result: ${next.next} ${next.paragraphs.length}`);
+								con.append(...next.paragraphs);
+							}
+							if (next.nextChapter) {
+								const nextLink = document.createElement("a");
+								nextLink.id = "linkNext";
+								nextLink.href = next.nextChapter;
+								nextLink.innerHTML = "下一章";
+								linkNext.replaceWith(nextLink);
+							}
+							rebuildChapterBody(getChapterPage$1());
+						})();
+					}
+				}
+			}
+		}
+		if (!multiPage) rebuildChapterBody(getChapterPage$1());
+		document.head.querySelectorAll("link[href][rel=\"stylesheet\"]").forEach((ln) => ln.remove());
+	}
+	function _scriptFromDocument(doc) {
+		const linkNext = doc.getElementById("linkNext");
+		const cls = Array.from(linkNext.classList).filter((it) => !it.startsWith("btn")).join().trim();
+		VM_log(`CLS = ${cls}`);
+		if (cls) {
+			const scripts = Array.from(doc.querySelectorAll("body > div.container.body-content.read-container > script[type]")).filter((it) => it.innerHTML.includes(cls));
+			if (scripts && scripts.length > 0) {
+				VM_log(`scripts ${scripts.length}`);
+				const s = scripts.pop();
+				const m = /var (__.*) = '';/.exec(s?.innerHTML || "");
+				if (m && m?.length > 1) return s;
+			} else VM_log("No scripts");
+		}
+	}
+	function varnameFromDocument(doc) {
+		const s = _scriptFromDocument(doc);
+		if (s) {
+			const m = /var (__.*) = '';/.exec(s?.innerHTML || "");
+			if (m && m?.length > 1) {
+				VM_log(`varName = ${m[1]}`);
+				return m[1];
+			}
+		}
+		return "";
+	}
+	function varScriptsFromDocument(doc) {
+		const s = _scriptFromDocument(doc);
+		if (s) return s.innerHTML.split(/[\r\n]+/).slice(0, 4) || [];
+		return [];
+	}
+	function parseFragmentPage$1(doc) {
+		const paragraphs = paragraphsFromElement(doc.getElementById("htmlContent"));
+		const linkNext = doc.getElementById("linkNext");
+		const page = { paragraphs };
+		if (linkNext instanceof HTMLAnchorElement) {
+			page.nextChapter = linkNext.href;
+			VM_log(`nextChapter: ${page.nextChapter}`);
+		} else {
+			const varName = varnameFromDocument(doc);
+			if (doc.defaultView) page.next = doc.defaultView[varName];
+			else {
+				const lines = [doc.querySelector("body > script")?.innerHTML || "", ...varScriptsFromDocument(doc)];
+				VM_log(`fn = ${lines.join("\r\n")}`);
+				const script = document.createElement("script");
+				script.innerHTML = lines.join("\r\n");
+				document.body.append(script);
+				script.remove();
+				page.next = document.defaultView[varName];
+			}
+			VM_log(`next: ${page.next}`);
+		}
+		return page;
+	}
+	function getChapterPage$1() {
+		const con = document.getElementById("htmlContent");
+		con.className = "";
+		con.querySelectorAll("p").forEach((p) => {
+			const s = p.textContent.trim();
+			if (s) {
+				if (s.includes("退#出#阅#读#模#式") || s.includes("你推荐他的其他作品") || s.includes("米小说移动版") || s.includes("最新章节") || s.includes("完整章节") || p.classList.contains("pmore")) p.remove();
+			} else p.remove();
+		});
+		const mainSection = disguiseParagraphs(con);
+		const prenexts = Array.from(document.querySelectorAll(".readPager a"));
+		const navigationBar = {};
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			element.className = "";
+			switch (element.id) {
+				case "linkPrev":
+					element.innerHTML = "上一章";
+					navigationBar.prevAnchor = element;
+					break;
+				case "linkIndex":
+					element.innerHTML = "目录";
+					navigationBar.infoAnchor = element;
+					break;
+				case "linkNext":
+					element.innerHTML = "下一章";
+					navigationBar.nextAnchor = element;
+			}
+		}
+		return {
+			breadcrumbBar: document.querySelector(".breadcrumb"),
+			title: document.querySelector("h1.readTitle")?.textContent,
+			mainSection,
+			navigationBar
+		};
+	}
+	function handle81kswRoute() {
+		VM_log("handle81kswRoute");
+		if (/\/index\/[^/]+/.test(location.pathname)) handleBookPage();
+		else if (/\/read\/[^/]+\/[^/]+/.test(location.pathname)) handleChapterPage();
+	}
+	function is81kswLike() {
+		return location.hostname.endsWith("81ksw.com");
+	}
+	function handleBookPage() {
+		VM_log("handleBookPage");
+	}
+	function handleChapterPage() {
+		VM_log("handleChapterPage");
+		const con = document.getElementById("content");
+		const anchors = [
+			document.getElementById("prev_url"),
+			document.getElementById("info_url"),
+			document.getElementById("next_url")
+		].filter((it) => it && it instanceof HTMLAnchorElement);
+		let multiPage = false;
+		if (isInIframe) return;
+		for (const a of anchors) {
+			VM_log(a.textContent);
+			if (a.textContent.includes("下一页")) {
+				multiPage = true;
+				(async () => {
+					let counter = 0;
+					let next = await fetchChaperFragmentPage(a.href, parseFragmentPage);
+					con.append(...next.paragraphs);
+					while (next.next && counter < 20) {
+						counter++;
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage);
+						VM_log(`result: ${a.href} ${next.paragraphs.length}`);
+						con.append(...next.paragraphs);
+					}
+					if (next.nextChapter) {
+						a.textContent = "下一章";
+						a.href = next.nextChapter;
+					}
+					rebuildChapterBody(getChapterPage());
+				})();
+			} else if (a.textContent.includes("下一章")) {
+				(() => {
+					rebuildChapterBody(getChapterPage());
+				})();
+				multiPage = true;
+			}
+		}
+		if (!multiPage) rebuildChapterBody(getChapterPage());
+		document.head.querySelectorAll("link[href][rel=\"stylesheet\"]").forEach((ln) => ln.remove());
+		new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.type == "childList") mutation.addedNodes.forEach((it) => {
+					if (it instanceof HTMLDivElement) {
+						if (it.classList.length === 0) it.remove();
+					}
+				});
+			});
+		}).observe(document.body, { childList: true });
+	}
+	function parseFragmentPage(doc) {
+		const nestedCon = doc.getElementById("content");
+		VM_log("content", nestedCon.outerHTML);
+		const paragraphs = paragraphsFromElement(nestedCon);
+		const prenexts = [doc.getElementById("next_url")].filter((it) => it && it instanceof HTMLAnchorElement);
+		let next;
+		let nextChapter;
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			if (element.textContent.includes("下一页")) {
+				next = element;
+				break;
+			} else if (element.textContent.includes("下一章")) {
+				nextChapter = element;
+				break;
+			}
+		}
+		return {
+			next: next?.href,
+			nextChapter: nextChapter?.href,
+			paragraphs
+		};
+	}
+	function getChapterPage() {
+		const con = document.querySelector(".content");
+		con.className = "";
+		const mainSection = disguiseParagraphs(con);
+		const prenexts = [
+			document.getElementById("prev_url"),
+			document.getElementById("info_url"),
+			document.getElementById("next_url")
+		].filter((it) => it && it instanceof HTMLAnchorElement);
+		const navigationBar = {};
+		for (const element of prenexts) if (element instanceof HTMLAnchorElement) {
+			element.className = "";
+			if (element.textContent.includes("上一章")) {
+				element.innerHTML = "上一章";
+				navigationBar.prevAnchor = element;
+			} else if (element.textContent.includes("目录")) {
+				element.innerHTML = "目录";
+				navigationBar.infoAnchor = element;
+			} else if (element.textContent.includes("下一章")) {
+				element.innerHTML = "下一章";
+				navigationBar.nextAnchor = element;
+			}
+		}
+		const breadcrumbBar = document.querySelector("div.layout-tit");
+		breadcrumbBar.querySelector(".reader-fun")?.remove();
+		return {
+			breadcrumbBar,
+			title: document.querySelector("h1.title")?.textContent,
+			mainSection,
+			navigationBar
+		};
+	}
 	document.defaultView.Prism = globalThis.Prism;
 	VM_log("init");
 	function handleRoute() {
-		if (location.host.endsWith("deqixs.com") || location.host.endsWith("sudugu.org") || location.host.endsWith("shudugu.org") || location.host.endsWith("deqixs.org")) {
+		if (location.host.endsWith("deqixs.com") || location.host.endsWith("deqixs.org") || isSudugu()) {
 			handleDeqiRoute();
 			_GM_registerMenuCommand("脚本设置", function() {
-				if (location.host.endsWith("deqixs.com")) _GM_openInTab("/pifu/#script-setting");
-				else _GM_openInTab("/i/pifu.aspx#script-setting");
+				if (location.host.endsWith("deqixs.com")) _GM_openInTab(`${location.protocol}//${location.host}/pifu/#script-setting`);
+				else _GM_openInTab(`${location.protocol}//${location.host}/i/pifu.aspx#script-setting`);
 			});
 		} else if (location.hostname == "www.ddxiaoshuo.cc") {
 			handleDDxiaoshuoRoute();
 			_GM_registerMenuCommand("脚本设置", function() {
-				_GM_openInTab("/history.html#script-setting");
+				_GM_openInTab(`${location.protocol}//${location.host}/history.html#script-setting`);
 			});
 		} else if (location.hostname == "www.cuoceng.com" || location.hostname == "cuoceng.com") handleCuoCengRoute();
 		else if (location.hostname.endsWith("kudushu.org")) handleKudushuRoute();
-		else if (location.hostname.endsWith("boluomao1.com")) handleBuoloumaoRoute();
-		else if (location.hostname == "www.biqu33.cc" || location.pathname.startsWith("/book/")) {
+		else if (location.hostname.endsWith("dmxs2.com")) handleDamiRoute();
+		else if (isBoluomaoLike()) handleBuoloumaoRoute();
+		else if (is81kswLike()) handle81kswRoute();
+		else if (location.hostname.endsWith("beqg.cc") || location.hostname.endsWith("biqu33.cc")) {
 			handleBiqu33Route();
 			_GM_registerMenuCommand("脚本设置", function() {
-				_GM_openInTab("/#script-setting");
+				_GM_openInTab(`${location.protocol}//${location.host}/#script-setting`);
 			});
 		}
 		_GM_registerMenuCommand("脚本设置", showConfigDialog);

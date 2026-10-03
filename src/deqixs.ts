@@ -2,13 +2,10 @@ import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseMode, refreshInterval, setupCodeTheme } from './config';
 import {
-	ensureDoc,
+	fetchChaperFragmentPage,
 	isInIframe,
-	NavLinks,
-	Page,
 	paragraphsFromElement,
 	rebuildChapterBody,
-	setAccessKeys,
 	VM_log
 } from './utils';
 function handleBookPage() {
@@ -32,6 +29,9 @@ function handleBookPage() {
 	itemtxt.firstElementChild!.appendChild(settingAnchor);
 
 	if (!finished) {
+		if (__LITE__) {
+			return;
+		}
 		const title = itemtxt.querySelector('h1>a')!.textContent;
 		const latestChapter = itemtxt.querySelector('ul>li>a')!.textContent;
 
@@ -60,62 +60,32 @@ function handleSettingPage() {
 	container.appendChild(settingForm);
 }
 
-type FragmentPage = {
-	next?: string;
-	nextChapter?: string;
-	paragraphs: HTMLParagraphElement[];
-};
+function parseFragmentPage(doc: Document): FragmentPage {
+	const container = doc.querySelector('div.container')!;
+	const nestedCon = doc.querySelector('div.container .con')!;
 
-async function fetchChaperFragmentPage(href: string): Promise<FragmentPage> {
-	const p = new Promise<FragmentPage>((resolve, reject) => {
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: href,
-			responseType: 'document',
-			onload: (response) => {
-				const doc = ensureDoc(response.response);
-				const container = doc.querySelector('div.container')!;
-				const nestedCon = doc.querySelector('div.container .con')!;
+	const paragraphs = paragraphsFromElement(nestedCon);
+	const prenexts = container.querySelectorAll('div.prenext a');
+	let next: HTMLAnchorElement | undefined;
+	let nextChapter: HTMLAnchorElement | undefined;
 
-				const paragraphs = paragraphsFromElement(nestedCon);
-				const prenexts = container.querySelectorAll('div.prenext a');
-				let next: HTMLAnchorElement | undefined;
-				let nextChapter: HTMLAnchorElement | undefined;
-
-				for (const element of prenexts) {
-					if (element instanceof HTMLAnchorElement) {
-						if (element.textContent == '下一页') {
-							next = element;
-							break;
-						} else if (element.textContent == '下一章') {
-							nextChapter = element;
-							break;
-						}
-					}
-				}
-
-				VM_log({
-					next: next?.href,
-					nextChapter: nextChapter?.href,
-					paragraphs: paragraphs
-				});
-				resolve({
-					next: next?.href,
-					nextChapter: nextChapter?.href,
-					paragraphs: paragraphs
-				});
-			},
-			onerror: (response) => {
-				VM_log(['handleSettingPage error', response]);
-				reject(response);
-			},
-			ontimeout: () => {
-				VM_log('handleSettingPage timeout');
-				reject('timeout');
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			if (element.textContent == '下一页') {
+				next = element;
+				break;
+			} else if (element.textContent == '下一章') {
+				nextChapter = element;
+				break;
 			}
-		});
-	});
-	return p;
+		}
+	}
+
+	return {
+		next: next?.href,
+		nextChapter: nextChapter?.href,
+		paragraphs: paragraphs
+	};
 }
 
 function handleChaperPage() {
@@ -133,12 +103,21 @@ function handleChaperPage() {
 			if (element.textContent == '下一页') {
 				void (async () => {
 					let counter = 0;
-					let next = await fetchChaperFragmentPage(element.href);
-					con.append(...next.paragraphs);
+					let next = await fetchChaperFragmentPage(element.href, parseFragmentPage);
+					if (next.paragraphs.length === 0) {
+						con.append(...(await fetchParagraphes(element.href)));
+					} else {
+						con.append(...next.paragraphs);
+					}
 					while (next.next && counter < 20) {
 						counter++;
-						next = await fetchChaperFragmentPage(next.next);
-						con.append(...next.paragraphs);
+						const href = next.next;
+						next = await fetchChaperFragmentPage(next.next, parseFragmentPage);
+						if (next.paragraphs.length === 0) {
+							con.append(...(await fetchParagraphes(href)));
+						} else {
+							con.append(...next.paragraphs);
+						}
 					}
 
 					if (next.nextChapter) {
@@ -220,13 +199,26 @@ function handleSuduguRoute() {
 	}
 }
 
-function isSudugu(): boolean {
-	return location.host.endsWith('sudugu.org') || location.host.endsWith('shudugu.org');
+export function isSudugu(): boolean {
+	const hostname = location.hostname;
+	return (
+		hostname.endsWith('shudugu.org') ||
+		hostname.endsWith('sudugu.org') ||
+		hostname.endsWith('sudugu.cc') ||
+		hostname.endsWith('suduguu.com') ||
+		hostname.includes('sudugu')
+	);
 }
 
 function getChapterPage(): Page {
 	const con = document.querySelector('div.container .con')!;
 	con.className = '';
+	con.querySelectorAll('p').forEach((p) => {
+		const s = p.textContent;
+		if (s.includes('官方纸飞机') || s.includes('完整章节')) {
+			p.remove();
+		}
+	});
 	const mainSection = disguiseParagraphs(con);
 
 	const prenexts = document.querySelectorAll('div.prenext a');
@@ -242,15 +234,52 @@ function getChapterPage(): Page {
 			}
 		}
 	}
-	setAccessKeys(navigationBar);
 	const breadcrumbBar = document.querySelector('div.container > div.submenu h1')!;
-	// const title = con.querySelector('p')?.textContent;
+	let title = breadcrumbBar
+		?.querySelector('a:last-child')
+		?.nextSibling?.textContent?.replace(/(^ > |（\d+ \/ \d+）$)/g, '');
 	const page = {
 		breadcrumbBar,
-		// title,
+		title,
 		mainSection,
 		navigationBar
 	};
 
 	return page;
+}
+
+async function fetchParagraphes(href: string): Promise<HTMLParagraphElement[]> {
+	const u = new URL(href, location.href);
+	const pathname = u.pathname;
+	// /52/4662012-2.html
+	const segments = pathname.split(/[/\-.]/).filter((s) => s.length > 0 && s !== 'html');
+
+	const req = {
+		method: 'GET',
+		url: new URL(
+			`/i/a.aspx?id=${segments[1]}&p=${segments[2]}&bid=${segments[0]}`,
+			location.href
+		).toString()
+	};
+	const p = new Promise<HTMLParagraphElement[]>((resolve, reject) => {
+		GM_xmlhttpRequest({
+			...req,
+			onload: (response) => {
+				const parser = new DOMParser();
+				const s = response.responseText.replace('document.write("', '').replace('");', '');
+				const realDoc = parser.parseFromString(s, 'text/html');
+				resolve(paragraphsFromElement(realDoc.body));
+			},
+			onerror: (response) => {
+				VM_log(['fetchChaperFragmentPage error', response]);
+				reject(response);
+			},
+			ontimeout: () => {
+				VM_log('fetchChaperFragmentPage timeout');
+				reject('timeout');
+			}
+		});
+	});
+
+	return p;
 }

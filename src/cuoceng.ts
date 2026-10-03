@@ -1,7 +1,7 @@
 import { GM_openInTab, GM_registerMenuCommand } from '$';
 import { disguiseParagraphs, setupExtendLanguageSupport } from './code';
 import { createSettingForm, disguiseMode, setupCodeTheme } from './config';
-import { rebuildChapterBody, setAccessKeys } from './utils';
+import { rebuildChapterBody } from './utils';
 
 function handleChapterPage() {
 	const showReading = document.getElementById('showReading')!;
@@ -12,7 +12,6 @@ function handleChapterPage() {
 	const infoAnchor = nextPageBox.querySelector('.dir')! as HTMLAnchorElement;
 	const nextAnchor = nextPageBox.querySelector('.next')! as HTMLAnchorElement;
 	const navigationBar = { prevAnchor, infoAnchor, nextAnchor };
-	setAccessKeys(navigationBar);
 
 	const title = bookTitle.textContent;
 	const breadcrumbBar = document.querySelector('.bookNav')!;

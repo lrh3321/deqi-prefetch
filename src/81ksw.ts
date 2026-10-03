@@ -1,5 +1,4 @@
 import { disguiseParagraphs } from './code';
-import { createSettingForm } from './config';
 import {
 	fetchChaperFragmentPage,
 	isInIframe,
@@ -8,70 +7,40 @@ import {
 	VM_log
 } from './utils';
 
-function cleanupBody() {
-	const children = Array.from(document.body.children).filter((it) => it.id != 'ss-reader-main');
-	children.forEach((it) => {
-		it.remove();
-	});
-}
+export function handle81kswRoute() {
+	VM_log('handle81kswRoute');
 
-function cleanBookPage() {
-	const articleMain = document.createElement('div');
-	articleMain.id = 'ss-reader-main';
-
-	const containers = Array.from(document.body.querySelectorAll('.container'));
-	containers.forEach((container) => {
-		container.className = '';
-		articleMain.appendChild(container);
-	});
-	document.body.appendChild(articleMain);
-	cleanupBody();
-}
-function handleSettingPage() {
-	const articleMain = document.getElementById('ss-reader-main')!;
-	const settingForm = createSettingForm();
-	articleMain.appendChild(settingForm);
-}
-
-export function handleDDxiaoshuoRoute() {
-	document.body.style.display = 'flex';
-	document.body.style.justifyContent = 'center';
-
-	const segments = location.pathname.split('/').filter(Boolean);
-	const lastSegment = segments[segments.length - 1];
-	switch (segments.length) {
-		case 0:
-			document.body.style.flexDirection = 'column';
-			break;
-		case 1:
-			cleanBookPage();
-			if (location.pathname == '/history.html') {
-				handleSettingPage();
-			}
-			break;
-		case 2:
-			if (/[\d\w]+_\d+$/.test(lastSegment)) {
-				// 不是章节首页
-				return;
-			}
-			handleChapterPage();
-			break;
-		default:
-			break;
+	if (/\/index\/[^/]+/.test(location.pathname)) {
+		handleBookPage();
+	} else if (/\/read\/[^/]+\/[^/]+/.test(location.pathname)) {
+		handleChapterPage();
 	}
+}
+
+export function is81kswLike() {
+	const hostname = location.hostname;
+	return hostname.endsWith('81ksw.com');
+}
+
+function handleBookPage() {
+	VM_log('handleBookPage');
 }
 
 function handleChapterPage() {
 	VM_log('handleChapterPage');
 
-	const con = document.getElementById('article')!;
+	const con = document.getElementById('content')!;
+	const anchors = [
+		document.getElementById('prev_url'),
+		document.getElementById('info_url'),
+		document.getElementById('next_url')
+	].filter((it) => it && it instanceof HTMLAnchorElement) as HTMLAnchorElement[];
 	let multiPage = false;
 	if (isInIframe) {
 		return;
 	}
-	const a = document.getElementById('next_url') as HTMLAnchorElement | null;
 
-	if (a) {
+	for (const a of anchors) {
 		VM_log(a.textContent);
 		if (a.textContent.includes('下一页')) {
 			multiPage = true;
@@ -102,31 +71,48 @@ function handleChapterPage() {
 			multiPage = true;
 		}
 	}
-
 	if (!multiPage) {
 		const page = getChapterPage();
 		rebuildChapterBody(page);
 	}
 
 	document.head.querySelectorAll('link[href][rel="stylesheet"]').forEach((ln) => ln.remove());
+
+	const ob = new MutationObserver((mutations: MutationRecord[]) => {
+		mutations.forEach((mutation) => {
+			if (mutation.type == 'childList') {
+				mutation.addedNodes.forEach((it) => {
+					if (it instanceof HTMLDivElement) {
+						if (it.classList.length === 0) {
+							it.remove();
+						}
+					}
+				});
+			}
+		});
+	});
+	ob.observe(document.body, { childList: true });
 }
 
 function parseFragmentPage(doc: Document): FragmentPage {
-	const nestedCon = doc.getElementById('article')!;
+	const nestedCon = doc.getElementById('content')!;
 	VM_log('content', nestedCon.outerHTML);
 
 	const paragraphs = paragraphsFromElement(nestedCon);
-
+	const prenexts = [doc.getElementById('next_url')].filter(
+		(it) => it && it instanceof HTMLAnchorElement
+	) as HTMLAnchorElement[];
 	let next: HTMLAnchorElement | undefined;
 	let nextChapter: HTMLAnchorElement | undefined;
 
-	const element = doc.getElementById('next_url');
-	if (element) {
+	for (const element of prenexts) {
 		if (element instanceof HTMLAnchorElement) {
 			if (element.textContent.includes('下一页')) {
 				next = element;
+				break;
 			} else if (element.textContent.includes('下一章')) {
 				nextChapter = element;
+				break;
 			}
 		}
 	}
@@ -139,21 +125,14 @@ function parseFragmentPage(doc: Document): FragmentPage {
 }
 
 function getChapterPage(): Page {
-	let con = document.getElementById('article')!;
+	const con = document.querySelector('.content')!;
 	con.className = '';
-	if (con.tagName == 'ARTICLE') {
-		const d = document.createElement('div');
-		d.innerHTML = con.innerHTML;
-		con.replaceWith(d);
-		con = d;
-	}
 	const mainSection = disguiseParagraphs(con);
-
 	const prenexts = [
-		document.getElementById('prev_url') as HTMLAnchorElement | null,
-		document.getElementById('info_url') as HTMLAnchorElement | null,
-		document.getElementById('next_url') as HTMLAnchorElement | null
-	];
+		document.getElementById('prev_url'),
+		document.getElementById('info_url'),
+		document.getElementById('next_url')
+	].filter((it) => it && it instanceof HTMLAnchorElement) as HTMLAnchorElement[];
 	const navigationBar: NavLinks = {};
 	for (const element of prenexts) {
 		if (element instanceof HTMLAnchorElement) {
@@ -170,8 +149,9 @@ function getChapterPage(): Page {
 			}
 		}
 	}
-	const breadcrumbBar = document.querySelector('.info-title') as HTMLElement;
-	const title = document.title.split('-').shift();
+	const breadcrumbBar = document.querySelector('div.layout-tit')!;
+	breadcrumbBar.querySelector('.reader-fun')?.remove();
+	const title = document.querySelector('h1.title')?.textContent;
 	const page = {
 		breadcrumbBar,
 		title,

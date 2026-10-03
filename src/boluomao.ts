@@ -1,13 +1,9 @@
-import { GM_xmlhttpRequest } from '$';
 import { disguiseParagraphs } from './code';
 import {
-	ensureDoc,
+	fetchChaperFragmentPage,
 	isInIframe,
-	NavLinks,
-	Page,
 	paragraphsFromElement,
 	rebuildChapterBody,
-	setAccessKeys,
 	VM_log
 } from './utils';
 
@@ -15,10 +11,19 @@ export function handleBuoloumaoRoute() {
 	VM_log('handleBuoloumaoRoute');
 
 	if (/\/book\/[^/]+/.test(location.pathname)) {
-		handleBookPage();
+		if (/-\d+\.html/.test(location.pathname)) {
+			handleChapterPage();
+		} else {
+			handleBookPage();
+		}
 	} else if (/\/read\/[^/]+\/[^/]+/.test(location.pathname)) {
 		handleChapterPage();
 	}
+}
+
+export function isBoluomaoLike() {
+	const hostname = location.hostname;
+	return hostname.endsWith('boluomao1.com') || hostname.endsWith('yxshufang.com');
 }
 
 function handleBookPage() {
@@ -41,11 +46,11 @@ function handleChapterPage() {
 			multiPage = true;
 			void (async () => {
 				let counter = 0;
-				let next = await fetchChaperFragmentPage(a.href);
+				let next = await fetchChaperFragmentPage(a.href, parseFragmentPage);
 				con.append(...next.paragraphs);
 				while (next.next && counter < 20) {
 					counter++;
-					next = await fetchChaperFragmentPage(next.next);
+					next = await fetchChaperFragmentPage(next.next, parseFragmentPage);
 					VM_log(`result: ${a.href} ${next.paragraphs.length}`);
 					con.append(...next.paragraphs);
 				}
@@ -72,71 +77,55 @@ function handleChapterPage() {
 	}
 
 	document.head.querySelectorAll('link[href][rel="stylesheet"]').forEach((ln) => ln.remove());
-}
 
-type FragmentPage = {
-	next?: string;
-	nextChapter?: string;
-	paragraphs: HTMLParagraphElement[];
-};
-
-async function fetchChaperFragmentPage(href: string): Promise<FragmentPage> {
-	VM_log(`fetchChaperFragmentPage: ${href}`);
-	const p = new Promise<FragmentPage>((resolve, reject) => {
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: href,
-			responseType: 'document',
-			onload: (response) => {
-				const doc = ensureDoc(response.response);
-				const nestedCon = doc.querySelector('.content')!;
-				VM_log('content', nestedCon.outerHTML);
-				nestedCon.querySelectorAll('p').forEach((p) => {
-					if (p.dataset.obf) {
-						if (!p.textContent.trim()) {
-							p.append(decode(p.dataset.obf));
+	const ob = new MutationObserver((mutations: MutationRecord[]) => {
+		mutations.forEach((mutation) => {
+			if (mutation.type == 'childList') {
+				mutation.addedNodes.forEach((it) => {
+					if (it instanceof HTMLDivElement) {
+						if (it.classList.length === 0) {
+							it.remove();
 						}
 					}
 				});
-				const paragraphs = paragraphsFromElement(nestedCon);
-				const prenexts = Array.from<HTMLAnchorElement>(doc.querySelectorAll('.readPage a'));
-				let next: HTMLAnchorElement | undefined;
-				let nextChapter: HTMLAnchorElement | undefined;
-
-				for (const element of prenexts) {
-					if (element instanceof HTMLAnchorElement) {
-						if (element.textContent.includes('下一页')) {
-							next = element;
-							break;
-						} else if (element.textContent.includes('下一章')) {
-							nextChapter = element;
-							break;
-						}
-					}
-				}
-
-				VM_log({
-					next: next?.href,
-					nextChapter: nextChapter?.href,
-					paragraphs: paragraphs
-				});
-				resolve({
-					next: next?.href,
-					nextChapter: nextChapter?.href,
-					paragraphs: paragraphs
-				});
-			},
-			onerror: (response) => {
-				VM_log(['handleSettingPage error', response]);
-				reject(response);
-			},
-			ontimeout: () => {
-				VM_log('handleSettingPage timeout');
-				reject('timeout');
 			}
 		});
 	});
-	return p;
+	ob.observe(document.body, { childList: true });
+}
+
+function parseFragmentPage(doc: Document): FragmentPage {
+	const nestedCon = doc.querySelector('.content')!;
+	VM_log('content', nestedCon.outerHTML);
+	nestedCon.querySelectorAll('p').forEach((p) => {
+		if (p.dataset.obf) {
+			if (!p.textContent.trim()) {
+				p.append(decode(p.dataset.obf));
+			}
+		}
+	});
+	const paragraphs = paragraphsFromElement(nestedCon);
+	const prenexts = Array.from<HTMLAnchorElement>(doc.querySelectorAll('.readPage a'));
+	let next: HTMLAnchorElement | undefined;
+	let nextChapter: HTMLAnchorElement | undefined;
+
+	for (const element of prenexts) {
+		if (element instanceof HTMLAnchorElement) {
+			if (element.textContent.includes('下一页')) {
+				next = element;
+				break;
+			} else if (element.textContent.includes('下一章')) {
+				nextChapter = element;
+				break;
+			}
+		}
+	}
+
+	return {
+		next: next?.href,
+		nextChapter: nextChapter?.href,
+		paragraphs: paragraphs
+	};
 }
 
 function getChapterPage(): Page {
@@ -161,7 +150,6 @@ function getChapterPage(): Page {
 			}
 		}
 	}
-	setAccessKeys(navigationBar);
 	const breadcrumbBar = document.querySelector('.position')!;
 	const title = document.querySelector('h1.title')?.textContent;
 	const page = {
