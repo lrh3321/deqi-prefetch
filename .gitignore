@@ -141,7 +141,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -193,5 +192,5 @@ dist
 
 .pnpm-store
 
-!/dist
+/dist/*
 !/dist/*.user.js

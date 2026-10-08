@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite-plus';
-import { loadEnv } from 'vite-plus';
 import monkey from 'vite-plugin-monkey';
 import type { MonkeyOption } from 'vite-plugin-monkey';
 
@@ -13,7 +12,7 @@ const monkeyOption: MonkeyOption = {
 		downloadURL: 'https://update.greasyfork.org/scripts/537588/Deqi%20Prefech.user.js',
 		source: 'https://github.com/lrh3321/deqi-prefetch',
 		supportURL: 'https://github.com/lrh3321/deqi-prefetch/issues',
-		version: '2026-10-040',
+		version: '2026-10-260',
 		description:
 			'得奇小说网, biqu33.cc, ddxiaoshuo.cc, cuoceng.com 看单个章节免翻页，把小说伪装成代码',
 		author: 'LRH3321',
@@ -26,12 +25,11 @@ const monkeyOption: MonkeyOption = {
 			'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js'
 		],
 		match: [
-			'*://*.deqixs.org/*',
 			'*://*.shudugu.org/*',
 			'*://*.sudugu.cc/*',
 			'*://*.suduguu.com/*',
 			'*://*.sudugu.org/*',
-			'*://*.sudugu.org/i/pifu.aspx',
+			'*://*.deqixs.org/*',
 			'*://*.deqixs.com/pifu/',
 			'*://*.deqixs.com/xiaoshuo/*/*.html',
 			'*://*.deqixs.com/xiaoshuo/*/',
@@ -44,8 +42,13 @@ const monkeyOption: MonkeyOption = {
 			'*://*.ddxiaoshuo.cc/*',
 			'*://*.cuoceng.com/*',
 			'*://*.dmxs2.com/book/*',
+			'*://*.wanbenshenzhan.com/*',
 			'*://*.81ksw.com/index/*',
-			'*://*.81ksw.com/read/*'
+			'*://*.81ksw.com/read/*',
+			'*://*.bishuxsw.com/book/*',
+			'*://*.piaohuaxs.com/book/*',
+			'*://*.96cbtxt.com/book/*',
+			'*://*.202book.com/book/*'
 		],
 		connect: ['self'],
 		grant: [
@@ -64,20 +67,22 @@ const monkeyOption: MonkeyOption = {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-	const env = loadEnv(mode, process.cwd(), '');
-
-	if (command === 'build' && env.LITE === 'ON') {
+	if (command === 'build' && mode.includes('lite')) {
 		monkeyOption.build = {
 			fileName: 'deqi-prefetch-lite.user.js'
 		};
 		if (monkeyOption.userscript) {
 			monkeyOption.userscript.name = 'Deqi Prefech Lite';
 			monkeyOption.userscript.require = undefined;
+			if (mode.includes('vconsole')) {
+				monkeyOption.userscript.connect = ['self', 'cdn.jsdelivr.net'];
+			}
 		}
 	}
 	return {
 		define: {
-			__LITE__: env.LITE === 'ON'
+			__LITE__: mode.includes('lite'),
+			__VSCONSOLE__: mode.includes('vconsole')
 		},
 		lint: { options: { typeAware: true, typeCheck: true }, ignorePatterns: ['dist/**'] },
 		fmt: {

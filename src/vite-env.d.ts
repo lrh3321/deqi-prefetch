@@ -4,6 +4,11 @@
 /// <reference types="@types/prismjs/index" />
 type DisguiseMode = 'none' | 'code';
 
+declare module 'https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js' {
+	import VConsole from 'vconsole';
+	export default VConsole;
+}
+
 declare namespace Prism {
 	/**
 	 * A function which will be invoked after an element was successfully highlighted.
@@ -189,8 +194,9 @@ declare namespace Prism {
 }
 
 declare const __LITE__: boolean;
+declare const __VSCONSOLE__: boolean;
 
-type ThemeMode = 'dark' | 'light' | 'auto';
+type ThemeMode = 'dark' | 'light' | '';
 
 type PageURL = { next?: string; nextChapter?: string };
 
@@ -214,7 +220,7 @@ type CleanPage = {
 };
 
 type NavLinks = {
-	prevAnchor?: HTMLAnchorElement;
-	infoAnchor?: HTMLAnchorElement;
-	nextAnchor?: HTMLAnchorElement;
+	prevAnchor?: HTMLAnchorElement | null;
+	infoAnchor?: HTMLAnchorElement | null;
+	nextAnchor?: HTMLAnchorElement | null;
 };
