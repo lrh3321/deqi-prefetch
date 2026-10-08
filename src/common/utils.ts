@@ -1,6 +1,8 @@
-import { GM_log, GM_xmlhttpRequest, GmLogType } from '$';
+import { GM_info, GM_log, GM_xmlhttpRequest, GmLogType } from '$';
+import { disguiseToCode } from './code';
 import {
 	bookPageAccessKey,
+	disguiseMode,
 	nextChapterAccessKey,
 	previousChapterAccessKey,
 	setupConfigButton
@@ -8,13 +10,38 @@ import {
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole({ theme: 'dark' });
 // console.log(vConsole.version);
+export const isViaBrowser = GM_info.scriptHandler === 'Via';
 
 export let VM_log: GmLogType = GM_log;
 
-// VM_log = function (message: any): void {
-// 	GM_log(message);
-// 	console.log(message);
-// };
+if (__VSCONSOLE__) {
+	// import('https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js')
+	// 	.then((module) => {
+	// 		console.log('module', module); // 模块的导出内容
+	// 		console.log('module.default', module.default); // 模块的导出内容
+	// 		const VConsole = module.default || module;
+	// 		const vConsole = new VConsole({});
+	// 		VM_log = function (message: any): void {
+	// 			GM_log(message);
+	// 			vConsole.log.log(message);
+	// 		};
+	// 		vConsole.show();
+	// 	})
+	// 	.catch((err) => console.error(err));
+	const script = document.createElement('script');
+	script.src = 'https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js';
+	script.onload = () => {
+		const VConsole = (document.defaultView as any).VConsole;
+		console.log('VConsole', VConsole);
+		const vConsole = new VConsole({});
+		VM_log = function (message: any): void {
+			GM_log(message);
+			vConsole.log.log(message);
+		};
+		vConsole.show();
+	};
+	document.head.append(script);
+}
 
 /**
  * 获取代码主题的CSS文件URL
@@ -42,6 +69,24 @@ export function getCodeThemeURL(theme: string): string {
 	}
 	// 第三方主题使用cdnjs链接
 	return `https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/${theme}.min.css`;
+}
+
+export function disguiseParagraphs(container: Element): Element {
+	if (__LITE__) {
+		return container;
+	}
+
+	switch (disguiseMode) {
+		case 'none':
+			(container as HTMLElement).style.fontSize = 'var(--novel-font-size)';
+			(container as HTMLElement).style.fontFamily = 'var(--novel-font-family)';
+			break;
+		case 'code':
+		default:
+			// 伪装成代码
+			return disguiseToCode(container);
+	}
+	return container;
 }
 
 /**
@@ -89,6 +134,7 @@ export function releaseCopy() {
 		}
 		native_replaceState(data, unused, url);
 	};
+	void unregisterServiceWorkers();
 }
 
 export const isInIframe = window.self !== window.top;
@@ -128,12 +174,14 @@ export function rebuildChapterBody(page: Page): CleanPage {
 	const root = document.createElement('div');
 	root.className = 'article-root';
 
+	page.title = page.title?.trim();
 	const header = buildNovelHeader(page);
 	const main = buildNovelMain(page);
 	const footer = buildNovelFooter(page.navigationBar);
 
 	root.append(header, document.createElement('hr'), main, document.createElement('hr'), footer);
 	newBody.append(root);
+	document.body.querySelectorAll('pre.debug').forEach((pre) => root.append(pre));
 	document.body.replaceWith(newBody);
 
 	const scripts = Array.from(document.head.querySelectorAll('script'));
@@ -174,8 +222,11 @@ export function updateStyle(pre: HTMLPreElement) {
 	}
 }
 
-export function paragraphsFromElement(el: Element): HTMLParagraphElement[] {
+export function paragraphsFromElement(el: Element | null): HTMLParagraphElement[] {
 	const paragraphs: HTMLParagraphElement[] = [];
+	if (!el) {
+		return paragraphs;
+	}
 
 	let paragraph = el.ownerDocument.createElement('p');
 	const appendParagraph = () => {
@@ -238,7 +289,7 @@ export function paragraphsFromElement(el: Element): HTMLParagraphElement[] {
 	return paragraphs;
 }
 
-type ParseFragmentCallback = (doc: Document) => FragmentPage;
+type ParseFragmentCallback = (doc: Document) => Promise<FragmentPage>;
 
 export async function fetchChaperFragmentPage(
 	href: string,
@@ -251,13 +302,37 @@ export async function fetchChaperFragmentPage(
 			url: href,
 			responseType: 'document',
 			onload: (response) => {
+				if (isViaBrowser) {
+					if (response.finalUrl != href && response.finalUrl.includes('login')) {
+						// prompt('Via', response.finalUrl);
+						void fetch(href)
+							.then((res) => {
+								void res
+									.text()
+									.then((text) => {
+										// const pre = document.createElement('pre');
+										// pre.textContent = text;
+										// pre.className = 'debug';
+										// document.body.appendChild(pre);
+
+										const doc = ensureDoc(text);
+										doc.documentElement.dataset.src = href;
+										const f = callback(doc);
+										resolve(f);
+									})
+									.catch(reject);
+							})
+							.catch(reject);
+						return;
+					}
+				}
 				const doc = ensureDoc(response.response);
+				doc.documentElement.dataset.src = href;
 				const f = callback(doc);
-				VM_log(f);
 				resolve(f);
 			},
 			onerror: (response) => {
-				VM_log(['fetchChaperFragmentPage error', response]);
+				VM_log('fetchChaperFragmentPage error', response);
 				reject(response);
 			},
 			ontimeout: () => {
@@ -276,6 +351,9 @@ function buildNovelHeader(page: Page): HTMLElement {
 		const breadcrumb = document.createElement('ol');
 		breadcrumb.className = 'breadcrumb';
 		breadcrumbBar.querySelectorAll('a').forEach((a) => {
+			if (!a.textContent.trim()) {
+				return;
+			}
 			const li = document.createElement('li');
 			const newA = a.cloneNode(true);
 			li.appendChild(newA);
@@ -329,12 +407,15 @@ function buildNovelFooter(nav: NavLinks): HTMLElement {
 	const navBar = document.createElement('nav');
 	navBar.className = 'article-nav';
 	if (nav.prevAnchor) {
+		nav.prevAnchor.innerHTML = '上一章';
 		navBar.appendChild(nav.prevAnchor);
 	}
 	if (nav.infoAnchor) {
+		nav.infoAnchor.innerHTML = '目录';
 		navBar.appendChild(nav.infoAnchor);
 	}
 	if (nav.nextAnchor) {
+		nav.nextAnchor.innerHTML = '下一章';
 		navBar.appendChild(nav.nextAnchor);
 	}
 	navBar.insertAdjacentHTML('beforeend', '<a href="/">小说列表</a>');
@@ -380,4 +461,17 @@ export function freezePage() {
 	// 5. 冻结表单、链接
 	document.querySelectorAll('a').forEach((a) => (a.onclick = (e) => e.preventDefault()));
 	document.querySelectorAll('form').forEach((f) => (f.onsubmit = (e) => e.preventDefault()));
+}
+
+export function tidyStyle() {
+	document.head.querySelectorAll('link[href][rel="stylesheet"]').forEach((ln) => ln.remove());
+}
+
+export async function unregisterServiceWorkers() {
+	if ('serviceWorker' in navigator) {
+		const registrations = await navigator.serviceWorker.getRegistrations();
+		for (let registration of registrations) {
+			await registration.unregister();
+		}
+	}
 }

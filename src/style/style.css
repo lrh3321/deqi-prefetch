@@ -5,7 +5,7 @@
 img[alt],
 .menu,
 .header p,
-h2 a,
+h2:not(.bookname) a,
 div.footer,
 div.container > ul.list {
 	display: none !important;
@@ -330,6 +330,10 @@ body:has(.article-root) {
 	border-radius: 0.5rem;
 }
 
+body[data-theme='dark'] .article-root section.img-container img {
+	filter: invert(90%);
+}
+
 .article-root section p {
 	text-indent: 2em;
 	margin: 0 0 var(--novel-para-spacing, 0.9em);
@@ -443,6 +447,9 @@ body[hidden] {
 		--card-bg-color: #262420;
 		--accent-color: #c08d5e;
 		background-color: color-mix(in srgb, var(--primary-bg-color) 82%, var(--secondary-color) 18%);
+	}
+	.article-root section.img-container img {
+		filter: invert(90%);
 	}
 }
 
