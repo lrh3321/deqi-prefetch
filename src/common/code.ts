@@ -1,6 +1,6 @@
 import { GM_addElement, GM_getValue } from '$';
-import { codeLang, codeShowLineNumbers, disguiseMode, inlineLengthMax } from './config';
-import { updateStyle } from './utils';
+import { codeLang, codeShowLineNumbers, inlineLengthMax } from './config';
+import { updateStyle, VM_log } from './utils';
 
 let extendLanguageElement: HTMLScriptElement | null = null;
 
@@ -9,7 +9,7 @@ export function setupExtendLanguageSupport() {
 		return;
 	}
 	if (!coreLanguages.has(codeLang)) {
-		console.log('loading language', codeLang);
+		VM_log('loading language', codeLang);
 		const src = `https://dev.prismjs.com/components/prism-${codeLang}.js`;
 		if (extendLanguageElement?.src == src) {
 			return;
@@ -19,11 +19,11 @@ export function setupExtendLanguageSupport() {
 	}
 }
 
-function disguiseToCode(container: Element): HTMLPreElement {
-	/**
-	 * 将文章段落伪装成代码显示
-	 * @param container - 包含需要伪装的段落元素的容器
-	 */
+/**
+ * 将文章段落伪装成代码显示
+ * @param container - 包含需要伪装的段落元素的容器
+ */
+export function disguiseToCode(container: Element): HTMLPreElement {
 	const fakeCodes: string[] = fakeCodeSnippet.split('====');
 
 	const getRandomCode = () => fakeCodes[Math.floor(Math.random() * fakeCodes.length)];
@@ -110,24 +110,6 @@ function disguiseToCode(container: Element): HTMLPreElement {
 		updateStyle(pre);
 	});
 	return pre;
-}
-
-export function disguiseParagraphs(container: Element): Element {
-	if (__LITE__) {
-		return container;
-	}
-
-	switch (disguiseMode) {
-		case 'none':
-			(container as HTMLElement).style.fontSize = 'var(--novel-font-size)';
-			(container as HTMLElement).style.fontFamily = 'var(--novel-font-family)';
-			break;
-		case 'code':
-		default:
-			// 伪装成代码
-			return disguiseToCode(container);
-	}
-	return container;
 }
 
 /**
@@ -269,7 +251,7 @@ export const avalibleCodeLanguages = [
 
 export const coreLanguages = new Set(['markup', 'css', 'clike', 'javascript']);
 
-const defaultCodeSnippet = `var x = 1;
+const _snippet = `var x = 1;
 switch (x) {
   case 1:
     console.log('x 等于1');
@@ -307,6 +289,7 @@ switch (x) {
     console.log('x 没有发生类型转换');
 }
 `;
+const defaultCodeSnippet = __LITE__ ? '' : _snippet;
 export let fakeCodeSnippet = GM_getValue<string>('fake-codes', defaultCodeSnippet);
 if (fakeCodeSnippet.trim() == '') {
 	fakeCodeSnippet = defaultCodeSnippet;

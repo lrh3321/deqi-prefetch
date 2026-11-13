@@ -1,0 +1,157 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* ===== Chapter list =====
+ * 只负责布局，颜色全部复用 style.css 在 body:has(.article-root) 上定义的主题变量，
+ * 因此自动跟随阅读页的浅色/深色主题，无需在此重复定义。
+ *
+ * 结构：.chapter-list > details（章节分组）> summary + a
+ * - .chapter-list > details 无论宽屏还是竖屏都独占一行；
+ * - 每个 details 内部的 <a> 沿用响应式网格（窄屏单列 / 宽屏多列）。
+ */
+.chapter-list {
+	max-width: 1200px;
+	width: 100%;
+	min-width: 0; /* 允许自身收缩，避免超长内容撑破屏幕 */
+	margin: 0 auto;
+	padding: 16px;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+	background-color: var(--card-bg-color);
+	border: 1px solid var(--separator-color);
+	border-radius: 12px;
+	box-shadow:
+		0 1px 2px rgb(0 0 0 / 0.04),
+		0 10px 30px rgb(0 0 0 / 0.06);
+}
+
+/* 分组行：独占一行，圆角卡片分组 */
+.chapter-list > details {
+	grid-column: 1 / -1;
+	/* grid 子项默认 min-width: auto（不小于内容宽），会让超长 nowrap 标题把分组撑破，
+	   必须设为 0 让其收缩到可用宽度，summary 的省略号才生效 */
+	min-width: 0;
+	border: 1px solid var(--separator-color);
+	border-radius: 10px;
+	padding: 8px;
+	background-color: color-mix(in srgb, var(--primary-bg-color) 45%, var(--card-bg-color) 55%);
+}
+
+/* 分组标题栏 */
+.chapter-list > details > summary {
+	/* summary 默认是 list-item，text-overflow 需要块级元素才生效，
+	   故显式改为 block（原生 marker 已用 ::-webkit-details-marker 隐藏） */
+	display: block;
+	list-style: none;
+	cursor: pointer;
+	padding: 8px 12px;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--accent-color);
+	border-radius: 8px;
+	user-select: none;
+	/* 标题过长时隐藏溢出部分，避免撑破/换行 */
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	transition: background-color 0.15s ease;
+}
+
+.chapter-list > details > summary:hover {
+	background-color: color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+/* 收起状态：加自定义三角箭头（跟随强调色） */
+.chapter-list > details > summary::before {
+	content: '';
+	display: inline-block;
+	width: 0;
+	height: 0;
+	margin-right: 0.5em;
+	border-top: 0.32em solid var(--accent-color);
+	border-right: 0.32em solid transparent;
+	border-left: 0.32em solid transparent;
+	vertical-align: middle;
+	transition: transform 0.15s ease;
+}
+
+.chapter-list > details[open] > summary::before {
+	transform: rotate(180deg);
+}
+
+/* 去掉一些浏览器默认的 details 边距/列表标记 */
+.chapter-list > details > summary::-webkit-details-marker {
+	display: none;
+}
+
+/* 分组内章节链接：
+ * 移动端优先——单列堆叠；宽屏自动多列，自上而下再横向展开。
+ */
+.chapter-list > details > a {
+	display: block;
+	padding: 10px 14px;
+	color: var(--primary-color);
+	text-decoration: none;
+	font-size: 14px;
+	line-height: var(--novel-line-height, 1.9);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	border-radius: 8px;
+	border: 1px solid transparent;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+.chapter-list > details > a:hover {
+	background-color: color-mix(in srgb, var(--accent-color) 12%, transparent);
+	color: var(--accent-color);
+	border-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+/* ----- Portrait / narrow screens (≤ 640px) -----
+ * 分组内单列，竖向浏览即可。
+ */
+@media (max-width: 640px) {
+	.chapter-list {
+		gap: 8px;
+		padding: 12px;
+	}
+
+	.chapter-list > details {
+		padding: 6px;
+	}
+
+	.chapter-list > details > summary {
+		font-size: 14px;
+	}
+
+	.chapter-list > details > a {
+		padding: 9px 12px;
+		font-size: 13px;
+	}
+}
+
+/* ----- Wide / landscape screens (≥ 768px) -----
+ * 分组本身切换为多列网格：summary 占满整行，章节链接自上而下再横向展开。
+ */
+@media (min-width: 768px) {
+	.chapter-list > details {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 6px;
+	}
+
+	.chapter-list > details > summary {
+		grid-column: 1 / -1;
+	}
+}

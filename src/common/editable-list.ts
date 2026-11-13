@@ -25,8 +25,8 @@ export class EditableList extends HTMLElement {
 </div>
 <ul class="item-list"></ul>`;
 
-		this.itemList = this.querySelector('ul.item-list')!!;
-		this.textInput = this.querySelector('.add-new-list-item-input')!!;
+		this.itemList = this.querySelector('ul.item-list')!;
+		this.textInput = this.querySelector('.add-new-list-item-input')!;
 		this.textInput!!.onkeydown = this.onKeydown.bind(this);
 	}
 	// fires after the element has been attached to the DOM
@@ -54,7 +54,7 @@ export class EditableList extends HTMLElement {
 			this.codeSnippetsStore.set(idx, snippet);
 			snippet = this.trimSnippet(snippet);
 			this.addCodeSnippet(idx, snippet);
-			textInput!!.value = '';
+			textInput!.value = '';
 
 			this.dispatchEvent(new CustomEvent('add-item'));
 		}
@@ -83,7 +83,7 @@ export class EditableList extends HTMLElement {
 		if (!this.itemList) {
 			this.lazyInit();
 		}
-		this.itemList!!.innerHTML = ``;
+		this.itemList!.innerHTML = ``;
 		this.codeSnippetsStore.forEach((snippet, idx) => {
 			this.addCodeSnippet(idx, snippet);
 		});
