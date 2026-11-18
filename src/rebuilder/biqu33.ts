@@ -1,12 +1,12 @@
-import { disguiseParagraphs } from './code';
 import {
+	disguiseParagraphs,
 	ensureDoc,
 	fetchChaperFragmentPage,
 	isInIframe,
 	paragraphsFromElement,
 	rebuildChapterBody,
 	VM_log
-} from './utils';
+} from '../common';
 
 export function handleBiqu33Route() {
 	if (document.documentElement.lang == 'zh-TW') {
@@ -24,7 +24,7 @@ export function handleBiqu33Route() {
 			}
 			break;
 		case 3:
-			if (/[\d\w]+_\d+$/.test(lastSegment)) {
+			if (/[\d\w]+[_~]\d+$/.test(lastSegment)) {
 				// 不是章节首页
 				return;
 			}
@@ -64,34 +64,27 @@ function mergeCanvases(canvases: HTMLCanvasElement[]): HTMLCanvasElement | undef
 	return result;
 }
 
+function cloneScript(script: Element): HTMLScriptElement {
+	const scriptCopy = document.createElement('script');
+	scriptCopy.innerHTML = script.innerHTML.split(';').join(';\r\n');
+	return scriptCopy;
+}
 function getCanvasScript(doc: Document | string): HTMLScriptElement | undefined {
 	const document = ensureDoc(doc);
-	let scriptCopy: HTMLScriptElement | undefined = undefined;
 	const scripts = Array.from(document.body.querySelectorAll('script:not([src])'));
-	scripts.forEach((script) => {
-		if (typeof scriptCopy != 'undefined') {
-			return;
-		}
+	for (const script of scripts) {
 		if (script.innerHTML.includes(`if(!isMobile)`) && !script.innerHTML.includes(`qrcode`)) {
 			// 有手机浏览器限制
-			console.log('有手机浏览器限制');
-			scriptCopy = document.createElement('script');
-			scriptCopy.innerHTML = script.innerHTML.split(';').join(';\r\n');
-			return;
+			VM_log('有手机浏览器限制');
+			return cloneScript(script);
 		}
-	});
-	if (typeof scriptCopy == 'undefined') {
-		scripts.forEach((script) => {
-			if (typeof scriptCopy != 'undefined') {
-				return;
-			}
-			if (script.innerHTML.includes(`display_img_line`)) {
-				scriptCopy = document.createElement('script');
-				scriptCopy.innerHTML = script.innerHTML;
-			}
-		});
 	}
-	return scriptCopy;
+	for (const script of scripts) {
+		if (script.innerHTML.includes(`display_img_line`)) {
+			return cloneScript(script);
+		}
+	}
+	return undefined;
 }
 
 function canvasToImage(canvas: HTMLCanvasElement): HTMLImageElement {
@@ -102,11 +95,12 @@ function canvasToImage(canvas: HTMLCanvasElement): HTMLImageElement {
 }
 
 const scriptCopyArray: HTMLScriptElement[] = [];
+let scriptFirstInject: boolean = true;
 const styleSet = new Set<string>();
 function handleChapterPage() {
 	VM_log('handleChapterPage');
 
-	const con = document.getElementById('txtbody')!;
+	const con = document.getElementById('txtbody') || document.getElementById('chaptercontent')!;
 	const page = parseFragmentPageURL(document);
 
 	let multiPage = false;
@@ -143,7 +137,7 @@ function handleChapterPage() {
 }
 
 function appendImage() {
-	const con = document.getElementById('txtbody')!;
+	const con = document.getElementById('txtbody') || document.getElementById('chaptercontent')!;
 	const merged = mergeCanvases(
 		Array.from(con.querySelectorAll('table canvas')).filter((c) => {
 			if (c instanceof HTMLCanvasElement) {
@@ -159,7 +153,7 @@ function appendImage() {
 }
 
 function rebuild() {
-	const con = document.getElementById('txtbody')!;
+	const con = document.getElementById('txtbody') || document.getElementById('chaptercontent')!;
 	const loading = con.querySelector('[id^="loading_peu_p_"]');
 	if (loading) {
 		VM_log('loading');
@@ -183,7 +177,20 @@ function rebuild() {
 
 		const thisWin = document.defaultView as docThis;
 		thisWin.isMobile = true;
+		thisWin.ASM_CONSTS[1729] = () => 1;
+		thisWin.ASM_CONSTS[1901] = (a) => {
+			document.getElementById('box_' + a)?.setAttribute('class', 'img-box');
+		};
+		CanvasRenderingContext2D.prototype.fillText = () => {};
+
 		const s = scriptCopyArray.shift()!;
+		if (!scriptFirstInject) {
+			s.innerHTML = s.innerHTML
+				.split('\r\n')
+				.filter((line) => !/^(function|var) /.test(line))
+				.join('\r\n');
+			scriptFirstInject = false;
+		}
 		document.body.appendChild(s);
 		VM_log(s.innerHTML);
 
@@ -200,9 +207,10 @@ function rebuild() {
 
 function parseFragmentPageURL(doc: Document): PageURL {
 	let next: HTMLAnchorElement | undefined;
-	let nextChapter = doc.getElementById('u_next') as HTMLAnchorElement | null;
+	let nextChapter = (doc.getElementById('u_next') ||
+		doc.getElementById('next_url')) as HTMLAnchorElement | null;
 
-	const span = doc.querySelector('#pageseg > span');
+	const span = doc.querySelector('#pageseg > span, #sub-pages > span');
 	if (span) {
 		const nextElementSibling = span.nextElementSibling;
 		if (nextElementSibling && nextElementSibling instanceof HTMLAnchorElement) {
@@ -216,9 +224,9 @@ function parseFragmentPageURL(doc: Document): PageURL {
 	};
 }
 
-function parseFragmentPage(doc: Document): FragmentPage {
-	const nestedCon = doc.getElementById('txtbody')!;
-	VM_log('content', nestedCon.outerHTML);
+async function parseFragmentPage(doc: Document): Promise<FragmentPage> {
+	const nestedCon = doc.getElementById('txtbody') || doc.getElementById('chaptercontent')!;
+	// VM_log('content', nestedCon.outerHTML);
 
 	const paragraphs = paragraphsFromElement(nestedCon);
 	// 判断是否为 canvas 页
@@ -246,31 +254,34 @@ function parseFragmentPage(doc: Document): FragmentPage {
 }
 
 function getChapterPage(): Page {
-	const con = document.getElementById('txtbody')!;
+	const con = document.getElementById('txtbody') || document.getElementById('chaptercontent')!;
 	con.className = '';
 
 	const mainSection = disguiseParagraphs(con);
 
-	const prenexts = Array.from<HTMLAnchorElement>(document.querySelectorAll('.rdpg > a'));
-	const navigationBar: NavLinks = {};
-	for (const element of prenexts) {
-		if (element instanceof HTMLAnchorElement) {
-			element.className = '';
-			const textContent = element.textContent;
-			if (textContent.includes('上一章')) {
-				element.innerHTML = '上一章';
-				navigationBar.prevAnchor = element;
-			} else if (textContent.includes('目') && textContent.includes('录')) {
-				element.innerHTML = '目录';
-				navigationBar.infoAnchor = element;
-			} else if (textContent.includes('下一章')) {
-				element.innerHTML = '下一章';
-				navigationBar.nextAnchor = element;
+	const navigationBar: NavLinks = {
+		prevAnchor: document.getElementById('prev_url') as HTMLAnchorElement | undefined,
+		infoAnchor: document.getElementById('info_url') as HTMLAnchorElement | undefined,
+		nextAnchor: document.getElementById('next_url') as HTMLAnchorElement | undefined
+	};
+	if (!navigationBar.infoAnchor) {
+		const prenexts = Array.from<HTMLAnchorElement>(document.querySelectorAll('.rdpg > a'));
+		for (const el of prenexts) {
+			if (el instanceof HTMLAnchorElement) {
+				el.className = '';
+				const textContent = el.textContent;
+				if (textContent.includes('上一章')) {
+					navigationBar.prevAnchor = el;
+				} else if (textContent.includes('目') && textContent.includes('录')) {
+					navigationBar.infoAnchor = el;
+				} else if (textContent.includes('下一章')) {
+					navigationBar.nextAnchor = el;
+				}
 			}
 		}
 	}
-	const breadcrumbBar = document.querySelector('.crumb')!;
-	const title = document.querySelector('h1.rd-ttl')?.textContent;
+	const breadcrumbBar = document.querySelector('.crumb, .breadcrumb')!;
+	const title = document.querySelector('h1.rd-ttl,h1.readTitle')?.textContent;
 	const page = {
 		breadcrumbBar,
 		title,
@@ -281,4 +292,11 @@ function getChapterPage(): Page {
 	return page;
 }
 
-type docThis = (WindowProxy & typeof globalThis) & { isMobile?: boolean; cenabled(): boolean };
+type docThis = (WindowProxy & typeof globalThis) & {
+	isMobile?: boolean;
+	cenabled(): boolean;
+	ASM_CONSTS: {
+		1729: () => 0 | 1;
+		1901: (a: string | number) => void;
+	};
+};

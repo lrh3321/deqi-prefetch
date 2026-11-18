@@ -7,7 +7,7 @@ import {
 	setupExtendLanguageSupport
 } from './code';
 import { EditableList, setupEditableList } from './editable-list';
-import { getCodeThemeURL, updateStyle } from './utils';
+import { getCodeThemeURL, updateStyle, VM_log } from './utils';
 
 export let disguiseDebug = GM_getValue('disguiseDebug', false);
 export let novelFontSize = GM_getValue('novel-font-size', '16px');
@@ -28,7 +28,7 @@ export let codeShowLineNumbers = GM_getValue('line-numbers', false);
 
 export let refreshInterval = GM_getValue('refreshInterval', -1);
 
-export let themeMode = GM_getValue<ThemeMode>('theme-mode', 'auto');
+export let themeMode = GM_getValue<ThemeMode>('theme-mode', '');
 
 function changeCodeTheme(theme: string) {
 	if (__LITE__) {
@@ -161,10 +161,10 @@ function createDisguiseCodeFieldset(): HTMLFieldSetElement {
 	});
 	codeThemeInput.value = codeTheme;
 	codeThemeInput.onchange = () => {
-		console.log('change');
+		VM_log('change');
 		const theme = codeThemeInput.value;
 		if (codeThemeInput.selectedIndex >= 0 && theme && theme != codeTheme) {
-			console.log(`Change code theme to ${theme}`);
+			VM_log(`Change code theme to ${theme}`);
 			changeCodeTheme(theme);
 		}
 	};
@@ -197,7 +197,7 @@ function foo(bar) {
 		highlightElement(newPre);
 		disguiseFieldset.replaceChild(newPre, preDemo);
 		preDemo = newPre;
-		console.log('update demo');
+		VM_log('update demo');
 	};
 
 	const codeLangInput = document.createElement('select');
@@ -231,7 +231,7 @@ function foo(bar) {
 	codeShowLineNumbersInput.onchange = () => {
 		codeShowLineNumbers = codeShowLineNumbersInput.checked;
 		GM_setValue('line-numbers', codeShowLineNumbers);
-		console.log(`Change code show line numbers to ${codeShowLineNumbers}`, editableList);
+		VM_log(`Change code show line numbers to ${codeShowLineNumbers}`, editableList);
 		editableList?.render();
 		renderDemo();
 	};
@@ -422,9 +422,9 @@ export function setDefaultStyle() {
 const FAB_ID = 'deqi-fab';
 const DIALOG_ID = 'deqi-settings-dialog';
 
-// 夜间模式：仅切换 body 上的 data-theme（auto/dark/light）。
+// 夜间模式：仅切换 body 上的 data-theme（''/dark/light）。
 // 具体配色全部在 src/style.css 与 src/config-dialog.css 中定义，这里不含颜色数据。
-// mode: 'auto' = 跟随系统（移除 data-theme，交给 prefers-color-scheme）
+// mode: '' = 跟随系统（移除 data-theme，交给 prefers-color-scheme）
 //       'dark' / 'light' = 强制夜间 / 日间
 const applyTheme = (mode?: ThemeMode) => {
 	if (!mode) {
@@ -521,7 +521,7 @@ function buildSettingsDialog() {
 	themeLabel.textContent = '夜间模式';
 	const themeSelect = document.createElement('select');
 	[
-		['auto', '跟随系统'],
+		['', '跟随系统'],
 		['dark', '夜间'],
 		['light', '日间']
 	].forEach(([v, text]) => {

@@ -2,6 +2,8 @@ build:
     vp build
 build-lite:
     vp build --mode lite
+build-lite-vconsole:
+    vp build --mode lite-vconsole
 
 build-all: build build-lite
 
